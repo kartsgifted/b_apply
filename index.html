@@ -56,15 +56,15 @@ section{padding:48px 0 8px}
 .facts dd small{display:block;font-weight:500;color:var(--muted);font-size:13.5px;margin-top:2px}
 
 .sessions{display:grid;gap:10px;margin-bottom:26px}
-.session{display:grid;grid-template-columns:86px 1fr;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.session{display:grid;grid-template-columns:104px 1fr;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
 .session .when{background:var(--teal);color:#fff;padding:14px 8px;text-align:center;display:flex;flex-direction:column;justify-content:center}
 .session .when .r{font-size:12px;font-weight:600;opacity:.8;letter-spacing:.04em}
-.session .when .d{font-family:var(--head);font-weight:800;font-size:24px;line-height:1.1;margin:2px 0}
+.session .when .d{font-family:var(--head);font-weight:800;font-size:23px;line-height:1.1;margin:2px 0;white-space:nowrap;letter-spacing:-.02em}
 .session .when .w{font-size:13px;font-weight:600}
 .session .info{padding:14px 16px}
 .session .info .t{font-weight:700;font-size:15px;color:var(--teal-deep)}
 .session .info .m{font-family:var(--head);font-weight:800;font-size:19px;margin-top:2px}
-.session .info .m small{font-family:var(--body);font-weight:500;font-size:13.5px;color:var(--muted);margin-left:6px}
+.session .info .m small{display:block;font-family:var(--body);font-weight:500;font-size:13.5px;color:var(--muted);margin-top:1px}
 
 .notes ul{list-style:none;margin:0;padding:0}
 .notes{margin:0;padding:18px;background:var(--apricot-soft);border-radius:var(--radius)}
@@ -124,7 +124,7 @@ tr.hit td.nm{color:var(--coral)}
 .match{font-size:14px;margin-top:8px;border-radius:8px;padding:8px 12px;display:none}
 .match.ok{display:block;background:var(--teal-soft);color:var(--teal-ink)}
 .match.no{display:block;background:#FDECEE;color:#8E1E29}
-.two{display:grid;grid-template-columns:110px 1fr;gap:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .choice input{position:absolute;opacity:0;pointer-events:none}
 .choice label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1.5px solid var(--line-strong);border-radius:12px;padding:16px 8px;cursor:pointer;font-weight:700;font-size:17px;text-align:center;transition:all .15s;background:#fff}
@@ -244,15 +244,15 @@ section{padding-top:32px}
     <p class="greet">
       안녕하세요, 한국예술영재교육연구원입니다.<br>
       2026 K예술영재 프로젝트 무용분야 심화과정 대상자 여러분께 <strong>심화 멘토링</strong> 일정을 안내드립니다.
-      이번 멘토링은 여러분의 <strong>오디션 작품 영상</strong>을 함께 보며 국립발레단 무용수 선생님께 <strong>1:1로 피드백</strong>을 받는 시간입니다.
-      아래에서 본인의 회차와 시간을 확인한 뒤, <strong>10월 15일(목) 오전 11시까지</strong> 참석 여부를 회신해 주세요.
+      이번 멘토링은 심사에 제출하셨던 여러분의 <strong>오디션 작품 영상</strong> 기반으로 <strong>1:1로 개별 피드백</strong>을 받는 시간입니다.
+      아래에서 본인의 회차와 시간을 확인한 뒤, <strong>10월 15일(목) 오전 11시까지</strong> 참석 여부를 회신해 주시기 바랍니다.
     </p>
 
     <dl class="facts">
       <div><dt>운영 방식</dt><dd>비대면 온라인 (ZOOM)</dd></div>
       <div><dt>멘토링 시간</dt><dd>1인당 10분<small>피드백 8분 + 질의응답 2분</small></dd></div>
-      <div><dt>활용 자료</dt><dd>본인 오디션 작품 영상<small>2분 내외 · 연구원에서 재생합니다</small></dd></div>
-      <div><dt>참여</dt><dd>학생 자율 참석<small>1인 1회, 배정된 회차에 참여</small></dd></div>
+      <div><dt>활용 자료</dt><dd>오디션 작품 영상<small>6월 심사 시, 제출하셨던 영상으로 진행</small></dd></div>
+      <div><dt>참여</dt><dd>1인 1회, 배정된 회차<small>일정 변경 불가, 미참시 불이익 없음</small></dd></div>
     </dl>
 
     <div class="sessions" id="sessionCards"></div>
@@ -263,7 +263,8 @@ section{padding-top:32px}
       <li><b>대기실 접속시간</b>(본인 멘토링 10분 전)까지 접속해 주세요.</li>
       <li>접속 링크와 유의사항은 회차별 운영 전에 개별로 보내드립니다. (1회차는 10월 23일 발송 예정)</li>
       <li>ZOOM 접속 시 표시 이름을 <b>학생 실명</b>으로 설정해 주세요. 출석 확인에 사용합니다.</li>
-      <li>멘토링 진행 과정은 사업 기록을 위해 녹화됩니다.</li>
+      <li>멘토링 진행 과정은 사업 기록을 위해 녹화되며, 외부 유출되지 않습니다.</li>
+      <li>멘토링은 학생과 멘토 선생님 <b>1:1로만</b> 진행되며, 다른 학생의 멘토링 내용은 서로 볼 수 없습니다. 학부모 등 <b>학생 외 참관은 불가</b>합니다.</li>
       <li>회차별 세부 일정과 내용은 강사진 사정에 따라 변동될 수 있으며, 변경 시 다시 안내드립니다.</li>
       </ul>
     </div>
@@ -308,18 +309,25 @@ section{padding-top:32px}
         </div>
 
         <div class="two">
-          <div class="field" id="f-age">
-            <label for="age">나이<span class="req">*</span></label>
-            <input type="number" id="age" name="age" inputmode="numeric" min="7" max="20" placeholder="예: 12">
-            <div class="err">나이를 숫자로 입력해 주세요.</div>
-          </div>
+        <div class="field" id="f-birth">
+          <label for="birth">출생연도<span class="req">*</span></label>
+          <input type="number" id="birth" name="birth" inputmode="numeric" min="2000" max="2020" placeholder="예: 2014">
+          <div class="err">출생연도를 4자리 숫자로 입력해 주세요. (예: 2014)</div>
+        </div>
+
+        <div class="two">
           <div class="field" id="f-phone">
-            <label for="phone">연락처<span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000">
+            <label for="phone">학생 연락처<span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="010-0000-0000">
+            <div class="err">휴대전화 번호를 정확히 입력해 주세요.</div>
+          </div>
+          <div class="field" id="f-pphone">
+            <label for="pphone">보호자 연락처<span class="req">*</span></label>
+            <input type="tel" id="pphone" name="pphone" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="010-0000-0000">
             <div class="err">휴대전화 번호를 정확히 입력해 주세요.</div>
           </div>
         </div>
-        <p class="hint" style="margin:-12px 0 20px">연락처는 학생 본인 또는 보호자 번호 모두 가능합니다. 접속 링크 안내에 사용합니다.</p>
+        <p class="hint" style="margin:-12px 0 20px">접속 링크와 안내는 학생·보호자 연락처 두 곳 모두로 보내드립니다. 학생 휴대전화가 없으면 보호자 번호를 같이 적어 주세요.</p>
 
         <div class="field" id="f-attend">
           <span class="lbl">참석 여부<span class="req">*</span></span>
@@ -339,7 +347,7 @@ section{padding-top:32px}
           <div class="consent">
             <b style="color:var(--ink)">개인정보 수집·이용 안내</b>
             <table>
-              <tr><th>수집 항목</th><td>학생 이름, 나이, 연락처, 참석 여부</td></tr>
+              <tr><th>수집 항목</th><td>학생 이름, 출생연도, 학생·보호자 연락처, 참석 여부</td></tr>
               <tr><th>이용 목적</th><td>멘토링 참석 확인, 접속 링크 및 일정 안내</td></tr>
               <tr><th>보유 기간</th><td>2026 K예술영재 프로젝트 종료 시까지 보관 후 파기</td></tr>
             </table>
@@ -365,7 +373,7 @@ section{padding-top:32px}
 <footer>
   <div class="wrap">
     <b>한국예술영재교육연구원</b> · 2026 K예술영재 프로젝트<br>
-    문의 사항은 무용분야 심화과정 오픈채팅방으로 남겨 주세요.
+    문의 사항은 <a href="mailto:kgifted2026@naver.com">kgifted2026@naver.com</a> 메일로 남겨 주세요.
   </div>
 </footer>
 
@@ -386,7 +394,7 @@ const CONFIG = {
 /* ============ 분반 명단 (이름은 가운데 글자 가림) ============
    원본: 무용분야 심화 멘토링 운영계획(안) ’26.10.13. 붙임2 분반 명단 */
 const SESSIONS = [
-  { no:1, date:'2026-10-25', d:'10.25', w:'일', mentor:'정은영', role:'국립발레단 수석 무용수',
+  { no:1, date:'2026-10-25', d:'10.25', w:'일', range:'11:00 – 13:00', mentor:'정은영', role:'국립발레단 수석 무용수',
     brk:{after:5, label:'휴식 11:50 – 12:00'},
     list:[
       ['곽○율','초5','10:50','11:00 – 11:10'],['김○희','초5','11:00','11:10 – 11:20'],
@@ -394,7 +402,7 @@ const SESSIONS = [
       ['윤○우','초5','11:30','11:40 – 11:50'],['이○아','초5','11:50','12:00 – 12:10'],
       ['조○은','초5','12:00','12:10 – 12:20'],['최○령','초5','12:10','12:20 – 12:30'],
       ['최○인','초5','12:20','12:30 – 12:40'],['한○린','초5','12:30','12:40 – 12:50'] ]},
-  { no:2, date:'2026-11-22', d:'11.22', w:'일', mentor:'송정빈', role:'국립발레단 솔리스트',
+  { no:2, date:'2026-11-22', d:'11.22', w:'일', range:'11:00 – 13:00', mentor:'송정빈', role:'국립발레단 솔리스트',
     brk:{after:5, label:'휴식 11:50 – 12:00'},
     list:[
       ['서○온','초5','10:50','11:00 – 11:10'],['이○울','초5','11:00','11:10 – 11:20'],
@@ -402,7 +410,7 @@ const SESSIONS = [
       ['김○혜','초6','11:30','11:40 – 11:50'],['문○원','초6','11:50','12:00 – 12:10'],
       ['박○엘','초6','12:00','12:10 – 12:20'],['송○잎','초6','12:10','12:20 – 12:30'],
       ['이○민','초6','12:20','12:30 – 12:40'],['이○윤','초6','12:30','12:40 – 12:50'] ]},
-  { no:3, date:'2026-12-06', d:'12.6', w:'일', mentor:'정은영', role:'국립발레단 수석 무용수',
+  { no:3, date:'2026-12-06', d:'12.6', w:'일', range:'17:30 – 19:30', mentor:'정은영', role:'국립발레단 수석 무용수',
     brk:{after:5, label:'휴식 18:20 – 18:30'},
     list:[
       ['한○슬','초6','17:20','17:30 – 17:40'],['맹○유','중1','17:30','17:40 – 17:50'],
@@ -415,7 +423,7 @@ const SESSIONS = [
 /* ================== 공통 ================== */
 const $ = s => document.querySelector(s);
 const norm = s => (s||'').replace(/\s+/g,'').trim();
-const range = s => { const a=s.list[0][3].split('–')[0].trim(), b=s.list[s.list.length-1][3].split('–')[1].trim(); return a+' – '+b; };
+const range = s => s.range;
 const longDate = s => { const [y,m,d]=s.date.split('-').map(Number); return `${m}월 ${d}일(${s.w})`; };
 
 function findStudent(name){
@@ -518,24 +526,25 @@ function onNameInput(){
 }
 $('#name').addEventListener('input', onNameInput);
 
-$('#phone').addEventListener('input', e=>{
+['#phone','#pphone'].forEach(sel=>$(sel).addEventListener('input', e=>{
   let d = e.target.value.replace(/\D/g,'').slice(0,11);
   e.target.value = d.length<4 ? d : d.length<8 ? d.slice(0,3)+'-'+d.slice(3) : d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
-});
+}));
 
 document.querySelectorAll('input[name=attend]').forEach(r=>r.addEventListener('change',()=>{
   $('#reasonBox').style.display = $('#att-n').checked ? 'block' : 'none';
   $('#f-attend').classList.remove('invalid');
 }));
-['name','age','phone'].forEach(id=>$('#'+id).addEventListener('input',()=>$('#f-'+id).classList.remove('invalid')));
+['name','birth','phone','pphone'].forEach(id=>$('#'+id).addEventListener('input',()=>$('#f-'+id).classList.remove('invalid')));
 $('#consent').addEventListener('change',()=>$('#f-consent').classList.remove('invalid'));
 
 function validate(){
   let ok = true, first = null;
   const bad = id => { $('#'+id).classList.add('invalid'); ok=false; first = first || $('#'+id); };
   if (norm($('#name').value).length < 2) bad('f-name');
-  const age = +$('#age').value; if (!age || age<7 || age>20) bad('f-age');
+  const by = +$('#birth').value; if (!by || by<2000 || by>2020) bad('f-birth');
   if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test($('#phone').value)) bad('f-phone');
+  if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test($('#pphone').value)) bad('f-pphone');
   if (!document.querySelector('input[name=attend]:checked')) bad('f-attend');
   if (!$('#consent').checked) bad('f-consent');
   if (first) first.scrollIntoView({block:'center'});
@@ -544,13 +553,14 @@ function validate(){
 
 $('#replyForm').addEventListener('submit', async e=>{
   e.preventDefault();
-  if (CONFIG.CLOSE_AFTER_DEADLINE && isClosed()){ alert('회신 기간이 종료되었습니다. 오픈채팅방으로 문의해 주세요.'); return; }
+  if (CONFIG.CLOSE_AFTER_DEADLINE && isClosed()){ alert('회신 기간이 종료되었습니다. kgifted2026@naver.com 메일로 문의해 주세요.'); return; }
   if (!validate()) return;
   const f = findStudent($('#name').value);
   const payload = {
     name: norm($('#name').value),
-    age: $('#age').value,
+    birth: $('#birth').value,
     phone: $('#phone').value,
+    pphone: $('#pphone').value,
     attend: document.querySelector('input[name=attend]:checked').value,
     reason: $('#att-n').checked ? $('#reason').value.trim() : '',
     consent: 'Y',
@@ -577,7 +587,7 @@ function showDone(p, f, res){
   $('#replyForm').style.display='none';
   $('#done').style.display='block';
   $('#doneMsg').textContent = p.attend==='참석'
-    ? '접속 링크와 유의사항은 회차 운영 전 입력하신 연락처로 안내드립니다.'
+    ? '접속 링크와 유의사항은 회차 운영 전 학생·보호자 연락처로 안내드립니다.'
     : '불참으로 접수되었습니다. 회신해 주셔서 감사합니다.';
   let sum = `<dt>이름</dt><dd>${p.name}</dd><dt>참석 여부</dt><dd>${p.attend}</dd>`;
   if (p.attend==='참석' && f) sum += `<dt>일정</dt><dd>${f.s.no}회차 · ${longDate(f.s)}</dd><dt>대기실 접속</dt><dd>${f.row[2]}</dd><dt>멘토링</dt><dd>${f.row[3]}</dd>`;
