@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>멘토링 응답 현황</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+@font-face{font-family:'Paperlogy';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+:root{
+  --teal:#176C86; --teal-deep:#1C6077; --teal-ink:#0F4252; --teal-soft:#E6F0F3;
+  --ivory:#FAF9F5; --paper:#fff; --ink:#212326; --muted:#5F6368;
+  --coral:#E84958; --coral-soft:#FDECEE; --apricot:#FFB098; --apricot-soft:#FFE9E0;
+  --grey:#8A8F94; --grey-soft:#EEEEEC;
+  --line:rgba(33,35,38,.12); --line-strong:rgba(33,35,38,.22);
+  --head:'Paperlogy','Pretendard Variable',Pretendard,sans-serif;
+  --body:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;word-break:keep-all}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.25}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--teal-deep)}
+.login-card{width:100%;max-width:380px;background:var(--paper);border-radius:18px;padding:32px 28px}
+.login-card .eyebrow{font-family:var(--head);font-weight:600;font-size:12px;letter-spacing:.12em;color:var(--teal)}
+.login-card h1{font-weight:800;font-size:26px;margin:8px 0 6px}
+.login-card p{color:var(--muted);margin:0 0 20px;font-size:14px}
+.login-card input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:10px;outline:none}
+.login-card input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.15)}
+.login-card .btn{width:100%;margin-top:10px;padding:13px}
+.login-err{color:var(--coral);font-size:13.5px;min-height:20px;margin-top:8px}
+
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;font-size:14px;background:var(--teal);color:#fff;white-space:nowrap}
+.btn:hover{background:var(--teal-ink)}
+.btn.ghost{background:var(--paper);color:var(--ink);border:1.5px solid var(--line-strong)}
+.btn.ghost:hover{background:var(--grey-soft)}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* top bar */
+#app{display:none}
+.top{background:var(--teal-deep);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
+.top .ttl{margin-right:auto}
+.top .ttl small{display:block;font-size:12.5px;color:rgba(255,255,255,.7);font-weight:600;letter-spacing:.04em}
+.top h1{font-weight:800;font-size:22px;color:#fff}
+.top .meta{font-size:13px;color:rgba(255,255,255,.75)}
+.top .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.top .btn.ghost:hover{background:rgba(255,255,255,.1)}
+
+main.wrap{padding-top:24px;padding-bottom:60px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:1.6fr repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .l{font-size:13px;color:var(--muted);font-weight:600}
+.kpi .v{font-family:var(--head);font-weight:800;font-size:30px;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .v small{font-family:var(--body);font-size:15px;color:var(--muted);font-weight:600;margin-left:2px}
+.kpi.main{background:var(--teal);color:#fff;border-color:var(--teal)}
+.kpi.main .l,.kpi.main .v small{color:rgba(255,255,255,.8)}
+.prog{height:8px;border-radius:8px;background:rgba(255,255,255,.25);margin-top:10px;overflow:hidden}
+.prog i{display:block;height:100%;background:#fff;border-radius:8px;transition:width .4s}
+.kpi .dl{font-size:12.5px;margin-top:6px;color:rgba(255,255,255,.85)}
+.v.att{color:var(--teal)} .v.abs{color:var(--grey)} .v.none{color:var(--coral)} .v.extra{color:var(--ink)}
+
+/* session cards */
+.sessions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.sc{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.sc .h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sc .h b{font-family:var(--head);font-weight:800;font-size:18px}
+.sc .h span{font-size:13px;color:var(--muted)}
+.bar{display:flex;height:10px;border-radius:10px;overflow:hidden;background:var(--grey-soft)}
+.bar i{display:block;height:100%}
+.bar .a{background:var(--teal)} .bar .b{background:#B9BDC1} .bar .c{background:var(--coral);opacity:.35}
+.legend{display:flex;gap:14px;font-size:13.5px;color:var(--muted)}
+.legend b{color:var(--ink);font-variant-numeric:tabular-nums}
+.sc .act{display:flex;gap:6px;flex-wrap:wrap}
+.sc .act .btn{font-size:13px;padding:7px 11px}
+
+/* toolbar */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.seg{display:inline-flex;background:var(--paper);border:1.5px solid var(--line-strong);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:none;border-radius:7px;padding:6px 12px;font-weight:700;font-size:13.5px;color:var(--muted)}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button .n{font-weight:600;opacity:.7;margin-left:3px;font-variant-numeric:tabular-nums}
+.search{flex:1;min-width:160px;max-width:260px;font:inherit;padding:8px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--paper);outline:none}
+.search:focus{border-color:var(--teal)}
+.toolbar .sp{flex:1}
+
+/* table */
+.tbl{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--teal-soft);color:var(--teal-ink);font-size:12.5px;font-weight:700;text-align:left;padding:10px 10px;white-space:nowrap;border-bottom:1px solid var(--line)}
+tbody td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#FCFBF8}
+td.c,th.c{text-align:center}
+td.nm{font-weight:700;white-space:nowrap}
+td.ph{white-space:nowrap}
+td.ph a{color:var(--ink);text-decoration:none;border-bottom:1px dashed var(--line-strong)}
+td.note{color:var(--muted);font-size:13.5px;max-width:260px}
+td.sess{white-space:nowrap;color:var(--muted);font-size:13.5px}
+td.sess b{color:var(--ink)}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.bd.att{background:var(--teal-soft);color:var(--teal-ink)}
+.bd.abs{background:var(--grey-soft);color:var(--muted)}
+.bd.none{background:var(--coral-soft);color:#B3261E}
+.src{font-size:12px;color:var(--muted)}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+h2.sub{font-size:18px;font-weight:800;margin:32px 0 10px}
+h2.sub small{font-family:var(--body);font-weight:500;font-size:13.5px;color:var(--muted);margin-left:8px}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none;z-index:50}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:1000px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpi.main{grid-column:1/-1}
+  .sessions{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .wrap{padding:0 16px}
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody tr{padding:12px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px}
+  tbody td{border:0;padding:0}
+  td.nm{grid-column:1;grid-row:1;font-size:16px}
+  td.sess{grid-column:2;grid-row:1;align-self:center}
+  td.st{grid-column:3;grid-row:1;text-align:right}
+  td.hide-m{display:none}
+  td.ph{grid-column:1/-1;font-size:14px}
+  td.ph::before{content:attr(data-l);color:var(--muted);font-size:12.5px;margin-right:6px}
+  td.ph:empty{display:none}
+  td.note{grid-column:1/-1;max-width:none}
+  td.note:empty{display:none}
+  td.at{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+  td.at:empty{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<section id="login">
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <div class="eyebrow">2026 K예술영재 프로젝트</div>
+    <h1>멘토링 응답 현황</h1>
+    <p>무용분야 심화 멘토링 참석 회신 현황입니다.<br>관리자 코드를 입력해 주세요.</p>
+    <input type="password" id="code" placeholder="관리자 코드" autocomplete="off" autofocus>
+    <button class="btn" type="submit" id="loginBtn">확인</button>
+    <div class="login-err" id="loginErr"></div>
+  </form>
+</section>
+
+<!-- 현황 -->
+<div id="app">
+  <header class="top">
+    <div class="wrap">
+      <div class="ttl"><small>무용분야 심화 멘토링</small><h1>참석 회신 현황</h1></div>
+      <span class="meta" id="updated"></span>
+      <button class="btn ghost" id="refreshBtn" type="button">새로고침</button>
+      <button class="btn ghost" id="csvBtn" type="button">CSV 내려받기</button>
+      <button class="btn ghost" id="logoutBtn" type="button">나가기</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="kpis" id="kpis"></section>
+    <section class="sessions" id="sessions"></section>
+
+    <div class="toolbar">
+      <div class="seg" id="segSession"></div>
+      <div class="seg" id="segStatus"></div>
+      <input class="search" id="q" type="search" placeholder="이름·연락처 검색">
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr>
+          <th>회차</th><th>이름</th><th class="c">학년</th><th>대기실 · 멘토링</th><th class="c">상태</th>
+          <th class="c">출생연도</th><th>학생 연락처</th><th>보호자 연락처</th><th>회신일시</th><th>비고</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="extraBox"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxZRwa_d4YPL2BD_HqAMc6dMNeJJU0AxC9BftLSIIlWZs1cu45dO6caSkKkuBXcCOiN/exec',
+  AUTO_REFRESH_SEC: 60,
+};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STATUS = { '참석':'att', '불참':'abs', '미회신':'none' };
+let DATA = null, CODE = '', fSession = 0, fStatus = '전체', timer = null;
+
+const store = {
+  get(){ try { return sessionStorage.getItem('dm_admin') || ''; } catch(e){ return ''; } },
+  set(v){ try { v ? sessionStorage.setItem('dm_admin', v) : sessionStorage.removeItem('dm_admin'); } catch(e){} },
+};
+
+function fmt(iso){
+  if (!iso) return '';
+  const d = new Date(iso); if (isNaN(d)) return iso;
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),1800); }
+
+async function load(code){
+  const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'list', code }) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || '불러오기 실패');
+  return j;
+}
+
+/* ── 로그인 ── */
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const code = $('#code').value.trim(); if (!code) return;
+  $('#loginBtn').disabled = true; $('#loginErr').textContent = '';
+  try { DATA = await load(code); CODE = code; store.set(code); enter(); }
+  catch(err){ $('#loginErr').textContent = err.message; }
+  finally { $('#loginBtn').disabled = false; }
+});
+function enter(){
+  $('#login').style.display='none'; $('#app').style.display='block';
+  render();
+  clearInterval(timer);
+  timer = setInterval(()=>{ if (!document.hidden) refresh(true); }, CONFIG.AUTO_REFRESH_SEC*1000);
+}
+$('#logoutBtn').addEventListener('click', ()=>{ store.set(''); CODE=''; DATA=null; clearInterval(timer); $('#app').style.display='none'; $('#login').style.display='grid'; $('#code').value=''; });
+
+async function refresh(silent){
+  const b = $('#refreshBtn'); b.disabled = true; if(!silent) b.textContent='불러오는 중…';
+  try { DATA = await load(CODE); render(); if(!silent) toast('최신 현황으로 바꿨습니다'); }
+  catch(err){ if(!silent) toast(err.message); }
+  finally { b.disabled = false; b.textContent='새로고침'; }
+}
+$('#refreshBtn').addEventListener('click', ()=>refresh(false));
+
+/* ── 그리기 ── */
+function counts(list){
+  const c = { '참석':0, '불참':0, '미회신':0 };
+  list.forEach(r=>{ c[r.status] = (c[r.status]||0) + 1; });
+  return c;
+}
+function render(){
+  const R = DATA.roster, total = R.length, c = counts(R), replied = total - c['미회신'];
+  const dl = new Date(DATA.deadline), left = dl - Date.now();
+  const kst = t => Math.floor((t + 9*3600000)/86400000);
+  const dd = kst(dl.getTime()) - kst(Date.now());
+  const dtxt = left <= 0 ? '회신 마감됨' : dd >= 1 ? `회신 마감 D-${dd} · 10/15(목) 11:00` : `오늘 11:00 마감 · ${Math.floor(left/3600000)}시간 ${Math.floor(left%3600000/60000)}분 남음`;
+
+  $('#updated').textContent = '갱신 ' + fmt(DATA.updatedAt);
+  $('#kpis').innerHTML = `
+    <div class="kpi main"><div class="l">회신 완료</div><div class="v">${replied}<small>/ ${total}명</small></div>
+      <div class="prog"><i style="width:${Math.round(replied/total*100)}%"></i></div><div class="dl">${dtxt}</div></div>
+    <div class="kpi"><div class="l">참석</div><div class="v att">${c['참석']}<small>명</small></div></div>
+    <div class="kpi"><div class="l">불참</div><div class="v abs">${c['불참']}<small>명</small></div></div>
+    <div class="kpi"><div class="l">미회신</div><div class="v none">${c['미회신']}<small>명</small></div></div>
+    <div class="kpi"><div class="l">명단 외 응답</div><div class="v extra">${DATA.extras.length}<small>건</small></div></div>`;
+
+  $('#sessions').innerHTML = DATA.sessions.map(s=>{
+    const L = R.filter(r=>r.session===s.no), k = counts(L), n = L.length;
+    const w = x => (x/n*100).toFixed(1)+'%';
+    return `<div class="sc">
+      <div class="h"><b>${s.no}회차 · ${esc(s.date)}</b><span>${esc(s.mentor)} · ${esc(s.range)}</span></div>
+      <div class="bar"><i class="a" style="width:${w(k['참석'])}"></i><i class="b" style="width:${w(k['불참'])}"></i><i class="c" style="width:${w(k['미회신'])}"></i></div>
+      <div class="legend"><span>참석 <b>${k['참석']}</b></span><span>불참 <b>${k['불참']}</b></span><span>미회신 <b>${k['미회신']}</b></span></div>
+      <div class="act">
+        <button class="btn ghost" data-copy="att" data-s="${s.no}" type="button">참석자 연락처 복사</button>
+        <button class="btn ghost" data-copy="none" data-s="${s.no}" type="button">미회신 명단 복사</button>
+      </div></div>`;
+  }).join('');
+
+  const segS = [{v:0,l:'전체'}].concat(DATA.sessions.map(s=>({v:s.no,l:s.no+'회차'})));
+  $('#segSession').innerHTML = segS.map(o=>`<button type="button" class="${fSession===o.v?'on':''}" data-v="${o.v}">${o.l}</button>`).join('');
+  const base = fSession ? R.filter(r=>r.session===fSession) : R, bc = counts(base);
+  $('#segStatus').innerHTML = ['전체','참석','불참','미회신'].map(v=>`<button type="button" class="${fStatus===v?'on':''}" data-v="${v}">${v}<span class="n">${v==='전체'?base.length:bc[v]}</span></button>`).join('');
+  renderTable();
+  renderExtras();
+}
+
+function renderTable(){
+  const q = $('#q').value.replace(/\s|-/g,'');
+  let L = DATA.roster;
+  if (fSession) L = L.filter(r=>r.session===fSession);
+  if (fStatus !== '전체') L = L.filter(r=>r.status===fStatus);
+  if (q) L = L.filter(r=>(r.name+r.sPhone+r.pPhone).replace(/-/g,'').includes(q));
+  $('#tbody').innerHTML = L.length ? L.map(r=>{
+    const note = [r.reason ? '사유: '+esc(r.reason) : '', r.edits ? `수정 ${r.edits}회` : ''].filter(Boolean).join(' · ');
+    return `<tr>
+      <td class="sess"><b>${r.session}회차</b> ${r.order}번</td>
+      <td class="nm">${esc(r.name)}</td>
+      <td class="c hide-m">${esc(r.grade)}</td>
+      <td class="hide-m" style="white-space:nowrap"><span style="color:var(--muted)">대기 ${esc(r.wait)}</span> · ${esc(r.time)}</td>
+      <td class="c st"><span class="bd ${STATUS[r.status]||'none'}">${esc(r.status)}</span></td>
+      <td class="c hide-m">${esc(r.birth)}</td>
+      <td class="ph" data-l="학생">${r.sPhone?`<a href="tel:${esc(r.sPhone)}">${esc(r.sPhone)}</a>`:''}</td>
+      <td class="ph" data-l="보호자">${r.pPhone?`<a href="tel:${esc(r.pPhone)}">${esc(r.pPhone)}</a>`:''}</td>
+      <td class="at">${fmt(r.at)}${r.source?` <span class="src">${esc(r.source)}</span>`:''}</td>
+      <td class="note">${note}</td></tr>`;
+  }).join('') : `<tr><td colspan="10" class="empty">해당하는 학생이 없습니다.</td></tr>`;
+}
+
+function renderExtras(){
+  const X = DATA.extras;
+  if (!X.length){ $('#extraBox').innerHTML=''; return; }
+  $('#extraBox').innerHTML = `<h2 class="sub">명단 외 응답<small>분반 명단에 없는 이름으로 접수된 회신 — 오타·동명이인 여부를 확인해 주세요</small></h2>
+  <div class="tbl"><table><thead><tr><th>이름</th><th class="c">상태</th><th class="c">출생연도</th><th>학생 연락처</th><th>보호자 연락처</th><th>회신일시</th><th>비고</th></tr></thead><tbody>
+  ${X.map(r=>`<tr><td class="nm">${esc(r.name)}</td><td class="c st"><span class="bd ${STATUS[r.attend]||'none'}">${esc(r.attend)}</span></td>
+    <td class="c hide-m">${esc(r.birth)}</td><td class="ph" data-l="학생">${esc(r.sPhone)}</td><td class="ph" data-l="보호자">${esc(r.pPhone)}</td>
+    <td class="at">${fmt(r.at)} <span class="src">${esc(r.source)}</span></td><td class="note">${r.reason?'사유: '+esc(r.reason):''}</td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+/* ── 필터 ── */
+$('#segSession').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; fSession=+b.dataset.v; render(); });
+$('#segStatus').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; fStatus=b.dataset.v; render(); });
+$('#q').addEventListener('input', renderTable);
+
+/* ── 복사 · CSV ── */
+async function copy(text){
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch(e){
+    const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select();
+    let ok=false; try{ ok=document.execCommand('copy'); }catch(_){} ta.remove(); return ok;
+  }
+}
+$('#sessions').addEventListener('click', async e=>{
+  const b = e.target.closest('[data-copy]'); if(!b) return;
+  const s = +b.dataset.s, kind = b.dataset.copy;
+  const L = DATA.roster.filter(r=>r.session===s && r.status===(kind==='att'?'참석':'미회신'));
+  if (!L.length){ toast(kind==='att'?'참석자가 아직 없습니다':'미회신 학생이 없습니다'); return; }
+  const text = kind==='att'
+    ? L.map(r=>`${r.name}\t학생 ${r.sPhone}\t보호자 ${r.pPhone}\t대기실 ${r.wait} / 멘토링 ${r.time}`).join('\n')
+    : L.map(r=>`${r.name} (${r.grade})`).join('\n');
+  toast(await copy(text) ? `${s}회차 ${kind==='att'?'참석자':'미회신'} ${L.length}명 복사됨` : '복사하지 못했습니다');
+});
+
+$('#csvBtn').addEventListener('click', ()=>{
+  const head = ['회차','순서','이름','학년','대기실 접속','멘토링 시간','상태','출생연도','학생 연락처','보호자 연락처','회신일시','접수 경로','불참 사유','수정 횟수'];
+  const rows = DATA.roster.map(r=>[r.session,r.order,r.name,r.grade,r.wait,r.time,r.status,r.birth,r.sPhone,r.pPhone,fmt(r.at),r.source,r.reason,r.edits]);
+  DATA.extras.forEach(r=>rows.push(['명단 외','',r.name,'','','',r.attend,r.birth,r.sPhone,r.pPhone,fmt(r.at),r.source,r.reason,r.edits]));
+  const cell = v => { const s=String(v??''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+  const csv = '﻿' + [head].concat(rows).map(r=>r.map(cell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  const d = new Date(), p=n=>String(n).padStart(2,'0');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download = `무용분야_심화멘토링_회신현황_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.csv`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+});
+
+/* ── 저장된 코드로 자동 입장 (같은 탭에서만 유지) ── */
+(async ()=>{
+  const saved = store.get(); if (!saved) return;
+  try { DATA = await load(saved); CODE = saved; enter(); } catch(e){ store.set(''); }
+})();
+</script>
+</body>
+</html>
