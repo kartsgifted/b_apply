@@ -155,7 +155,7 @@ tr.hit td.nm{color:var(--coral)}
 .done .sum dd{margin:0;font-weight:700}
 .link-btn{background:none;border:0;color:var(--teal);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:6px}
 
-footer{margin-top:56px;padding:28px 0 120px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+footer{margin-top:56px;padding:28px 0 48px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
 footer b{color:var(--ink)}
 
 /* 확정 모드 */
@@ -175,37 +175,22 @@ footer b{color:var(--ink)}
 .ackcard .slot dd{margin:0;font-weight:700}
 .ackcard .slot dd.big{color:var(--coral);font-family:var(--head);font-size:20px;line-height:1.3}
 
-/* stepper */
-.stepper{position:sticky;top:0;z-index:15;background:rgba(250,249,245,.94);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
-.stepper .wrap{display:flex;align-items:center;gap:6px;padding-top:12px;padding-bottom:12px}
-.stepper .ttl{display:none;font-family:var(--head);font-weight:800;font-size:15px;margin-right:auto;white-space:nowrap}
-body:not([data-step="1"]) .stepper .ttl{display:block}
-.steps{display:flex;gap:6px;flex:1;justify-content:flex-end}
-body[data-step="1"] .steps{justify-content:stretch}
-.st{flex:1;max-width:150px;display:flex;flex-direction:column;gap:6px;background:none;border:0;padding:0;font:inherit;color:var(--muted);cursor:pointer;text-align:left}
-body:not([data-step="1"]) .st{flex:0 0 auto;max-width:none}
-.st i{display:block;height:4px;border-radius:4px;background:var(--line-strong)}
-.st span{font-size:13px;font-weight:700;white-space:nowrap}
-.st span b{font-family:var(--head);font-weight:800;margin-right:4px}
-.st.on{color:var(--ink)} .st.on i{background:var(--coral)}
-.st.past{color:var(--teal-deep)} .st.past i{background:var(--teal)}
-body:not([data-step="1"]) .st span{font-size:12px}
-body:not([data-step="1"]) .st:not(.on) span em{display:none}
-.st span em{font-style:normal}
+/* 상단 탭 */
+.tabsbar{position:sticky;top:0;z-index:15;background:rgba(250,249,245,.95);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.tabsbar .wrap{display:grid;grid-template-columns:repeat(3,1fr)}
+.tb{background:none;border:0;font:inherit;cursor:pointer;padding:14px 4px 12px;color:var(--muted);font-weight:700;font-size:15px;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tb b{font-family:var(--head);font-weight:800;font-size:13px;margin-right:5px;color:var(--line-strong)}
+.tb[aria-selected=true]{color:var(--ink);border-bottom-color:var(--coral)}
+.tb[aria-selected=true] b{color:var(--coral)}
 .step{display:none;animation:fade .25s ease}
 .step.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-body:not([data-step="1"]) .hero{display:none}
 section{padding-top:32px}
-
-/* bottom bar */
-.cta{position:fixed;left:0;right:0;bottom:0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(rgba(250,249,245,0),var(--ivory) 28%);z-index:20}
-.cta .in{display:flex;gap:8px;max-width:680px;margin:0 auto}
-.cta .btn{padding:15px;font-size:17px}
-.cta .next{flex:1;box-shadow:0 6px 18px rgba(232,73,88,.28)}
-.cta .prev{background:#fff;color:var(--ink);border:1.5px solid var(--line-strong);padding:15px 18px}
-.cta .prev[hidden]{display:none}
-.cta.hide{display:none}
+.next-hint{margin:26px 0 0;text-align:center}
+.next-hint button{background:none;border:0;font:inherit;font-weight:700;color:var(--teal);cursor:pointer;padding:8px}
+.ackbtn{width:100%;margin-top:14px;padding:15px;font-size:17px}
+.ack-ok{display:none;margin-top:14px;text-align:center;background:var(--paper);border-radius:10px;padding:12px;font-weight:700;color:var(--teal-ink)}
+.ack-ok.on{display:block}
 
 @media (max-width:420px){
   .wrap{padding:0 16px}
@@ -242,27 +227,63 @@ section{padding-top:32px}
   </div>
 </header>
 
-<nav class="stepper" aria-label="진행 단계">
-  <div class="wrap">
-    <span class="ttl">무용분야 심화 멘토링</span>
-    <div class="steps">
-      <button class="st" data-go="1" type="button"><i></i><span><b>01</b><em>멘토링 안내</em></span></button>
-      <button class="st" data-go="2" type="button"><i></i><span><b>02</b><em>내 시간 확인</em></span></button>
-      <button class="st" data-go="3" type="button"><i></i><span><b>03</b><em>일정 확인</em></span></button>
-    </div>
+<nav class="tabsbar" aria-label="페이지 탭">
+  <div class="wrap" role="tablist">
+    <button class="tb" role="tab" data-go="1" type="button"><b>01</b>내 시간 확인</button>
+    <button class="tb" role="tab" data-go="2" type="button"><b>02</b>멘토링 안내</button>
+    <button class="tb" role="tab" data-go="3" type="button"><b>03</b>일정 확인</button>
   </div>
 </nav>
 
 <main class="wrap">
 
-  <!-- 01 안내 -->
-  <section id="guide" class="step" data-step="1">
-    <div class="sec-head"><span class="num">01</span><h2>멘토링 안내</h2></div>
+  <!-- 01 내 시간 확인 -->
+  <section id="mine" class="step" data-step="1">
+    <div class="sec-head"><span class="num">01</span><h2>내 시간 확인</h2></div>
+
+    <div class="form" id="formCard">
+      <div id="ackForm">
+        <p class="ack-lead">학생 이름을 입력하면 최종 확정된 본인의 멘토링 일정이 나옵니다. 일정을 확인한 뒤 <b>[일정을 확인했습니다]</b> 버튼을 눌러 주세요.</p>
+        <div class="field" id="f-name" style="margin-bottom:0">
+          <label for="name">학생 이름</label>
+          <div class="row">
+            <input type="text" id="name" name="name" autocomplete="name" maxlength="10" placeholder="띄어쓰기 없이 실명 입력">
+            <button class="btn btn-teal" id="findBtn" type="button">조회</button>
+          </div>
+          <div class="err" id="nameErr">분반 명단에 있는 이름을 정확히 입력해 주세요.</div>
+        </div>
+        <div class="result" id="findResult" aria-live="polite"></div>
+      </div>
+
+      <div class="done" id="done" aria-live="polite">
+        <div class="mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h3>일정 확인이 완료되었습니다</h3>
+        <p>ZOOM 접속 링크와 유의사항은 회차 운영 전에 학생·보호자 연락처로 보내드립니다.</p>
+        <dl class="sum" id="doneSum"></dl>
+        <div><button type="button" class="link-btn" data-goto="2">멘토링 안내 보기</button></div>
+      </div>
+    </div>
+
+    <div style="margin-top:22px">
+      <div class="change" style="margin:0">
+      <b class="h">일정 조정 안내</b>
+      의견 수렴 결과에 따라 아래 두 학생의 회차가 서로 바뀌었습니다. 나머지 학생의 일정은 처음 안내와 같습니다.
+      <ul>
+        <li>박○엘 학생: 2회차(11/22) → <b>1회차 10/25(일) 12:40</b></li>
+        <li>한○린 학생: 1회차(10/25) → <b>2회차 11/22(일) 12:10</b></li>
+      </ul>
+    </div>
+    </div>
+  </section>
+
+  <!-- 02 멘토링 안내 -->
+  <section id="guide" class="step" data-step="2">
+    <div class="sec-head"><span class="num">02</span><h2>멘토링 안내</h2></div>
     <p class="greet">
       안녕하세요, 한국예술영재교육연구원입니다.<br>
       2026 K예술영재 프로젝트 무용분야 심화과정 대상자 여러분께 <strong>심화 멘토링</strong> 일정을 안내드립니다.
       이번 멘토링은 심사에 제출하셨던 여러분의 <strong>오디션 작품 영상</strong> 기반으로 <strong>1:1로 개별 피드백</strong>을 받는 시간입니다.
-      의견 수렴을 거쳐 개인별 일정이 <strong>최종 확정</strong>되었습니다. 아래에서 본인의 회차와 시간을 확인한 뒤, 마지막 단계에서 <strong>[일정 확인]</strong> 버튼을 눌러 주시기 바랍니다.
+      의견 수렴을 거쳐 개인별 일정이 <strong>최종 확정</strong>되었습니다. <strong>[내 시간 확인]</strong> 탭에서 본인 일정을 확인한 뒤, <strong>[일정을 확인했습니다]</strong> 버튼을 눌러 주시기 바랍니다.
     </p>
 
     <dl class="facts">
@@ -272,14 +293,6 @@ section{padding-top:32px}
       <div><dt>참여</dt><dd>1인 1회, 배정된 회차<small>일정 변경 불가, 미참시 불이익 없음</small></dd></div>
     </dl>
 
-    <div class="change">
-      <b class="h">일정 조정 안내</b>
-      의견 수렴 결과에 따라 아래 두 학생의 회차가 서로 바뀌었습니다. 나머지 학생의 일정은 처음 안내와 같습니다.
-      <ul>
-        <li>박○엘 학생: 2회차(11/22) → <b>1회차 10/25(일) 12:40</b></li>
-        <li>한○린 학생: 1회차(10/25) → <b>2회차 11/22(일) 12:10</b></li>
-      </ul>
-    </div>
 
     <div class="sessions" id="sessionCards"></div>
 
@@ -294,23 +307,15 @@ section{padding-top:32px}
       <li>회차별 세부 일정과 내용은 강사진 사정에 따라 변동될 수 있으며, 변경 시 다시 안내드립니다.</li>
       </ul>
     </div>
+    <p class="next-hint"><button type="button" data-goto="3">회차별 전체 시간표 보기 →</button></p>
   </section>
 
-  <!-- 02 내 시간 확인 -->
-  <section id="time" class="step" data-step="2">
-    <div class="sec-head"><span class="num">02</span><h2>내 시간 확인</h2></div>
-    <p class="mask-note" style="margin:-8px 0 14px;font-size:14px;color:var(--ink)"><span class="chg" style="margin:0 4px 0 0">변경</span> 표시는 의견 수렴 후 회차가 조정된 학생입니다.</p>
+  <!-- 03 일정 확인 (전체 시간표) -->
+  <section id="time" class="step" data-step="3">
+    <div class="sec-head"><span class="num">03</span><h2>일정 확인</h2></div>
+    <p class="mask-note" style="margin:-8px 0 14px;font-size:14px;color:var(--ink)">회차별 전체 시간표입니다. <span class="chg" style="margin:0 2px 0 4px">변경</span> 표시는 의견 수렴 후 회차가 조정된 학생입니다.</p>
 
-    <div class="lookup">
-      <label for="findName">학생 이름</label>
-      <div class="row">
-        <input type="text" id="findName" placeholder="예: 홍길동" autocomplete="off" maxlength="10">
-        <button class="btn btn-teal" id="findBtn" type="button">확인</button>
-      </div>
-      <div class="result" id="findResult" aria-live="polite"></div>
-    </div>
-
-    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="tabs" role="tablist" id="tabs" style="margin-top:0"></div>
     <div class="tmeta" id="tmeta"></div>
     <div class="tbl-wrap">
       <table>
@@ -319,30 +324,6 @@ section{padding-top:32px}
       </table>
     </div>
     <p class="mask-note">※ 개인정보 보호를 위해 이름 가운데 글자를 ○로 표시했습니다.</p>
-  </section>
-
-  <!-- 03 일정 확인 -->
-  <section id="reply" class="step" data-step="3">
-    <div class="sec-head"><span class="num">03</span><h2>일정 확인</h2></div>
-
-    <div class="form" id="formCard">
-      <div id="ackForm">
-        <p class="ack-lead">본인의 확정 일정을 확인했다면 이름을 입력하고 아래 <b>[일정 확인]</b> 버튼을 눌러 주세요. 확인 여부는 운영진이 접속 링크 안내를 준비하는 데 사용합니다.</p>
-        <div class="field" id="f-name">
-          <label for="name">학생 이름<span class="req">*</span></label>
-          <input type="text" id="name" name="name" autocomplete="name" maxlength="10" placeholder="띄어쓰기 없이 실명 입력">
-          <div class="err" id="nameErr">분반 명단에 있는 이름을 정확히 입력해 주세요.</div>
-        </div>
-        <div class="ackcard" id="ackCard" aria-live="polite"></div>
-      </div>
-
-      <div class="done" id="done" aria-live="polite">
-        <div class="mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-        <h3>일정 확인이 완료되었습니다</h3>
-        <p>ZOOM 접속 링크와 유의사항은 회차 운영 전에 학생·보호자 연락처로 보내드립니다.</p>
-        <dl class="sum" id="doneSum"></dl>
-      </div>
-    </div>
   </section>
 </main>
 
@@ -353,10 +334,6 @@ section{padding-top:32px}
   </div>
 </footer>
 
-<div class="cta" id="cta"><div class="in">
-  <button class="btn prev" type="button" id="prevBtn">이전</button>
-  <button class="btn btn-coral next" type="button" id="nextBtn">다음</button>
-</div></div>
 
 <script>
 /* ================== 설정 ================== */
@@ -440,7 +417,7 @@ $('#tabs').addEventListener('click', e=>{
 });
 renderTabs(); renderTable();
 
-/* ================== 이름 조회 ================== */
+/* ================== 내 시간 확인 ================== */
 function slotHTML(f){
   const [nm,gr,wait,mt] = f.row;
   return `<dl class="slot">
@@ -450,39 +427,30 @@ function slotHTML(f){
     <dt>멘토링</dt><dd>${mt}</dd></dl>${f.row[4]?`<div class="prev">일정이 조정되었습니다 · 변경 전: ${f.row[4]}</div>`:''}`;
 }
 function doFind(){
-  const v = $('#findName').value, box = $('#findResult');
+  const v = norm($('#name').value), box = $('#findResult');
+  $('#f-name').classList.remove('invalid');
+  if (!v){ box.className='result'; return; }
   const f = findStudent(v);
-  if (!norm(v)){ box.className='result'; return; }
   if (!f){
-    hit = null; renderTable(); setStep(step, true);
+    hit = null; renderTable();
     box.className='result no';
-    box.textContent='명단에서 찾지 못했습니다. 이름을 띄어쓰기 없이 다시 입력하거나, 아래 표에서 직접 확인해 주세요.';
+    box.innerHTML='명단에서 찾지 못했습니다. 이름을 띄어쓰기 없이 다시 입력하거나, <a href="#step3" data-goto="3">일정 확인</a> 탭의 전체 시간표에서 확인해 주세요.';
     return;
   }
   hit = f; current = SESSIONS.indexOf(f.s); renderTabs(); renderTable();
   box.className='result ok';
-  box.innerHTML = `<div class="who">${norm(v)} 학생의 멘토링 일정</div>${slotHTML(f)}`;
-  setStep(step, true);
-  if (!$('#name').value){ $('#name').value = norm(v); onNameInput(); }
+  box.innerHTML = `<div class="who">${v} 학생의 확정 일정</div>${slotHTML(f)}
+    <button class="btn btn-coral ackbtn" type="button" id="ackBtn">일정을 확인했습니다</button>`;
+  $('#ackBtn').addEventListener('click', submitAck);
 }
 $('#findBtn').addEventListener('click', doFind);
-$('#findName').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doFind(); }});
-
-/* ================== 일정 확인 ================== */
-function onNameInput(){
-  const f = findStudent($('#name').value), card = $('#ackCard');
-  $('#f-name').classList.remove('invalid');
-  if (!f){ card.className='ackcard'; card.innerHTML=''; return; }
-  card.className='ackcard on';
-  card.innerHTML = `<div class="who">${norm($('#name').value)} 학생의 확정 일정</div>${slotHTML(f)}`;
-}
-$('#name').addEventListener('input', onNameInput);
-$('#name').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); submitAck(); }});
+$('#name').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doFind(); }});
+$('#name').addEventListener('input', ()=>{ if ($('#findResult').classList.contains('ok') || $('#findResult').classList.contains('no')) { $('#findResult').className='result'; } });
 
 async function submitAck(){
   const name = norm($('#name').value), f = findStudent(name);
-  if (!f){ $('#nameErr').textContent='분반 명단에 있는 이름을 정확히 입력해 주세요.'; $('#f-name').classList.add('invalid'); $('#name').focus(); return; }
-  const btn = $('#nextBtn'); btn.disabled = true; btn.textContent = '확인 중…';
+  if (!f) return;
+  const btn = $('#ackBtn'); btn.disabled = true; btn.textContent = '확인 중…';
   try{
     let res = { ok:true, session:f.s.no, wait:f.row[2], time:f.row[3] };
     if (CONFIG.SCRIPT_URL){
@@ -492,36 +460,30 @@ async function submitAck(){
     if (!res.ok){ $('#nameErr').textContent = res.error || '확인하지 못했습니다.'; $('#f-name').classList.add('invalid'); return; }
     const s = SESSIONS.find(x=>x.no===res.session) || f.s;
     $('#doneSum').innerHTML = `<dt>이름</dt><dd>${name}</dd><dt>일정</dt><dd>${s.no}회차 · ${longDate(s)}</dd><dt>대기실 접속</dt><dd>${res.wait}</dd><dt>멘토링</dt><dd>${res.time}</dd>`;
-    $('#ackForm').style.display='none'; $('#done').style.display='block';
-    $('#cta').classList.add('hide'); window.scrollTo(0,0);
+    $('#ackForm').style.display='none'; $('#done').style.display='block'; toTabs();
   }catch(err){
     alert('확인 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.\n(' + err.message + ')');
   }finally{
-    btn.disabled = false; setStep(step, true);
+    btn.disabled = false; btn.textContent = '일정을 확인했습니다';
   }
 }
 
-/* ================== 단계 이동 ================== */
+/* ================== 탭 이동 ================== */
 let step = 1;
-const LABEL = {1:'다음 · 내 시간 확인', 2:'다음 · 일정 확인', 3:'일정 확인'};
+function toTabs(){ const top = $('.hero').offsetHeight; if (window.scrollY > top) window.scrollTo(0, top); }   // 탭 바로 아래부터 보이게
 function setStep(n, keepScroll){
   step = Math.min(3, Math.max(1, n));
   document.body.dataset.step = step;
   document.querySelectorAll('.step').forEach(el=>el.classList.toggle('active', +el.dataset.step===step));
-  document.querySelectorAll('.st').forEach(el=>{ const g=+el.dataset.go; el.classList.toggle('on', g===step); el.classList.toggle('past', g<step); el.setAttribute('aria-current', g===step?'step':'false'); });
-  $('#prevBtn').hidden = step===1;
-  $('#nextBtn').textContent = (step===2 && hit) ? '이 일정 확인하기' : LABEL[step];
-  const doneShown = $('#done').style.display==='block';
-  $('#cta').classList.toggle('hide', step===3 && doneShown);
-  if (!keepScroll) window.scrollTo(0,0);
+  document.querySelectorAll('.tb').forEach(el=>el.setAttribute('aria-selected', +el.dataset.go===step));
+  if (!keepScroll) toTabs();
   if (location.hash !== '#step'+step) history.replaceState(null,'','#step'+step);
 }
 function go(n){ if (n!==step){ history.pushState(null,'','#step'+n); setStep(n); } }
-$('#nextBtn').addEventListener('click', ()=>{ step<3 ? go(step+1) : submitAck(); });
-$('#prevBtn').addEventListener('click', ()=>go(step-1));
-document.querySelectorAll('.st').forEach(el=>el.addEventListener('click',()=>go(+el.dataset.go)));
-window.addEventListener('popstate', ()=>{ const m=location.hash.match(/step(\d)/); setStep(m?+m[1]:1); });
-{ const m=location.hash.match(/step(\d)/); setStep(m?+m[1]:1); }
+document.querySelectorAll('.tb').forEach(el=>el.addEventListener('click',()=>go(+el.dataset.go)));
+document.addEventListener('click', e=>{ const a=e.target.closest('[data-goto]'); if(a){ e.preventDefault(); go(+a.dataset.goto); } });
+window.addEventListener('popstate', ()=>{ const m=location.hash.match(/step(\d)/); setStep(m?+m[1]:1, true); });
+{ const m=location.hash.match(/step(\d)/); setStep(m?+m[1]:1, true); }
 </script>
 </body>
 </html>
