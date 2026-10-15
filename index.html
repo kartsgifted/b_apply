@@ -158,6 +158,23 @@ tr.hit td.nm{color:var(--coral)}
 footer{margin-top:56px;padding:28px 0 120px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
 footer b{color:var(--ink)}
 
+/* 확정 모드 */
+.deadline.final .dday{background:var(--teal)}
+.change{background:var(--apricot-soft);border:1.5px solid var(--apricot);border-radius:var(--radius);padding:14px 16px;margin:0 0 22px;font-size:15px}
+.change b.h{display:block;font-family:var(--head);font-weight:800;font-size:16px;margin-bottom:4px}
+.change ul{margin:0;padding-left:18px}
+.change li{margin:2px 0}
+.chg{display:inline-block;margin-left:4px;padding:1px 6px;border-radius:6px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;vertical-align:2px}
+.result .prev,.ackcard .prev{margin-top:10px;font-size:13.5px;color:#8E1E29;background:#FDECEE;border-radius:8px;padding:6px 10px}
+.ack-lead{margin:0 0 18px;font-size:15.5px}
+.ackcard{display:none;border-radius:12px;background:var(--teal-soft);padding:16px;margin-top:4px}
+.ackcard.on{display:block}
+.ackcard .who{font-family:var(--head);font-weight:800;font-size:18px}
+.ackcard .slot{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-top:10px;font-size:15px}
+.ackcard .slot dt{color:var(--muted);font-weight:600}
+.ackcard .slot dd{margin:0;font-weight:700}
+.ackcard .slot dd.big{color:var(--coral);font-family:var(--head);font-size:20px;line-height:1.3}
+
 /* stepper */
 .stepper{position:sticky;top:0;z-index:15;background:rgba(250,249,245,.94);backdrop-filter:saturate(1.4) blur(8px);-webkit-backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
 .stepper .wrap{display:flex;align-items:center;gap:6px;padding-top:12px;padding-bottom:12px}
@@ -217,10 +234,10 @@ section{padding-top:32px}
   <div class="wrap">
     <div class="eyebrow">2026 K예술영재 프로젝트 · 심화과정</div>
     <h1><span>무용분야</span><span>심화 멘토링</span></h1>
-    <p class="lead">본인의 멘토링 일정을 확인하고<br>참석 여부를 알려 주세요.</p>
-    <div class="deadline" id="deadline">
-      <span>회신 마감 <b>10. 15.(목) 오전 11시</b></span>
-      <span class="dday" id="dday">D-?</span>
+    <p class="lead">최종 확정된 개인별 멘토링 일정을<br>확인해 주세요.</p>
+    <div class="deadline final">
+      <span>멘토링 일정 <b>최종 확정</b></span>
+      <span class="dday">10. 15. 확정</span>
     </div>
   </div>
 </header>
@@ -231,7 +248,7 @@ section{padding-top:32px}
     <div class="steps">
       <button class="st" data-go="1" type="button"><i></i><span><b>01</b><em>멘토링 안내</em></span></button>
       <button class="st" data-go="2" type="button"><i></i><span><b>02</b><em>내 시간 확인</em></span></button>
-      <button class="st" data-go="3" type="button"><i></i><span><b>03</b><em>참석 여부 회신</em></span></button>
+      <button class="st" data-go="3" type="button"><i></i><span><b>03</b><em>일정 확인</em></span></button>
     </div>
   </div>
 </nav>
@@ -245,7 +262,7 @@ section{padding-top:32px}
       안녕하세요, 한국예술영재교육연구원입니다.<br>
       2026 K예술영재 프로젝트 무용분야 심화과정 대상자 여러분께 <strong>심화 멘토링</strong> 일정을 안내드립니다.
       이번 멘토링은 심사에 제출하셨던 여러분의 <strong>오디션 작품 영상</strong> 기반으로 <strong>1:1로 개별 피드백</strong>을 받는 시간입니다.
-      아래에서 본인의 회차와 시간을 확인한 뒤, <strong>10월 15일(목) 오전 11시까지</strong> 참석 여부를 회신해 주시기 바랍니다.
+      의견 수렴을 거쳐 개인별 일정이 <strong>최종 확정</strong>되었습니다. 아래에서 본인의 회차와 시간을 확인한 뒤, 마지막 단계에서 <strong>[일정 확인]</strong> 버튼을 눌러 주시기 바랍니다.
     </p>
 
     <dl class="facts">
@@ -254,6 +271,15 @@ section{padding-top:32px}
       <div><dt>활용 자료</dt><dd>오디션 작품 영상<small>6월 심사 시, 제출 영상으로 진행</small></dd></div>
       <div><dt>참여</dt><dd>1인 1회, 배정된 회차<small>일정 변경 불가, 미참시 불이익 없음</small></dd></div>
     </dl>
+
+    <div class="change">
+      <b class="h">일정 조정 안내</b>
+      의견 수렴 결과에 따라 아래 두 학생의 회차가 서로 바뀌었습니다. 나머지 학생의 일정은 처음 안내와 같습니다.
+      <ul>
+        <li>박○엘 학생: 2회차(11/22) → <b>1회차 10/25(일) 12:40</b></li>
+        <li>한○린 학생: 1회차(10/25) → <b>2회차 11/22(일) 12:10</b></li>
+      </ul>
+    </div>
 
     <div class="sessions" id="sessionCards"></div>
 
@@ -273,6 +299,7 @@ section{padding-top:32px}
   <!-- 02 내 시간 확인 -->
   <section id="time" class="step" data-step="2">
     <div class="sec-head"><span class="num">02</span><h2>내 시간 확인</h2></div>
+    <p class="mask-note" style="margin:-8px 0 14px;font-size:14px;color:var(--ink)"><span class="chg" style="margin:0 4px 0 0">변경</span> 표시는 의견 수렴 후 회차가 조정된 학생입니다.</p>
 
     <div class="lookup">
       <label for="findName">학생 이름</label>
@@ -294,77 +321,26 @@ section{padding-top:32px}
     <p class="mask-note">※ 개인정보 보호를 위해 이름 가운데 글자를 ○로 표시했습니다.</p>
   </section>
 
-  <!-- 03 회신 -->
+  <!-- 03 일정 확인 -->
   <section id="reply" class="step" data-step="3">
-    <div class="sec-head"><span class="num">03</span><h2>참석 여부 회신</h2></div>
+    <div class="sec-head"><span class="num">03</span><h2>일정 확인</h2></div>
 
     <div class="form" id="formCard">
-      <div class="preview" id="previewNote">미리보기 모드입니다. 응답 저장 주소(SCRIPT_URL)가 아직 설정되지 않아 제출해도 저장되지 않습니다.</div>
-      <form id="replyForm" novalidate>
+      <div id="ackForm">
+        <p class="ack-lead">본인의 확정 일정을 확인했다면 이름을 입력하고 아래 <b>[일정 확인]</b> 버튼을 눌러 주세요. 확인 여부는 운영진이 접속 링크 안내를 준비하는 데 사용합니다.</p>
         <div class="field" id="f-name">
           <label for="name">학생 이름<span class="req">*</span></label>
-          <input type="text" id="name" name="name" autocomplete="name" maxlength="10" placeholder="띄어쓰기 없이 입력">
-          <div class="match" id="nameMatch"></div>
-          <div class="err">이름을 입력해 주세요.</div>
+          <input type="text" id="name" name="name" autocomplete="name" maxlength="10" placeholder="띄어쓰기 없이 실명 입력">
+          <div class="err" id="nameErr">분반 명단에 있는 이름을 정확히 입력해 주세요.</div>
         </div>
-
-        <div class="two">
-        <div class="field" id="f-birth">
-          <label for="birth">출생연도<span class="req">*</span></label>
-          <input type="number" id="birth" name="birth" inputmode="numeric" min="2000" max="2020" placeholder="예: 2014">
-          <div class="err">출생연도를 4자리 숫자로 입력해 주세요. (예: 2014)</div>
-        </div>
-
-        <div class="two">
-          <div class="field" id="f-phone">
-            <label for="phone">학생 연락처<span class="req">*</span></label>
-            <input type="tel" id="phone" name="phone" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="010-0000-0000">
-            <div class="err">휴대전화 번호를 정확히 입력해 주세요.</div>
-          </div>
-          <div class="field" id="f-pphone">
-            <label for="pphone">보호자 연락처<span class="req">*</span></label>
-            <input type="tel" id="pphone" name="pphone" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="010-0000-0000">
-            <div class="err">휴대전화 번호를 정확히 입력해 주세요.</div>
-          </div>
-        </div>
-        <p class="hint" style="margin:-12px 0 20px">접속 링크와 안내는 학생·보호자 연락처 두 곳 모두로 보내드립니다. 학생 휴대전화가 없으면 보호자 번호를 같이 적어 주세요.</p>
-
-        <div class="field" id="f-attend">
-          <span class="lbl">참석 여부<span class="req">*</span></span>
-          <div class="choice">
-            <input type="radio" name="attend" id="att-y" value="참석"><label for="att-y">참석합니다<small id="attYSub">배정된 회차에 참여</small></label>
-            <input type="radio" name="attend" id="att-n" value="불참"><label for="att-n">불참합니다<small>이번 멘토링 미참여</small></label>
-          </div>
-          <div class="err">참석 여부를 선택해 주세요.</div>
-        </div>
-
-        <div class="field" id="reasonBox">
-          <label for="reason">불참 사유 <span style="font-weight:500;color:var(--muted)">(선택)</span></label>
-          <textarea id="reason" name="reason" rows="3" maxlength="300" placeholder="간단히 적어 주시면 운영에 참고하겠습니다."></textarea>
-        </div>
-
-        <div class="field" id="f-consent">
-          <div class="consent">
-            <b style="color:var(--ink)">개인정보 수집·이용 안내</b>
-            <table>
-              <tr><th>수집 항목</th><td>학생 이름, 출생연도, 학생·보호자 연락처, 참석 여부</td></tr>
-              <tr><th>이용 목적</th><td>멘토링 참석 확인, 접속 링크 및 일정 안내</td></tr>
-              <tr><th>보유 기간</th><td>2026 K예술영재 프로젝트 종료 시까지 보관 후 파기</td></tr>
-            </table>
-            <label class="chk"><input type="checkbox" id="consent"> 위 내용에 동의합니다. (학생 및 보호자)</label>
-          </div>
-          <div class="err">개인정보 수집·이용에 동의해 주세요.</div>
-        </div>
-
-        <p class="hint" style="text-align:center">이미 회신했더라도 다시 제출하면 마지막 응답으로 변경됩니다.</p>
-      </form>
+        <div class="ackcard" id="ackCard" aria-live="polite"></div>
+      </div>
 
       <div class="done" id="done" aria-live="polite">
         <div class="mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-        <h3>회신이 접수되었습니다</h3>
-        <p id="doneMsg"></p>
+        <h3>일정 확인이 완료되었습니다</h3>
+        <p>ZOOM 접속 링크와 유의사항은 회차 운영 전에 학생·보호자 연락처로 보내드립니다.</p>
         <dl class="sum" id="doneSum"></dl>
-        <div><button type="button" class="link-btn" id="againBtn">응답 수정하기</button></div>
       </div>
     </div>
   </section>
@@ -385,14 +361,11 @@ section{padding-top:32px}
 <script>
 /* ================== 설정 ================== */
 const CONFIG = {
-  // Apps Script 웹앱 배포 후 받은 URL(.../exec)을 넣으세요. 비워 두면 미리보기 모드로 동작합니다.
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxZRwa_d4YPL2BD_HqAMc6dMNeJJU0AxC9BftLSIIlWZs1cu45dO6caSkKkuBXcCOiN/exec',
-  DEADLINE: '2026-10-15T11:00:00+09:00',
-  CLOSE_AFTER_DEADLINE: false,   // true로 바꾸면 마감 시각 이후 제출을 막습니다.
 };
 
-/* ============ 분반 명단 (이름은 가운데 글자 가림) ============
-   원본: 무용분야 심화 멘토링 운영계획(안) ’26.10.13. 붙임2 분반 명단 */
+/* ============ 최종 분반 명단 (이름은 가운데 글자 가림) ============
+   원본: ’26.10.15 최종 분반 명단 / 5번째 값 = 변경 전 일정(바뀐 학생만) */
 const SESSIONS = [
   { no:1, date:'2026-10-25', d:'10.25', w:'일', range:'11:00 – 13:00', mentor:'정은영', role:'국립발레단 수석 무용수',
     brk:{after:5, label:'휴식 11:50 – 12:00'},
@@ -401,14 +374,14 @@ const SESSIONS = [
       ['송○솔','초5','11:10','11:20 – 11:30'],['오○린','초5','11:20','11:30 – 11:40'],
       ['윤○우','초5','11:30','11:40 – 11:50'],['이○아','초5','11:50','12:00 – 12:10'],
       ['조○은','초5','12:00','12:10 – 12:20'],['최○령','초5','12:10','12:20 – 12:30'],
-      ['최○인','초5','12:20','12:30 – 12:40'],['한○린','초5','12:30','12:40 – 12:50'] ]},
+      ['최○인','초5','12:20','12:30 – 12:40'],['박○엘','초6','12:30','12:40 – 12:50','2회차 11/22(일) 12:10'] ]},
   { no:2, date:'2026-11-22', d:'11.22', w:'일', range:'11:00 – 13:00', mentor:'송정빈', role:'국립발레단 솔리스트',
     brk:{after:5, label:'휴식 11:50 – 12:00'},
     list:[
       ['서○온','초5','10:50','11:00 – 11:10'],['이○울','초5','11:00','11:10 – 11:20'],
       ['김○해','초6','11:10','11:20 – 11:30'],['김○율','초6','11:20','11:30 – 11:40'],
       ['김○혜','초6','11:30','11:40 – 11:50'],['문○원','초6','11:50','12:00 – 12:10'],
-      ['박○엘','초6','12:00','12:10 – 12:20'],['송○잎','초6','12:10','12:20 – 12:30'],
+      ['한○린','초5','12:00','12:10 – 12:20','1회차 10/25(일) 12:40'],['송○잎','초6','12:10','12:20 – 12:30'],
       ['이○민','초6','12:20','12:30 – 12:40'],['이○윤','초6','12:30','12:40 – 12:50'] ]},
   { no:3, date:'2026-12-06', d:'12.6', w:'일', range:'17:30 – 19:30', mentor:'정은영', role:'국립발레단 수석 무용수',
     brk:{after:5, label:'휴식 18:20 – 18:30'},
@@ -456,7 +429,7 @@ function renderTable(){
   let html = '';
   s.list.forEach((r,i)=>{
     const isHit = hit && hit.s===s && hit.i===i;
-    html += `<tr class="${isHit?'hit':''}" ${isHit?'id="hitRow"':''}><td>${i+1}</td><td class="nm">${r[0]}</td><td class="col-gr">${r[1]}</td><td class="wait">${r[2]}</td><td class="mt">${r[3]}</td></tr>`;
+    html += `<tr class="${isHit?'hit':''}" ${isHit?'id="hitRow"':''}><td>${i+1}</td><td class="nm">${r[0]}${r[4]?'<span class="chg">변경</span>':''}</td><td class="col-gr">${r[1]}</td><td class="wait">${r[2]}</td><td class="mt">${r[3]}</td></tr>`;
     if (s.brk && s.brk.after===i+1) html += `<tr class="brk"><td colspan="5">${s.brk.label}</td></tr>`;
   });
   $('#tbody').innerHTML = html;
@@ -474,7 +447,7 @@ function slotHTML(f){
     <dt>회차</dt><dd>${f.s.no}회차 · ${longDate(f.s)}</dd>
     <dt>멘토</dt><dd>${f.s.mentor} 선생님</dd>
     <dt>대기실 접속</dt><dd class="big">${wait}</dd>
-    <dt>멘토링</dt><dd>${mt}</dd></dl>`;
+    <dt>멘토링</dt><dd>${mt}</dd></dl>${f.row[4]?`<div class="prev">일정이 조정되었습니다 · 변경 전: ${f.row[4]}</div>`:''}`;
 }
 function doFind(){
   const v = $('#findName').value, box = $('#findResult');
@@ -490,130 +463,61 @@ function doFind(){
   box.className='result ok';
   box.innerHTML = `<div class="who">${norm(v)} 학생의 멘토링 일정</div>${slotHTML(f)}`;
   setStep(step, true);
-  // 회신 폼 이름 자동 채움
   if (!$('#name').value){ $('#name').value = norm(v); onNameInput(); }
 }
 $('#findBtn').addEventListener('click', doFind);
 $('#findName').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doFind(); }});
 
-/* ================== 마감 ================== */
-const deadline = new Date(CONFIG.DEADLINE);
-function isClosed(){ return Date.now() > deadline.getTime(); }
-function updateDday(){
-  const el = $('#dday'), diff = deadline - Date.now();
-  if (diff <= 0){ el.textContent='마감'; $('#deadline').classList.add('closed'); return; }
-  const kst = t => Math.floor((t + 9*3600000) / 86400000);   // 한국 날짜 기준 일수
-  const dd = kst(deadline.getTime()) - kst(Date.now());
-  el.textContent = dd>=1 ? `D-${dd}` : `오늘 마감 · ${Math.floor(diff/3600000)}시간 ${Math.floor(diff%3600000/60000)}분 남음`;
-}
-updateDday(); setInterval(updateDday, 30000);
-
-/* ================== 폼 ================== */
-if (!CONFIG.SCRIPT_URL) $('#previewNote').style.display='block';
-
+/* ================== 일정 확인 ================== */
 function onNameInput(){
-  const v = $('#name').value, box = $('#nameMatch'), f = findStudent(v);
-  if (norm(v).length < 2){ box.className='match'; $('#attYSub').textContent='배정된 회차에 참여'; return; }
-  if (f){
-    box.className='match ok';
-    box.innerHTML = `<b>${f.s.no}회차 · ${longDate(f.s)}</b> · 대기실 ${f.row[2]} 접속 · 멘토링 ${f.row[3]}`;
-    $('#attYSub').textContent = `${f.s.d}(${f.s.w}) ${f.row[3].split('–')[0].trim()}`;
-  } else {
-    box.className='match no';
-    box.textContent = '분반 명단에서 찾지 못한 이름입니다. 오타가 없는지 확인해 주세요. 그대로 제출해도 접수됩니다.';
-    $('#attYSub').textContent='배정된 회차에 참여';
-  }
+  const f = findStudent($('#name').value), card = $('#ackCard');
+  $('#f-name').classList.remove('invalid');
+  if (!f){ card.className='ackcard'; card.innerHTML=''; return; }
+  card.className='ackcard on';
+  card.innerHTML = `<div class="who">${norm($('#name').value)} 학생의 확정 일정</div>${slotHTML(f)}`;
 }
 $('#name').addEventListener('input', onNameInput);
+$('#name').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); submitAck(); }});
 
-['#phone','#pphone'].forEach(sel=>$(sel).addEventListener('input', e=>{
-  let d = e.target.value.replace(/\D/g,'').slice(0,11);
-  e.target.value = d.length<4 ? d : d.length<8 ? d.slice(0,3)+'-'+d.slice(3) : d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
-}));
-
-document.querySelectorAll('input[name=attend]').forEach(r=>r.addEventListener('change',()=>{
-  $('#reasonBox').style.display = $('#att-n').checked ? 'block' : 'none';
-  $('#f-attend').classList.remove('invalid');
-}));
-['name','birth','phone','pphone'].forEach(id=>$('#'+id).addEventListener('input',()=>$('#f-'+id).classList.remove('invalid')));
-$('#consent').addEventListener('change',()=>$('#f-consent').classList.remove('invalid'));
-
-function validate(){
-  let ok = true, first = null;
-  const bad = id => { $('#'+id).classList.add('invalid'); ok=false; first = first || $('#'+id); };
-  if (norm($('#name').value).length < 2) bad('f-name');
-  const by = +$('#birth').value; if (!by || by<2000 || by>2020) bad('f-birth');
-  if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test($('#phone').value)) bad('f-phone');
-  if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test($('#pphone').value)) bad('f-pphone');
-  if (!document.querySelector('input[name=attend]:checked')) bad('f-attend');
-  if (!$('#consent').checked) bad('f-consent');
-  if (first) first.scrollIntoView({block:'center'});
-  return ok;
-}
-
-$('#replyForm').addEventListener('submit', async e=>{
-  e.preventDefault();
-  if (CONFIG.CLOSE_AFTER_DEADLINE && isClosed()){ alert('회신 기간이 종료되었습니다. kgifted2026@naver.com 메일로 문의해 주세요.'); return; }
-  if (!validate()) return;
-  const f = findStudent($('#name').value);
-  const payload = {
-    name: norm($('#name').value),
-    birth: $('#birth').value,
-    phone: $('#phone').value,
-    pphone: $('#pphone').value,
-    attend: document.querySelector('input[name=attend]:checked').value,
-    reason: $('#att-n').checked ? $('#reason').value.trim() : '',
-    consent: 'Y',
-    session: f ? f.s.no : '',
-    ua: navigator.userAgent.slice(0,120),
-  };
-  const btn = $('#nextBtn'); btn.disabled = true; btn.textContent = '보내는 중…';
+async function submitAck(){
+  const name = norm($('#name').value), f = findStudent(name);
+  if (!f){ $('#nameErr').textContent='분반 명단에 있는 이름을 정확히 입력해 주세요.'; $('#f-name').classList.add('invalid'); $('#name').focus(); return; }
+  const btn = $('#nextBtn'); btn.disabled = true; btn.textContent = '확인 중…';
   try{
-    let res = { ok:true, preview:true };
+    let res = { ok:true, session:f.s.no, wait:f.row[2], time:f.row[3] };
     if (CONFIG.SCRIPT_URL){
-      const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify(payload) });
+      const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'ack', name }) });
       res = await r.json();
     }
-    if (!res.ok) throw new Error(res.error || '저장 실패');
-    showDone(payload, f, res);
+    if (!res.ok){ $('#nameErr').textContent = res.error || '확인하지 못했습니다.'; $('#f-name').classList.add('invalid'); return; }
+    const s = SESSIONS.find(x=>x.no===res.session) || f.s;
+    $('#doneSum').innerHTML = `<dt>이름</dt><dd>${name}</dd><dt>일정</dt><dd>${s.no}회차 · ${longDate(s)}</dd><dt>대기실 접속</dt><dd>${res.wait}</dd><dt>멘토링</dt><dd>${res.time}</dd>`;
+    $('#ackForm').style.display='none'; $('#done').style.display='block';
+    $('#cta').classList.add('hide'); window.scrollTo(0,0);
   }catch(err){
-    alert('제출 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.\n(' + err.message + ')');
+    alert('확인 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.\n(' + err.message + ')');
   }finally{
     btn.disabled = false; setStep(step, true);
   }
-});
-
-function showDone(p, f, res){
-  $('#replyForm').style.display='none';
-  $('#done').style.display='block';
-  $('#doneMsg').textContent = p.attend==='참석'
-    ? '접속 링크와 유의사항은 회차 운영 전 학생·보호자 연락처로 안내드립니다.'
-    : '불참으로 접수되었습니다. 회신해 주셔서 감사합니다.';
-  let sum = `<dt>이름</dt><dd>${p.name}</dd><dt>참석 여부</dt><dd>${p.attend}</dd>`;
-  if (p.attend==='참석' && f) sum += `<dt>일정</dt><dd>${f.s.no}회차 · ${longDate(f.s)}</dd><dt>대기실 접속</dt><dd>${f.row[2]}</dd><dt>멘토링</dt><dd>${f.row[3]}</dd>`;
-  if (res.updated) sum += `<dt>처리</dt><dd>기존 응답 변경</dd>`;
-  $('#doneSum').innerHTML = sum;
-  $('#cta').classList.add('hide'); window.scrollTo(0,0);
 }
-$('#againBtn').addEventListener('click',()=>{ $('#done').style.display='none'; $('#replyForm').style.display='block'; $('#cta').classList.remove('hide'); });
 
 /* ================== 단계 이동 ================== */
 let step = 1;
-const LABEL = {1:'다음 · 내 시간 확인', 2:'다음 · 참석 여부 회신', 3:'회신 보내기'};
+const LABEL = {1:'다음 · 내 시간 확인', 2:'다음 · 일정 확인', 3:'일정 확인'};
 function setStep(n, keepScroll){
   step = Math.min(3, Math.max(1, n));
   document.body.dataset.step = step;
   document.querySelectorAll('.step').forEach(el=>el.classList.toggle('active', +el.dataset.step===step));
   document.querySelectorAll('.st').forEach(el=>{ const g=+el.dataset.go; el.classList.toggle('on', g===step); el.classList.toggle('past', g<step); el.setAttribute('aria-current', g===step?'step':'false'); });
   $('#prevBtn').hidden = step===1;
-  $('#nextBtn').textContent = (step===2 && hit) ? '이 일정으로 회신하기' : LABEL[step];
+  $('#nextBtn').textContent = (step===2 && hit) ? '이 일정 확인하기' : LABEL[step];
   const doneShown = $('#done').style.display==='block';
   $('#cta').classList.toggle('hide', step===3 && doneShown);
   if (!keepScroll) window.scrollTo(0,0);
   if (location.hash !== '#step'+step) history.replaceState(null,'','#step'+step);
 }
 function go(n){ if (n!==step){ history.pushState(null,'','#step'+n); setStep(n); } }
-$('#nextBtn').addEventListener('click', ()=>{ step<3 ? go(step+1) : $('#replyForm').requestSubmit(); });
+$('#nextBtn').addEventListener('click', ()=>{ step<3 ? go(step+1) : submitAck(); });
 $('#prevBtn').addEventListener('click', ()=>go(step-1));
 document.querySelectorAll('.st').forEach(el=>el.addEventListener('click',()=>go(+el.dataset.go)));
 window.addEventListener('popstate', ()=>{ const m=location.hash.match(/step(\d)/); setStep(m?+m[1]:1); });
