@@ -111,6 +111,7 @@ button{font:inherit;cursor:pointer}
 .m.s{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
 .m.s .who{display:block;font-size:12px;font-weight:800;color:var(--teal);margin-bottom:2px;cursor:pointer}
 .m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.m.o.pend{opacity:.6}
 .m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:5px 12px}
 .quick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px 0}
 .quick button{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:4px 10px;font-size:12.5px}
@@ -180,7 +181,7 @@ button{font:inherit;cursor:pointer}
 <script>
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxlDl4HN6qOaHON0t_xhAkrxNr0EcGAy8HM7G6o4Ij3JTbLSmEV8lBnUztPwx7qGKAy/exec',
-  POLL_MS: 3000,
+  POLL_MS: 1500,
 };
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
 const $ = s => document.querySelector(s);
@@ -193,6 +194,7 @@ async function api(action, body){
 }
 
 let ZOOM_EDIT = false, ZOOM_CUR = null;   // 링크 입력 중에는 자동 새로고침이 입력칸을 덮지 않음
+let SEQ = 0, APPLIED = 0, PENDING = [];   // 요청 순번(늦게 온 옛 응답 무시) · 보내는 중인 운영진 메시지
 let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
 
 /* ── 로그인 ── */
@@ -223,8 +225,11 @@ $('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!
 /* ── 주기적 새로고침 ── */
 function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
 async function refresh(){
+  const seq = ++SEQ, s0 = session;
   try{
     const r = await api('op_state', { session });
+    if (seq < APPLIED || s0 !== session) return schedule();   // 더 최근 응답이 이미 반영됐거나 회차 탭이 바뀜
+    APPLIED = seq;
     if (!r.ok && r.auth){ clearTimeout(timer); timer = null; try{ sessionStorage.removeItem('dm_room'); }catch(_){}   // 코드가 바뀌면 반복 요청으로 잠기지 않도록 로그인 화면으로
       $('#app').style.display = 'none'; $('#login').style.display = 'grid'; $('#loginErr').textContent = r.error; return; }
     if (!r.ok){ toast(r.error); throw new Error(r.error); }
@@ -277,14 +282,15 @@ function apply(r){
 function renderChat(){
   const msgs = DATA.msgs || [], on = DATA.list.filter(x=>!x.test && x.online).length;
   $('#cheadSub').textContent = `${SESS[session]} · 학생 ${on}명 접속 중`;
-  const sig = session + '|' + (msgs.length ? msgs[msgs.length-1].i : 0);
+  const sig = session + '|' + (msgs.length ? msgs[msgs.length-1].i : 0) + '|' + PENDING.map(p=>p.id).join(',');
   if (sig === lastChatSig) return;
   lastChatSig = sig;
   const box = $('#msgs');
   box.innerHTML = msgs.length ? msgs.map(m => m.f==='o'
       ? `<div class="m o">${esc(m.x)}<small>운영진 · ${hhmm(m.t)}</small></div>`
       : `<div class="m s"><span class="who" data-at="${esc(m.n)}">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
-    : `<div class="empty">아직 대화가 없습니다.<br>아래 문구 버튼으로 첫 인사를 보내 보세요.</div>`;
+    : PENDING.length ? '' : `<div class="empty">아직 대화가 없습니다.<br>아래 문구 버튼으로 첫 인사를 보내 보세요.</div>`;
+  box.innerHTML += PENDING.filter(p=>p.s===session).map(p=>`<div class="m o pend">${esc(p.x)}<small>보내는 중…</small></div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 function mention(name){ const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
@@ -348,10 +354,12 @@ $('#list').addEventListener('click', async e=>{
 });
 $('#chatForm').addEventListener('submit', async e=>{
   e.preventDefault(); const text = $('#chatText').value.trim(); if (!text) return;
-  $('#chatText').value = '';
-  const r = await api('op_send', { session, text });
-  if (!r.ok){ toast(r.error); $('#chatText').value = text; }
-  lastChatSig = ''; refresh();
+  $('#chatText').value = ''; $('#chatText').focus();
+  const p = { id: Date.now() + Math.random(), x: text, s: session }; PENDING.push(p);
+  if (DATA) renderChat();   // 서버 응답을 기다리지 않고 바로 표시
+  let r; try{ r = await api('op_send', { session: p.s, text }); }catch(_){ r = { ok:false, error:'연결에 문제가 있습니다. 다시 보내 주세요.' }; }
+  if (!r.ok){ PENDING = PENDING.filter(q=>q!==p); toast(r.error); $('#chatText').value = text; lastChatSig = ''; renderChat(); return; }
+  await refresh(); PENDING = PENDING.filter(q=>q!==p); lastChatSig = ''; renderChat();
 });
 $('#quick').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; $('#chatText').value = b.textContent; $('#chatText').focus(); });
 $('#bcForm').addEventListener('submit', async e=>{
