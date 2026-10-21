@@ -93,6 +93,26 @@ button{font:inherit;cursor:pointer}
 .badge.done{background:var(--grey-soft);color:var(--muted)}
 .badge.waiting{background:var(--teal-soft);color:var(--teal-ink)}
 .unread{background:var(--coral);color:#fff;font-size:12px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 6px}
+/* 시간 알림 */
+@keyframes pulseCard{0%,100%{box-shadow:0 0 0 0 rgba(232,73,88,.55);border-color:var(--coral)}50%{box-shadow:0 0 0 7px rgba(232,73,88,0);border-color:#F6A3AB}}
+@keyframes blinkBtn{0%,100%{background:var(--coral);color:#fff;box-shadow:0 0 0 0 rgba(232,73,88,.6)}50%{background:#fff;color:var(--coral);box-shadow:0 0 0 6px rgba(232,73,88,.18)}}
+@keyframes blinkSoft{0%,100%{opacity:1}50%{opacity:.35}}
+.st.due{background:#FFF0F1;border-color:var(--coral);animation:pulseCard 1.2s infinite;animation-delay:var(--ph,0s)}
+.st.due [data-set="called"],.al .btn.blink{animation:blinkBtn 1.2s infinite;animation-delay:var(--ph,0s);border:2px solid var(--coral);font-size:14px;padding:8px 12px}
+.st.soon{border-color:var(--apricot);background:#FFF8F4}
+.badge.absent{background:#B3261E;color:#fff;animation:blinkSoft 1.2s infinite;animation-delay:var(--ph,0s)}
+.badge.soon{background:var(--apricot);color:#7A2E12}
+.badge.due{background:var(--coral);color:#fff}
+.alerts{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.alerts:empty{display:none}
+.al{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-radius:12px;padding:10px 12px;font-size:14px;font-weight:600;line-height:1.4}
+.al .tx{flex:1;min-width:180px}
+.al .tx small{display:block;font-weight:500;font-size:12.5px;opacity:.85}
+.al.due{background:var(--coral);color:#fff}
+.al.due .btn.blink{border-color:#fff}
+.al.absent{background:#FBE3E1;color:#8C1D18;border:1.5px solid #E8A29C}
+.al.soon{background:var(--apricot-soft);color:#7A2E12}
+.al .btn.ghost{background:#fff}
 .brk{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
 
 /* 오른쪽: 공지 + 채팅 */
@@ -153,6 +173,7 @@ button{font:inherit;cursor:pointer}
 
   <div class="body">
     <div class="left">
+      <div class="alerts" id="alerts"></div>
       <div class="sum" id="sum"></div>
       <div class="now" id="now"></div>
       <div id="list"></div>
@@ -184,6 +205,12 @@ const CONFIG = {
   POLL_MS: 1500,
 };
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
+const SDATE = { 1:'2026-10-25', 2:'2026-11-22', 3:'2026-12-06' };
+/* 리허설용: 주소 뒤에 ?sim=2026-10-25T10:58 을 붙이면 그 시각부터 시계가 흐르는 것으로 알림을 미리 볼 수 있음 */
+const SIM_OFF = (()=>{ try{ const v = new URLSearchParams(location.search).get('sim'); if (!v) return 0; const t = new Date(v + (v.length <= 16 ? ':00+09:00' : '')).getTime(); return isNaN(t) ? 0 : t - Date.now(); }catch(_){ return 0; } })();
+const clock = () => Date.now() + SIM_OFF;
+const kst = (d, hm) => { const m = String(hm || '').match(/(\d{1,2}):(\d{2})/); return m ? new Date(`${d}T${m[1].padStart(2,'0')}:${m[2]}:00+09:00`).getTime() : NaN; };
+const fmt = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Seoul' });
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hhmm = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Seoul' });
@@ -201,6 +228,7 @@ let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, 
 $('#loginForm').addEventListener('submit', async e=>{
   e.preventDefault(); CODE = $('#code').value.trim(); if (!CODE) return;
   try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
+  askNotify();
   $('#loginBtn').disabled = true; $('#loginErr').textContent = '';
   try{
     const r = await api('op_state', { session });
@@ -215,7 +243,7 @@ function start(r){
   renderTabs(); apply(r); schedule();
 }
 $('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); }catch(_){} location.reload(); });
-$('#soundBtn').addEventListener('click', ()=>{ sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
+$('#soundBtn').addEventListener('click', ()=>{ askNotify(); sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
 
 function renderTabs(){
   $('#tabs').innerHTML = [1,2,3].map(n=>`<button class="tab ${n===session?'on':''}" data-s="${n}" type="button">${SESS[n]}</button>`).join('');
@@ -259,14 +287,19 @@ function apply(r){
   if (lastMsgId >= 0 && r.msgs.some(m=>m.i > lastMsgId && m.f==='s')) beep();
   lastMsgId = maxId;
 
+  document.documentElement.style.setProperty('--ph', `-${clock() % 1200}ms`);   // 다시 그려도 깜빡임 박자가 끊기지 않게
+  const F = {}; alertsOf(L).forEach(a=>{ (F[a.x.name] = F[a.x.name] || {})[a.type] = true; });
   let html = '';
   L.forEach((x, k)=>{
-    html += `<div class="st ${x.status}" data-n="${esc(x.name)}">
+    const f = F[x.name] || {};
+    html += `<div class="st ${x.status}${f.due?' due':f.soon?' soon':''}" data-n="${esc(x.name)}">
       <div class="no">${x.test?'T':x.order}</div>
       <div class="nm">${esc(x.name)} <span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, r.now)}</span>
-        <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span></div>
+        <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>
+        ${f.due ? `<span class="badge due">⏰ 멘토링 시간</span>` : f.soon ? `<span class="badge soon">곧 차례</span>` : ''}
+        ${f.absent ? `<span class="badge absent">⚠ ${x.seenAt ? '연결 끊김' : '미접속'}</span>` : ''}</div>
       <div class="act">
-        ${x.status==='waiting' ? `<button class="btn coral sm" data-set="called" type="button">입장 허용</button>` : ''}
+        ${x.status==='waiting' ? `<button class="btn coral sm" data-set="called" type="button">${f.due?'⏰ 입장 허용':'입장 허용'}</button>` : ''}
         ${x.status==='called' ? `<button class="btn sm" data-set="done" type="button">멘토링 완료</button>` : ''}
         ${x.status!=='waiting' ? `<button class="btn ghost sm" data-set="waiting" type="button">대기로</button>` : ''}
       </div>
@@ -276,9 +309,84 @@ function apply(r){
   });
   $('#list').innerHTML = html;
 
+  tick(true);
   $('#bcList').innerHTML = r.bc.slice().reverse().map(b=>`<div>${hhmm(b.t)} · ${esc(b.x)}</div>`).join('');
   renderChat();
 }
+/* ── 시간 알림: 멘토링 시작 시각(입장 허용 필요) · 대기실 접속 시각 미접속 ── */
+let ABS_ACK = new Set(), NOTIFIED = new Set(), lastAlertSig = '', lastDueBeep = 0, titleOn = false;
+try { ABS_ACK = new Set(JSON.parse(sessionStorage.getItem('dm_room_ack') || '[]')); } catch(_){}
+function askNotify(){ try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(_){} }
+function alertsOf(L){
+  const now = clock(), d = SDATE[session], out = [];
+  if (new Date(now + 9*3600e3).toISOString().slice(0,10) !== d) return out;   // 그 회차 당일에만
+  L.forEach(x=>{
+    if (x.test || x.status !== 'waiting') return;
+    const st = kst(d, x.time), wt = kst(d, x.wait);
+    if (now >= st) out.push({ type:'due', x, at: st });
+    else if (now >= st - 60000) out.push({ type:'soon', x, at: st });
+    if (!x.online && now >= wt && !ABS_ACK.has(session + '|' + x.name)) out.push({ type:'absent', x, at: wt });
+  });
+  const rank = { due:0, absent:1, soon:2 };
+  return out.sort((a,b)=> rank[a.type]-rank[b.type] || a.x.order-b.x.order);
+}
+function tick(fromApply){
+  if (!DATA) return;
+  const A = alertsOf(DATA.list), called = DATA.list.find(x=>x.status==='called');
+  if (!fromApply){   // 문턱 시각을 넘는 순간 카드도 바로 갱신
+    const want = A.map(a=>a.type+a.x.name).sort().join(), have = [...document.querySelectorAll('.st.due,.st.soon')].map(e=>(e.classList.contains('due')?'due':'soon')+e.dataset.n).concat([...document.querySelectorAll('.badge.absent')].map(e=>'absent'+e.closest('.st').dataset.n)).sort().join();
+    if (want !== have){ apply(DATA); return; }
+  }
+  const sig = session + '|' + (called ? called.name : '') + '|' + A.map(a=>a.type+a.x.name+(a.x.seenAt?1:0)).join();
+  if (sig !== lastAlertSig){
+    lastAlertSig = sig;
+    document.documentElement.style.setProperty('--ph', `-${clock() % 1200}ms`);
+    $('#alerts').innerHTML = A.map(a=>{
+      const x = a.x, who = `${x.order}번 ${esc(x.name)}`;
+      if (a.type === 'due') return `<div class="al due"><div class="tx">⏰ <b>${who}</b> 학생 멘토링 시간(${fmt(a.at)})입니다 · 입장 허용을 눌러 주세요
+          ${called ? `<small>현재 ${esc(called.name)} 학생이 입장 허용 상태입니다. 끝났으면 [멘토링 완료]를 먼저 눌러 주세요.</small>` : ''}
+          ${x.online ? '' : `<small>⚠ 이 학생은 지금 대기실에 접속해 있지 않습니다.</small>`}</div>
+        <button class="btn sm blink" data-name="${esc(x.name)}" data-set="called" type="button">⏰ 입장 허용</button></div>`;
+      if (a.type === 'absent') return `<div class="al absent"><div class="tx">⚠ <b>${who}</b> 학생 · 대기실 접속 시각(${fmt(a.at)})이 지났는데 ${x.seenAt ? '연결이 끊겼습니다' : '아직 접속하지 않았습니다'}
+          <small>전화·문자로 확인해 주세요. 접속하면 이 알림은 자동으로 사라집니다.</small></div>
+        <button class="btn ghost sm" data-ack="${esc(x.name)}" type="button">확인함</button></div>`;
+      return `<div class="al soon"><div class="tx">🕐 1분 뒤 <b>${who}</b> 학생 차례입니다 (${fmt(a.at)})</div></div>`;
+    }).join('');
+  }
+  // 새 알림: 소리 + 데스크톱 알림
+  A.forEach(a=>{
+    const k = session + '|' + a.type + '|' + a.x.name;
+    if (NOTIFIED.has(k) || a.type === 'soon') return;
+    NOTIFIED.add(k);
+    alarm(a.type);
+    notify(a.type === 'due' ? `⏰ ${a.x.name} 학생 입장 허용 시간` : `⚠ ${a.x.name} 학생 대기실 미접속`,
+           a.type === 'due' ? `${fmt(a.at)} 멘토링 시작 · 운영 화면에서 [입장 허용]을 눌러 주세요.` : `대기실 접속 시각 ${fmt(a.at)}이 지났습니다.`, k);
+  });
+  const due = A.some(a=>a.type==='due');
+  if (due && Date.now() - lastDueBeep > 30000){ if (lastDueBeep) alarm('due'); lastDueBeep = Date.now(); }   // 누를 때까지 30초마다 다시 알림
+  if (!due) lastDueBeep = 0;
+  const hot = A.filter(a=>a.type!=='soon');
+  titleOn = hot.length ? !titleOn : false;
+  document.title = titleOn ? (due ? '⏰ 입장 허용 필요!' : '⚠ 미접속 학생') : '대기실 운영 · 무용 심화 멘토링';
+}
+function alarm(type){
+  if (!sound || !audio) return;
+  try{ audio.resume && audio.resume();
+    const seq = type === 'due' ? [[880,0],[1175,.18],[880,.36],[1175,.54]] : [[520,0],[520,.3]];
+    seq.forEach(([f,d])=>{ const o=audio.createOscillator(), g=audio.createGain(); o.frequency.value=f; o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(.0001,audio.currentTime+d); g.gain.exponentialRampToValueAtTime(.3,audio.currentTime+d+.02); g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+d+.16); o.start(audio.currentTime+d); o.stop(audio.currentTime+d+.18); });
+  }catch(_){}
+}
+function notify(title, body, tag){
+  try { if ('Notification' in window && Notification.permission === 'granted'){ const n = new Notification(title, { body, tag, requireInteraction: true }); n.onclick = ()=>{ window.focus(); n.close(); }; } } catch(_){}
+}
+setInterval(()=>tick(false), 1000);
+$('#alerts').addEventListener('click', e=>{
+  const a = e.target.closest('[data-ack]');
+  if (a){ ABS_ACK.add(session + '|' + a.dataset.ack); try{ sessionStorage.setItem('dm_room_ack', JSON.stringify([...ABS_ACK])); }catch(_){} lastAlertSig=''; apply(DATA); return; }
+  const b = e.target.closest('[data-set]'); if (b) setStatus(b.dataset.name, b.dataset.set, b);
+});
+
 function renderChat(){
   const msgs = DATA.msgs || [], on = DATA.list.filter(x=>!x.test && x.online).length;
   $('#cheadSub').textContent = `${SESS[session]} · 학생 ${on}명 접속 중`;
@@ -340,18 +448,20 @@ $('#zbar').addEventListener('keydown', e=>{ if (e.target.id==='zIn' && e.key==='
 $('#list').addEventListener('click', async e=>{
   const card = e.target.closest('.st'); if (!card) return;
   const name = card.dataset.n, b = e.target.closest('[data-set]');
-  if (b){
-    const to = b.dataset.set;
+  if (b) return setStatus(name, b.dataset.set, b);
+  mention(name);
+});
+async function setStatus(name, to, b){
+  {
     const other = DATA.list.find(v=>v.status==='called' && v.name!==name);
     if (to==='called' && !ZOOM_CUR && !confirm(`${SESS[session]} ZOOM 링크가 아직 등록되지 않았습니다.\n입장 허용해도 학생에게 링크가 보이지 않습니다. 계속할까요?`)) return;
     if (to==='called' && other && !confirm(`${other.name} 학생이 아직 '입장 허용' 상태입니다. 그대로 두고 ${name} 학생도 입장 허용할까요?`)) return;
     b.disabled = true;
     const r = await api('op_set', { name, status: to });
     if (!r.ok) toast(r.error); else toast(to==='called' ? `${name} 학생 입장 허용` : to==='done' ? `${name} 학생 완료` : `${name} 학생 대기로`);
-    refresh(); return;
+    refresh();
   }
-  mention(name);
-});
+}
 $('#chatForm').addEventListener('submit', async e=>{
   e.preventDefault(); const text = $('#chatText').value.trim(); if (!text) return;
   $('#chatText').value = ''; $('#chatText').focus();
