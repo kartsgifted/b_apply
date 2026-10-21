@@ -77,6 +77,17 @@ button{font:inherit;cursor:pointer}
 .st{display:grid;grid-template-columns:34px 1fr auto;gap:4px 10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
 .st:hover{border-color:var(--line-strong)}
 .st.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.12)}
+/* 접속 상태: 카드 전체 색으로 구분 */
+.st{transition:background-color .3s,border-color .3s}
+.st.live{background:#E8F6EE;border-color:#7FCFA2;box-shadow:inset 6px 0 0 var(--green)}
+.st.live .no{color:var(--green)}
+.st.live .dot.on{background:var(--green);color:#fff;font-size:12.5px;padding:3px 9px}
+.st.live .dot.on i{background:#fff;animation:liveRing 1.6s infinite}
+@keyframes liveRing{0%{box-shadow:0 0 0 0 rgba(255,255,255,.9)}100%{box-shadow:0 0 0 6px rgba(255,255,255,0)}}
+.st.away{background:#F2F2F0;border-color:rgba(33,35,38,.10)}
+.st.away .nm{color:#5F6368}
+.st.away .no{color:#A3A8AD}
+.st.away .meta{color:#80868B}
 .st.called{background:#FFF5F6;border-color:var(--coral)}
 .st.done{opacity:.55}
 .st .no{font-family:var(--head);font-weight:800;font-size:18px;color:var(--teal);text-align:center}
@@ -318,7 +329,7 @@ function apply(r){
   let html = '';
   L.forEach((x, k)=>{
     const f = F[x.name] || {};
-    html += `<div class="st ${x.status}${f.due?' due':f.soon?' soon':''}" data-n="${esc(x.name)}">
+    html += `<div class="st ${x.status} ${x.online?'live':'away'}${f.due?' due':f.soon?' soon':''}" data-n="${esc(x.name)}">
       <div class="no">${x.test?'T':x.order}</div>
       <div class="nm">${esc(x.name)} <span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, r.now)}</span>
         <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>
