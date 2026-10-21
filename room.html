@@ -121,6 +121,16 @@ button{font:inherit;cursor:pointer}
 .ph .cp:hover{opacity:1}
 .ph .none{opacity:.75;font-weight:500}
 .st .ph{grid-column:2/4;background:#FBE3E1;color:#8C1D18;border-radius:8px;padding:6px 10px;margin-top:2px}
+/* 리허설(시간 미리보기) */
+.simbar{display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 20px;background:#2B2F36;color:#fff;font-size:13.5px}
+.simbar.on{display:flex}
+.simbar b{font-family:var(--head);font-size:16px;font-variant-numeric:tabular-nums;color:#FFD1C2}
+.simbar .tag{background:var(--apricot);color:#4A1A0A;font-weight:800;border-radius:6px;padding:2px 8px;font-size:12.5px}
+.simbar .note{opacity:.75;font-size:12.5px;flex-basis:100%}
+.simbar input{font:inherit;font-size:14px;padding:5px 8px;border-radius:8px;border:0}
+.simbar .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.simbar .btn.ghost:hover{background:rgba(255,255,255,.1)}
+.top .btn.sim-on{background:var(--apricot);color:#4A1A0A;border-color:var(--apricot)}
 .brk{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
 
 /* 오른쪽: 공지 + 채팅 */
@@ -179,10 +189,12 @@ button{font:inherit;cursor:pointer}
     <div class="sp">
       <span class="conn" id="conn"><i></i><span>실시간</span></span>
       <button class="btn ghost sm" id="soundBtn" type="button">🔔 알림음 켬</button>
+      <button class="btn ghost sm" id="simBtn" type="button" title="정해진 시각이 된 것처럼 알림을 미리 확인합니다">🧪 알림 미리보기</button>
       <button class="btn ghost sm" id="resetBtn" type="button">회차 초기화</button>
       <button class="btn ghost sm" id="logoutBtn" type="button">나가기</button>
     </div>
   </header>
+  <div class="simbar" id="simbar"></div>
   <div class="zbar" id="zbar"></div>
 
   <div class="body">
@@ -221,7 +233,7 @@ const CONFIG = {
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
 const SDATE = { 1:'2026-10-25', 2:'2026-11-22', 3:'2026-12-06' };
 /* 리허설용: 주소 뒤에 ?sim=2026-10-25T10:58 을 붙이면 그 시각부터 시계가 흐르는 것으로 알림을 미리 볼 수 있음 */
-const SIM_OFF = (()=>{ try{ const v = new URLSearchParams(location.search).get('sim'); if (!v) return 0; const t = new Date(v + (v.length <= 16 ? ':00+09:00' : '')).getTime(); return isNaN(t) ? 0 : t - Date.now(); }catch(_){ return 0; } })();
+let SIM_OFF = (()=>{ try{ const v = new URLSearchParams(location.search).get('sim'); if (!v) return 0; const t = new Date(v + (v.length <= 16 ? ':00+09:00' : '')).getTime(); return isNaN(t) ? 0 : t - Date.now(); }catch(_){ return 0; } })();
 const clock = () => Date.now() + SIM_OFF;
 const kst = (d, hm) => { const m = String(hm || '').match(/(\d{1,2}):(\d{2})/); return m ? new Date(`${d}T${m[1].padStart(2,'0')}:${m[2]}:00+09:00`).getTime() : NaN; };
 const fmt = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Seoul' });
@@ -254,7 +266,7 @@ $('#loginForm').addEventListener('submit', async e=>{
 });
 function start(r){
   $('#login').style.display = 'none'; $('#app').style.display = 'flex';
-  renderTabs(); apply(r); schedule();
+  renderTabs(); apply(r); schedule(); renderSim();
 }
 $('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); }catch(_){} location.reload(); });
 $('#soundBtn').addEventListener('click', ()=>{ askNotify(); sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
@@ -262,7 +274,7 @@ $('#soundBtn').addEventListener('click', ()=>{ askNotify(); sound = !sound; $('#
 function renderTabs(){
   $('#tabs').innerHTML = [1,2,3].map(n=>`<button class="tab ${n===session?'on':''}" data-s="${n}" type="button">${SESS[n]}</button>`).join('');
 }
-$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; lastMsgId=-1; lastChatSig=''; ZOOM_EDIT=false; ZOOM_CUR=null; renderTabs(); $('#list').innerHTML=''; $('#msgs').innerHTML=''; refresh(); });
+$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; if (SIM_OFF){ SIM_OFF = 0; NOTIFIED.clear(); lastAlertSig = ''; } simSess = 0; lastMsgId=-1; lastChatSig=''; ZOOM_EDIT=false; ZOOM_CUR=null; renderTabs(); $('#list').innerHTML=''; $('#msgs').innerHTML=''; refresh(); });
 
 /* ── 주기적 새로고침 ── */
 function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
@@ -325,10 +337,47 @@ function apply(r){
   $('#list').innerHTML = html;
 
   tick(true);
+  if ((SIM_OPEN || SIM_OFF) && simSess !== session){ simSess = session; renderSim(); }   // 회차 탭을 바꾸면 그 회차 기준으로 다시
   $('#bcList').innerHTML = r.bc.slice().reverse().map(b=>`<div>${hhmm(b.t)} · ${esc(b.x)}</div>`).join('');
   renderChat();
 }
 /* ── 시간 알림: 멘토링 시작 시각(입장 허용 필요) · 대기실 접속 시각 미접속 ── */
+let SIM_OPEN = false, simSess = 0;
+/* ── 알림 미리보기(리허설): 이 브라우저의 시계만 그 시각으로 돌려 알림을 확인. 학생 화면·시트에는 영향 없음 ── */
+function setSim(ms){
+  SIM_OFF = ms == null ? 0 : ms - Date.now();
+  NOTIFIED.clear(); lastAlertSig = ''; lastDueBeep = 0;
+  [...ABS_ACK].forEach(k=>{ if (k.startsWith('sim|')) ABS_ACK.delete(k); });
+  renderSim(); if (DATA) apply(DATA);
+}
+function renderSim(){
+  const on = !!SIM_OFF, bar = $('#simbar');
+  $('#simBtn').classList.toggle('sim-on', on || SIM_OPEN);
+  $('#simBtn').textContent = on ? '🧪 미리보기 중' : '🧪 알림 미리보기';
+  bar.classList.toggle('on', on || SIM_OPEN);
+  if (!(on || SIM_OPEN)) return;
+  const L = (DATA && DATA.list || []).filter(x=>!x.test), d = SDATE[session];
+  const p1 = L[0], p2 = L[1];
+  const presets = p1 ? [
+    ['1번 대기실 접속 10초 전', kst(d, p1.wait) - 10000],
+    ['1번 멘토링 1분 전', kst(d, p1.time) - 60000],
+    ['1번 멘토링 10초 전', kst(d, p1.time) - 10000],
+  ].concat(p2 ? [['2번 대기실 접속 10초 전', kst(d, p2.wait) - 10000]] : []) : [];
+  bar.innerHTML = `${on ? `<span class="tag">리허설 중</span> 이 화면의 시계 <b id="simClock">${fmt(clock())}</b><span id="simSec"></span>` : `<span class="tag">알림 미리보기</span> ${SESS[session]} 당일 시각을 골라 주세요`}
+    ${presets.map(([t, ms])=>`<button class="btn ghost sm" type="button" data-sim="${ms}">${t}</button>`).join('')}
+    <input type="time" id="simTime" step="1" value="${on ? new Date(clock()+9*3600e3).toISOString().slice(11,19) : (p1 ? p1.wait : '10:50')}">
+    <button class="btn ghost sm" type="button" id="simGo">이 시각으로</button>
+    <button class="btn coral sm" type="button" id="simOff">${on ? '리허설 끝내기 (실제 시각으로)' : '닫기'}</button>
+    <span class="note">이 브라우저에서만 시계를 바꿔 알림·깜빡임·알림음을 미리 보는 기능입니다. 학생 화면, 입장 상태, 시트에는 아무 영향이 없습니다. 학생 접속 여부는 실제 상태 그대로 반영됩니다.</span>`;
+}
+function simTick(){ const c = $('#simClock'); if (c && SIM_OFF) c.textContent = new Date(clock()+9*3600e3).toISOString().slice(11,19); }
+setInterval(simTick, 500);
+$('#simBtn').addEventListener('click', ()=>{ SIM_OPEN = !SIM_OPEN || !!SIM_OFF; renderSim(); });
+$('#simbar').addEventListener('click', e=>{
+  const b = e.target.closest('[data-sim]'); if (b){ setSim(+b.dataset.sim); toast('리허설 시각으로 바꿨습니다'); return; }
+  if (e.target.id === 'simGo'){ const v = $('#simTime').value; if (!v) return; const ms = kst(SDATE[session], v) + (Number(v.split(':')[2]) || 0) * 1000; setSim(ms); return; }
+  if (e.target.id === 'simOff'){ const was = !!SIM_OFF; SIM_OPEN = false; setSim(null); if (was) toast('실제 시각으로 돌아왔습니다'); }
+});
 let ABS_ACK = new Set(), NOTIFIED = new Set(), lastAlertSig = '', lastDueBeep = 0, titleOn = false;
 try { ABS_ACK = new Set(JSON.parse(sessionStorage.getItem('dm_room_ack') || '[]')); } catch(_){}
 function askNotify(){ try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(_){} }
@@ -350,7 +399,7 @@ function alertsOf(L){
     const st = kst(d, x.time), wt = kst(d, x.wait);
     if (now >= st) out.push({ type:'due', x, at: st });
     else if (now >= st - 60000) out.push({ type:'soon', x, at: st });
-    if (!x.online && now >= wt && !ABS_ACK.has(session + '|' + x.name)) out.push({ type:'absent', x, at: wt });
+    if (!x.online && now >= wt && !ABS_ACK.has((SIM_OFF ? 'sim|' : '') + session + '|' + x.name)) out.push({ type:'absent', x, at: wt });
   });
   const rank = { due:0, absent:1, soon:2 };
   return out.sort((a,b)=> rank[a.type]-rank[b.type] || a.x.order-b.x.order);
@@ -408,7 +457,7 @@ function notify(title, body, tag){
 setInterval(()=>tick(false), 1000);
 $('#alerts').addEventListener('click', e=>{
   const a = e.target.closest('[data-ack]');
-  if (a){ ABS_ACK.add(session + '|' + a.dataset.ack); try{ sessionStorage.setItem('dm_room_ack', JSON.stringify([...ABS_ACK])); }catch(_){} lastAlertSig=''; apply(DATA); return; }
+  if (a){ ABS_ACK.add((SIM_OFF ? 'sim|' : '') + session + '|' + a.dataset.ack); try{ sessionStorage.setItem('dm_room_ack', JSON.stringify([...ABS_ACK].filter(k=>!k.startsWith('sim|')))); }catch(_){} lastAlertSig=''; apply(DATA); return; }
   const b = e.target.closest('[data-set]'); if (b) setStatus(b.dataset.name, b.dataset.set, b);
 });
 
