@@ -84,6 +84,7 @@ input:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23
 .m{max-width:82%;padding:9px 12px;border-radius:14px;font-size:15px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
 .m small{display:block;font-size:11.5px;opacity:.7;margin-top:3px}
 .m.s{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.m.pend{opacity:.6}
 .m.o{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
 .m.o .who,.m.p .who{display:block;font-size:12px;font-weight:800;margin-bottom:2px}
 .m.o{background:#FFF4F0;border-color:#F6C9BC}
@@ -184,7 +185,7 @@ footer a{color:var(--teal)}
 <script>
 const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxlDl4HN6qOaHON0t_xhAkrxNr0EcGAy8HM7G6o4Ij3JTbLSmEV8lBnUztPwx7qGKAy/exec',
-  POLL_MS: 3000,          // 화면을 보고 있을 때 새 소식 확인 간격
+  POLL_MS: 1500,          // 화면을 보고 있을 때 새 소식 확인 간격
   POLL_HIDDEN_MS: 10000,  // 다른 앱을 보고 있을 때
 };
 const $ = s => document.querySelector(s);
@@ -192,11 +193,13 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const norm = s => (s||'').replace(/\s+/g,'');
 const hhmm = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Seoul' });
 
+let SEQ = 0, APPLIED = 0;   // 늦게 도착한 옛 응답이 새 화면을 덮지 않도록 요청 순번 확인
 async function api(action, body){
   const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify(Object.assign({ action }, body)) });
   return r.json();
 }
 
+let PENDING = [], pid = 0, lastPendSig = '', lastBc = [];   // 보내는 중인 내 메시지(바로 화면에 표시)
 let ME = null, TOKEN = '', timer = null, lastStatus = '', lastSig = '', lastMsgId = 0, audio = null, fails = 0;
 
 /* ── 본인 확인 ── */
@@ -273,8 +276,14 @@ function alertCalled(){
 function renderMsgs(msgs, bc){
   $('#bc').hidden = !bc.length;
   $('#bc').innerHTML = bc.slice(-3).map(b=>`<div><b>📢 운영진 공지</b> ${esc(b.x)} <small style="color:var(--muted)">${hhmm(b.t)}</small></div>`).join('');
-  const last = msgs.length ? msgs[msgs.length-1].i : 0;
-  if (last === lastMsgId && $('#msgs').dataset.ready) return;
+  if (msgs && msgs.length){   // 이미 화면에 있는 것보다 오래된 목록이면 무시(깜빡임 방지)
+    const tail = msgs[msgs.length-1];
+    if (tail.i < lastMsgId && (renderMsgs.cur || []).some(m=>m.i===tail.i && m.t===tail.t)) msgs = null;
+  }
+  if (msgs) renderMsgs.cur = msgs; else msgs = renderMsgs.cur || [];
+  const last = msgs.length ? msgs[msgs.length-1].i : 0, pendSig = PENDING.map(p=>p.id).join(',');
+  if (last === lastMsgId && pendSig === lastPendSig && $('#msgs').dataset.ready) return;
+  lastPendSig = pendSig;
   const box = $('#msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
   box.dataset.ready = '1';
   box.innerHTML = msgs.length ? msgs.map(m => {
@@ -282,30 +291,39 @@ function renderMsgs(msgs, bc){
       if (m.f === 'o') return `<div class="m o"><span class="who">운영진</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`;
       if (m.n === ME.name) return `<div class="m s">${esc(m.x)}<small>${hhmm(m.t)}</small></div>`;
       return `<div class="m p"><span class="who">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`;
-    }).join('')
+    }).join('') + PENDING.map(p=>`<div class="m s pend">${esc(p.x)}<small>보내는 중…</small></div>`).join('')
+    : PENDING.length ? PENDING.map(p=>`<div class="m s pend">${esc(p.x)}<small>보내는 중…</small></div>`).join('')
     : `<div class="empty">아직 대화가 없습니다.<br>먼저 인사를 남겨 보세요 👋</div>`;
-  if (atBottom || last > lastMsgId) box.scrollTop = box.scrollHeight;
+  if (atBottom || last > lastMsgId || PENDING.length) box.scrollTop = box.scrollHeight;
   lastMsgId = last;
 }
 $('#sendForm').addEventListener('submit', async e=>{
   e.preventDefault();
   const text = $('#text').value.trim(); if (!text) return;
-  $('#sendBtn').disabled = true;
+  const p = { id: ++pid, x: text }; PENDING.push(p);
+  $('#text').value = ''; $('#text').focus(); renderMsgs(null, lastBc);   // 서버 응답을 기다리지 않고 바로 표시
+  const seq = ++SEQ;
   try{
     const res = await api('wr_send', { name: ME.name, token: TOKEN, text });
-    if (res.ok){ $('#text').value = ''; renderMsgs(res.msgs, []); poll(true); }
-    else alert(res.error || '보내지 못했습니다.');
-  }catch(_){ alert('연결에 문제가 있습니다. 다시 보내 주세요.'); }
-  finally{ $('#sendBtn').disabled = false; $('#text').focus(); }
+    PENDING = PENDING.filter(q=>q !== p);
+    if (res.ok){
+      const l = res.msgs.length ? res.msgs[res.msgs.length-1].i : 0;
+      if (seq > APPLIED || l >= lastMsgId){ APPLIED = Math.max(APPLIED, seq); renderMsgs(res.msgs, lastBc); } else renderMsgs(null, lastBc);
+    }
+    else { renderMsgs(null, lastBc); $('#text').value = text; alert(res.error || '보내지 못했습니다.'); }
+  }catch(_){ PENDING = PENDING.filter(q=>q !== p); renderMsgs(null, lastBc); $('#text').value = text; alert('연결에 문제가 있습니다. 다시 보내 주세요.'); }
 });
 
 /* ── 실시간 확인 ── */
 async function poll(once){
   if (!once) clearTimeout(timer);
   if (!ME) return;
+  const seq = ++SEQ;
   try{
     const r = await api('wr_poll', { name: ME.name, token: TOKEN });
     if (!r.ok){ if (r.auth) return logout(); throw new Error(r.error); }
+    if (seq < APPLIED) throw 0; else APPLIED = seq;   // 더 최근 응답이 이미 반영됨
+    lastBc = r.bc || [];
     fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간 연결됨';
     const sig = [r.status, r.zoom, r.current, r.ahead].join('|');
     if (sig !== lastSig){ renderStatus(r); lastSig = sig; }
@@ -314,7 +332,8 @@ async function poll(once){
     lastStatus = r.status;
     renderMsgs(r.msgs, r.bc);
     $('#onlineCnt').textContent = ME.test ? '테스트 계정 · 1회차 방' : `지금 ${r.online}명 접속 중`;
-  }catch(_){
+  }catch(e){
+    if (e === 0){ if (!once) timer = setTimeout(poll, document.hidden ? CONFIG.POLL_HIDDEN_MS : CONFIG.POLL_MS); return; }
     fails++; $('#conn').classList.add('off'); $('#conn').querySelector('span').textContent = '연결 확인 중…';
   }
   if (!once) timer = setTimeout(poll, document.hidden ? CONFIG.POLL_HIDDEN_MS : Math.min(CONFIG.POLL_MS * (1 + fails), 15000));
@@ -328,7 +347,7 @@ $('#copyBtn').addEventListener('click', async ()=>{
 });
 function logout(){
   try { sessionStorage.removeItem('dm_wr'); } catch(_){}
-  ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; clearTimeout(timer);
+  ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; PENDING = []; lastPendSig = ''; renderMsgs.cur = []; clearTimeout(timer);
   $('#room').style.display = 'none'; $('#login').style.display = 'block'; $('#conn').hidden = true;
   $('#msgs').dataset.ready = ''; $('#name').value = ''; $('#birth').value = '';
 }
