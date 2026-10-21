@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>무용분야 심화 멘토링 대기실</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -18,169 +18,200 @@
   --body:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;word-break:keep-all}
+html,body{height:100%}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;word-break:keep-all;-webkit-text-size-adjust:100%}
 h1,h2,h3{font-family:var(--head);margin:0;line-height:1.25}
 button{font:inherit;cursor:pointer}
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
+.btn{border:0;border-radius:12px;padding:15px;font-weight:800;font-size:17px;background:var(--teal);color:#fff;width:100%}
+.btn:disabled{opacity:.6;cursor:default}
+.screen{display:none}
+.screen.on{display:block}
 
+/* ① 본인 확인 */
 .hero{background:var(--teal-deep);color:#fff;position:relative;overflow:hidden;padding:34px 0 28px}
 .hero svg{position:absolute;right:-140px;top:-60px;width:460px;opacity:.9;pointer-events:none}
 .hero .wrap{position:relative}
 .eyebrow{font-family:var(--head);font-weight:600;font-size:12.5px;letter-spacing:.12em;color:var(--apricot)}
 .hero h1{font-weight:800;font-size:clamp(26px,7vw,36px);margin:8px 0 6px}
 .hero p{margin:0;color:rgba(255,255,255,.85);font-size:15px}
-.conn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);border-radius:999px;padding:4px 10px}
-.conn i{width:8px;height:8px;border-radius:50%;background:#7CE0A3}
-.conn.off i{background:#FFB098}
-
-main{padding:18px 0 40px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:14px}
+.lmain{padding:18px 0 30px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 18px}
 .card h2{font-size:19px;font-weight:800;margin-bottom:6px}
 .lead{margin:0 0 16px;color:var(--muted);font-size:15px}
 label{display:block;font-weight:700;margin:0 0 6px;font-size:15px}
-input,textarea{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1.5px solid var(--line-strong);border-radius:11px;outline:none;background:#fff;color:var(--ink)}
-input:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.15)}
+input{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1.5px solid var(--line-strong);border-radius:11px;outline:none;background:#fff;color:var(--ink)}
+input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.15)}
 .field{margin-bottom:14px}
 .hint{font-size:13px;color:var(--muted);margin-top:6px}
-.btn{border:0;border-radius:12px;padding:15px;font-weight:800;font-size:17px;background:var(--teal);color:#fff;width:100%}
-.btn:disabled{opacity:.6;cursor:default}
 .err{color:var(--coral);font-size:14px;min-height:22px;margin-top:10px;font-weight:600}
+footer{text-align:center;font-size:13px;color:var(--muted);padding:4px 0 30px}
+footer a{color:var(--teal)}
 
-#room{display:none}
+/* ② 유의사항 카드뉴스 (처음 입장 + 다시 보기 공용) */
+#rules{position:fixed;inset:0;z-index:50;background:var(--teal-deep);color:#fff;display:none;flex-direction:column;height:100dvh}
+#rules.on{display:flex}
+.rtop{display:flex;align-items:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) 18px 6px;max-width:560px;width:100%;margin:0 auto}
+.rtop .eyebrow{flex:1}
+.rclose{background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px}
+.rbar{display:flex;gap:5px;padding:4px 18px 0;max-width:560px;width:100%;margin:0 auto}
+.rbar i{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,.25);transition:background .3s}
+.rbar i.on{background:var(--apricot)}
+.rview{flex:1;min-height:0;overflow:hidden;max-width:560px;width:100%;margin:0 auto;touch-action:pan-y}
+.rtrack{display:flex;height:100%;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.slide{flex:0 0 100%;height:100%;padding:16px 18px;display:flex}
+.sc{flex:1;background:#fff;color:var(--ink);border-radius:22px;padding:clamp(22px,5vh,40px) 24px;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+.sc .num{font-family:var(--head);font-weight:800;font-size:15px;color:var(--teal);letter-spacing:.06em}
+.sc .ico{font-size:clamp(54px,11vh,84px);line-height:1;margin:clamp(14px,4vh,34px) 0 clamp(12px,3vh,24px)}
+.sc h2{font-size:clamp(25px,6.4vw,31px);font-weight:800;letter-spacing:-.01em}
+.sc p{font-size:clamp(16px,4.3vw,18px);color:#3E4246;margin:14px 0 0;line-height:1.65}
+.sc p b{color:var(--coral)}
+.sc .box{margin-top:auto;background:var(--teal-soft);border-radius:14px;padding:14px 16px;font-size:15.5px;color:var(--teal-ink)}
+.sc .box b{font-family:var(--head);font-size:19px;color:var(--teal-ink)}
+.sc .deco{position:absolute;right:-50px;bottom:-60px;width:220px;opacity:.5;pointer-events:none}
+.sc.cover{background:var(--apricot-soft)}
+.sc.cover h2{font-size:clamp(27px,7vw,34px)}
+.rnav{display:flex;gap:10px;padding:6px 18px max(18px,env(safe-area-inset-bottom));max-width:560px;width:100%;margin:0 auto}
+.rnav button{border:0;border-radius:14px;padding:16px;font-weight:800;font-size:17px}
+.rnav .prev{flex:0 0 30%;background:rgba(255,255,255,.14);color:#fff}
+.rnav .prev:disabled{opacity:.35}
+.rnav .next{flex:1;background:#fff;color:var(--teal-ink)}
+.rnav .next.go{background:var(--coral);color:#fff}
 
-/* 상태 */
-.status{text-align:center;padding:24px 18px;border-width:2px;border-color:var(--teal)}
-.status .ic{font-size:40px;line-height:1}
-.status h2{font-size:23px;margin:10px 0 6px}
-.status p{margin:0;color:var(--muted);font-size:15px}
-.status .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
-.chip{background:var(--teal-soft);color:var(--teal-ink);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700}
+/* ③ 대기실: 한 화면 고정 (스크롤 없음, 채팅 목록만 안에서 스크롤) */
+#room{height:100dvh;flex-direction:column;max-width:640px;margin:0 auto;padding:0 12px max(10px,env(safe-area-inset-bottom));gap:8px;overflow:hidden}
+#room.on{display:flex}
+.rh{display:flex;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) 2px 0}
+.rh h1{font-size:17px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rh h1 small{display:block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.conn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}
+.conn i{width:8px;height:8px;border-radius:50%;background:#2DB36B}
+.conn.off i{background:#F08A4B}
+.pill{border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:999px;padding:5px 11px;font-weight:800;font-size:13.5px;white-space:nowrap}
+.pill.ghost{border-color:var(--line-strong);color:var(--muted);font-weight:700}
+
+.status{flex:none;border-radius:16px;border:2px solid var(--teal);background:#fff;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center}
+.status .ic{grid-row:1/3;font-size:34px;line-height:1}
+.status h2{font-size:clamp(17px,4.6vw,20px);font-weight:800}
+.status p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.45}
+.status .chips{grid-column:1/3;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{background:var(--teal-soft);color:var(--teal-ink);border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700}
 .chip.hot{background:var(--apricot-soft);color:#A3303B}
 .status.called{background:var(--coral);border-color:var(--coral);color:#fff;animation:glow 1.6s ease-in-out infinite}
 .status.called p{color:rgba(255,255,255,.92)}
-@keyframes glow{50%{box-shadow:0 0 0 8px rgba(232,73,88,.18)}}
-.zbtn{display:block;width:100%;margin-top:16px;padding:18px;border-radius:14px;border:0;background:#fff;color:var(--coral);font-weight:800;font-size:20px;text-decoration:none}
-.status .fallback{display:block;margin-top:10px;font-size:13.5px;color:#fff}
+@keyframes glow{50%{box-shadow:0 0 0 7px rgba(232,73,88,.2)}}
+.zbtn{grid-column:1/3;display:block;text-align:center;margin-top:10px;padding:15px;border-radius:13px;background:#fff;color:var(--coral);font-weight:800;font-size:19px;text-decoration:none}
+.status .fallback{grid-column:1/3;text-align:center;margin-top:6px;font-size:12.5px;color:#fff}
 .status .fallback a{color:#fff;font-weight:700}
 .status.done{border-color:var(--line)}
 .dots::after{content:'';animation:dots 1.5s steps(4) infinite}
 @keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
 
-.sched{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;font-size:15px}
-.sched dt{color:var(--muted);font-weight:600}
-.sched dd{margin:0;font-weight:700}
-.zname{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;background:var(--teal-soft);border-radius:12px;padding:11px 14px;font-size:15px}
-.zname b{font-size:17px;color:var(--teal-ink)}
-.zname button{margin-left:auto;border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:9px;padding:5px 12px;font-weight:700;font-size:14px}
+.info{flex:none;display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:13.5px}
+.info .when{flex:1 1 100%;font-weight:700;color:var(--ink)}
+.info .when span{color:var(--muted);font-weight:600}
+.info .zn{display:flex;align-items:center;gap:6px;flex:1;min-width:0;color:var(--muted)}
+.info .zn b{color:var(--teal-ink);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info button{border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:8px;padding:3px 10px;font-weight:700;font-size:13px}
 
-/* 채팅 */
-.chat h2{display:flex;align-items:center;gap:8px}
-.chat h2 small{font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted)}
-.bc{background:var(--apricot-soft);border-radius:12px;padding:10px 12px;margin:10px 0 0;font-size:14.5px}
+.chat{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 10px 10px}
+.chat .ch{display:flex;align-items:baseline;gap:8px;padding:0 4px}
+.chat .ch h2{font-size:16px;font-weight:800}
+.chat .ch small{font-size:12.5px;color:var(--muted)}
+.bc{flex:none;background:var(--apricot-soft);border-radius:10px;padding:7px 10px;margin-top:7px;font-size:13.5px;max-height:4.6em;overflow-y:auto}
 .bc b{color:#A3303B}
-.bc div+div{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(163,48,59,.25)}
-.msgs{height:300px;overflow-y:auto;background:var(--ivory);border-radius:12px;padding:12px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.msgs .empty{margin:auto;color:var(--muted);font-size:14px;text-align:center}
-.m{max-width:82%;padding:9px 12px;border-radius:14px;font-size:15px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
-.m small{display:block;font-size:11.5px;opacity:.7;margin-top:3px}
+.bc div+div{margin-top:4px;padding-top:4px;border-top:1px dashed rgba(163,48,59,.25)}
+.msgs{flex:1;min-height:60px;overflow-y:auto;background:var(--ivory);border-radius:12px;padding:10px;margin-top:8px;display:flex;flex-direction:column;gap:7px;overscroll-behavior:contain}
+.msgs .empty{margin:auto;color:var(--muted);font-size:13.5px;text-align:center}
+.m{max-width:82%;padding:8px 11px;border-radius:14px;font-size:14.5px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+.m small{display:block;font-size:11px;opacity:.7;margin-top:2px}
 .m.s{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
 .m.pend{opacity:.6}
-.m.o{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
-.m.o .who,.m.p .who{display:block;font-size:12px;font-weight:800;margin-bottom:2px}
+.m.o,.m.p{align-self:flex-start;border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.o .who,.m.p .who{display:block;font-size:12px;font-weight:800;margin-bottom:1px}
 .m.o{background:#FFF4F0;border-color:#F6C9BC}
 .m.o .who{color:var(--coral)}
-.m.p{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.p{background:#fff}
 .m.p .who{color:var(--teal)}
-.chat .rule{font-size:12.5px;color:var(--muted);margin:6px 0 0}
-.m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:14px;border-radius:999px;padding:6px 14px}
-.send{display:flex;gap:8px;margin-top:10px}
-.send input{flex:1;font-size:16px;padding:12px}
-.send button{flex:none;border:0;border-radius:11px;background:var(--teal);color:#fff;font-weight:800;padding:0 18px}
-
-.rules ol{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:9px}
-.rules li{background:var(--ivory);border-radius:12px;padding:11px 13px}
-.rules li .t{display:flex;align-items:center;gap:8px;font-weight:800}
-.rules li .n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12.5px;display:grid;place-items:center}
-.rules li p{margin:4px 0 0 30px;font-size:14.5px;color:#3E4246}
-.rules li p b{color:var(--coral)}
-.again{display:block;margin:4px auto 0;background:none;border:0;color:var(--teal);font-weight:700;text-decoration:underline;padding:8px}
-footer{text-align:center;font-size:13.5px;color:var(--muted);padding:6px 0 40px}
-footer a{color:var(--teal)}
+.m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:13.5px;border-radius:999px;padding:5px 13px}
+.send{flex:none;display:flex;gap:8px;margin-top:8px}
+.send input{flex:1;font-size:16px;padding:11px 12px}
+.send button{flex:none;border:0;border-radius:11px;background:var(--teal);color:#fff;font-weight:800;padding:0 16px}
+@media (max-width:420px){ .conn span{display:none} .pill{padding:5px 9px;font-size:13px} }
+@media (max-height:600px){ .info .when{display:none} .status .ic{font-size:26px} .status{padding:9px 12px} }
+html,body{touch-action:pan-x pan-y}
+button,a,input{touch-action:manipulation}
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <svg viewBox="0 0 520 420" fill="none" aria-hidden="true">
-    <path d="M40 360C140 250 210 330 300 220S430 40 510 70" stroke="#FFB098" stroke-width="2" opacity=".75"/>
-    <path d="M10 330C130 230 200 300 290 190S420 10 520 40" stroke="#FFB098" stroke-width="1" opacity=".45"/>
-    <circle cx="300" cy="220" r="5" fill="#E84958"/>
-  </svg>
-  <div class="wrap">
-    <div class="eyebrow">2026 K예술영재 프로젝트 · 심화과정</div>
-    <h1>무용분야 심화 멘토링 대기실</h1>
-    <p>본인 확인 후 이 화면에서 순서를 기다려 주세요.</p>
-    <div class="conn" id="conn" hidden><i></i><span>실시간 연결됨</span></div>
-  </div>
-</header>
-
-<main class="wrap">
-
-  <!-- 본인 확인 -->
-  <section class="card" id="login">
-    <h2>본인 확인</h2>
-    <p class="lead">멘토링 대상 학생의 이름과 생년월일을 입력해 주세요.</p>
-    <form id="loginForm" autocomplete="off">
-      <div class="field">
-        <label for="name">학생 이름</label>
-        <input type="text" id="name" maxlength="10" placeholder="띄어쓰기 없이 실명 입력">
-      </div>
-      <div class="field">
-        <label for="birth">생년월일 8자리</label>
-        <input type="text" id="birth" inputmode="numeric" maxlength="8" placeholder="예: 20150901">
-        <div class="hint">입력한 정보는 본인 확인에만 사용됩니다.</div>
-      </div>
-      <button class="btn" type="submit" id="loginBtn">대기실 입장</button>
-      <div class="err" id="loginErr" aria-live="polite"></div>
-    </form>
-  </section>
-
-  <!-- 대기실 -->
-  <div id="room">
-    <section class="card status" id="status" aria-live="assertive"></section>
-
+<!-- ① 본인 확인 -->
+<div class="screen on" id="login">
+  <header class="hero">
+    <svg viewBox="0 0 520 420" fill="none" aria-hidden="true">
+      <path d="M40 360C140 250 210 330 300 220S430 40 510 70" stroke="#FFB098" stroke-width="2" opacity=".75"/>
+      <path d="M10 330C130 230 200 300 290 190S420 10 520 40" stroke="#FFB098" stroke-width="1" opacity=".45"/>
+      <circle cx="300" cy="220" r="5" fill="#E84958"/>
+    </svg>
+    <div class="wrap">
+      <div class="eyebrow">2026 K예술영재 프로젝트 · 심화과정</div>
+      <h1>무용분야 심화 멘토링 대기실</h1>
+      <p>본인 확인 후 유의사항을 확인하고 대기실에 입장해 주세요.</p>
+    </div>
+  </header>
+  <main class="wrap lmain">
     <section class="card">
-      <dl class="sched" id="sched"></dl>
-      <div class="zname">ZOOM 표시 이름 <b id="zName"></b><button type="button" id="copyBtn">복사</button></div>
-    </section>
-
-    <section class="card chat">
-      <h2>대기실 채팅 <small id="onlineCnt"></small></h2>
-      <p class="rule">같은 회차에 접속한 친구들과 운영진이 함께 보는 채팅방입니다. 서로 응원하고 존중하는 대화를 나눠 주세요.</p>
-      <div class="bc" id="bc" hidden></div>
-      <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.<br>먼저 인사를 남겨 보세요 👋</div></div>
-      <form class="send" id="sendForm" autocomplete="off">
-        <input type="text" id="text" maxlength="300" placeholder="메시지 입력">
-        <button type="submit" id="sendBtn">보내기</button>
+      <h2>본인 확인</h2>
+      <p class="lead">멘토링 대상 학생의 이름과 생년월일을 입력해 주세요.</p>
+      <form id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="name">학생 이름</label>
+          <input type="text" id="name" maxlength="10" placeholder="띄어쓰기 없이 실명 입력">
+        </div>
+        <div class="field">
+          <label for="birth">생년월일 8자리</label>
+          <input type="text" id="birth" inputmode="numeric" maxlength="8" placeholder="예: 20150901">
+          <div class="hint">입력한 정보는 본인 확인에만 사용됩니다.</div>
+        </div>
+        <button class="btn" type="submit" id="loginBtn">다음</button>
+        <div class="err" id="loginErr" aria-live="polite"></div>
       </form>
     </section>
+  </main>
+  <footer>한국예술영재교육연구원 · 2026 K예술영재 프로젝트<br>문의 <a href="mailto:kgifted2026@naver.com">kgifted2026@naver.com</a></footer>
+</div>
 
-    <section class="card rules">
-      <h2>📌 멘토링 참여 유의사항</h2>
-      <ol>
-        <li><div class="t"><span class="n">0</span>비디오 / 오디오 ON</div><p>ZOOM 입장 시 비디오와 오디오를 켜고 입장해 주세요.</p></li>
-        <li><div class="t"><span class="n">1</span>참가자 이름</div><p><b>‘무용_이름’</b> 형식으로 설정해 주세요. (예: <span class="ex"></span>)</p></li>
-        <li><div class="t"><span class="n">2</span>입장 시간 준수</div><p>사전에 안내된 스케줄을 확인하시고, <b>본인 멘토링 시작 시간 10분 전까지</b> 이 대기실 화면에 접속해 주세요.</p></li>
-        <li><div class="t"><span class="n">3</span>대기실 안내</div><p>이 화면이 대기실입니다. 앞선 멘토링이 끝나면 운영진이 순서대로 <b>[ZOOM 입장]</b> 버튼을 열어 드리니, 화면을 켜 둔 채 기다려 주세요.</p></li>
-        <li><div class="t"><span class="n">4</span>참관 제한</div><p>멘토링은 참가자 본인만 참여할 수 있으며, 참가자 외 인원의 입장 및 참관은 불가합니다.</p></li>
-        <li><div class="t"><span class="n">5</span>시간 관련 안내</div><p>정해진 입장 시간을 지키지 않으면 멘토링 참여가 어려울 수 있습니다. 당일 진행 상황에 따라 시작 및 종료 시간이 다소 달라질 수 있으니, 배정 시간 전후로 여유 있게 준비해 주세요.</p></li>
-      </ol>
-    </section>
-    <button class="again" type="button" id="again">다른 학생으로 입장하기</button>
+<!-- ② 유의사항 카드뉴스 -->
+<div id="rules" role="dialog" aria-modal="true" aria-label="멘토링 참여 유의사항">
+  <div class="rtop"><div class="eyebrow">멘토링 참여 유의사항</div><button class="rclose" type="button" id="rClose" hidden>닫기 ✕</button></div>
+  <div class="rbar" id="rBar"></div>
+  <div class="rview" id="rView"><div class="rtrack" id="rTrack"></div></div>
+  <div class="rnav"><button class="prev" type="button" id="rPrev">이전</button><button class="next" type="button" id="rNext">다음</button></div>
+</div>
+
+<!-- ③ 대기실 -->
+<div class="screen" id="room">
+  <div class="rh">
+    <h1><small>무용 심화 멘토링</small>대기실</h1>
+    <span class="conn" id="conn"><i></i><span>연결됨</span></span>
+    <button class="pill" type="button" id="rulesBtn">📌 유의사항</button>
+    <button class="pill ghost" type="button" id="again">나가기</button>
   </div>
-</main>
-
-<footer>한국예술영재교육연구원 · 2026 K예술영재 프로젝트<br>문의 <a href="mailto:kgifted2026@naver.com">kgifted2026@naver.com</a></footer>
+  <section class="status" id="status" aria-live="assertive"></section>
+  <section class="info">
+    <div class="when" id="sched"></div>
+    <div class="zn">ZOOM 이름 <b id="zName"></b></div><button type="button" id="copyBtn">복사</button>
+  </section>
+  <section class="chat">
+    <div class="ch"><h2>대기실 채팅</h2><small id="onlineCnt"></small></div>
+    <div class="bc" id="bc" hidden></div>
+    <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.<br>먼저 인사를 남겨 보세요 👋</div></div>
+    <form class="send" id="sendForm" autocomplete="off">
+      <input type="text" id="text" maxlength="300" placeholder="응원과 인사를 나눠 보세요">
+      <button type="submit" id="sendBtn">보내기</button>
+    </form>
+  </section>
+</div>
 
 <script>
 const CONFIG = {
@@ -214,48 +245,103 @@ $('#loginForm').addEventListener('submit', async e=>{
     const res = await api('wr_login', { name, birth });
     if (!res.ok){ $('#loginErr').textContent = res.error; return; }
     TOKEN = res.token; ME = res.me;
-    try { sessionStorage.setItem('dm_wr', JSON.stringify({ token: TOKEN, me: ME })); } catch(_){}
+    RULES_SEEN = false; save();
     enter();
   }catch(err){ $('#loginErr').textContent = '연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.'; }
-  finally{ $('#loginBtn').disabled = false; $('#loginBtn').textContent = '대기실 입장'; }
+  finally{ $('#loginBtn').disabled = false; $('#loginBtn').textContent = '다음'; }
 });
 
+let RULES_SEEN = false;
+function save(){ try { sessionStorage.setItem('dm_wr', JSON.stringify({ token: TOKEN, me: ME, seen: RULES_SEEN })); } catch(_){} }
+function show(id){ ['login','room'].forEach(k=>$('#'+k).classList.toggle('on', k===id)); }
+
 function enter(){
-  $('#login').style.display = 'none'; $('#room').style.display = 'block'; $('#conn').hidden = false;
   $('#sched').innerHTML = ME.test
-    ? `<dt>계정</dt><dd>테스트 계정 (1회차 링크 사용)</dd>`
-    : `<dt>일정</dt><dd>${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님</dd>
-       <dt>내 순서</dt><dd>${ME.order}번 · 멘토링 ${esc(ME.time)}</dd>
-       <dt>대기 시작</dt><dd>${esc(ME.wait)}까지 이 화면에 접속</dd>`;
+    ? `테스트 계정 <span>· 1회차 채팅방 · 1회차 ZOOM 링크 사용</span>`
+    : `${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님 <span>· ${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)}</span>`;
   $('#zName').textContent = `무용_${ME.name}`;
-  document.querySelector('.rules .ex').textContent = `무용_${ME.name}`;
   renderStatus({ status:'waiting' });
-  window.scrollTo(0,0);
-  poll();
+  poll();   // 유의사항을 보는 동안에도 '접속 중'으로 표시
+  if (RULES_SEEN){ show('room'); } else { show(null); openRules(true); }
 }
+
+/* ── 유의사항 카드뉴스 ── */
+const DECO = `<svg class="deco" viewBox="0 0 220 220" fill="none" aria-hidden="true"><path d="M10 200C70 140 110 180 150 120S200 30 230 40" stroke="#FFB098" stroke-width="2"/><path d="M0 180C60 125 100 160 140 105S190 15 220 25" stroke="#176C86" stroke-width="1" opacity=".5"/><circle cx="150" cy="120" r="4" fill="#E84958"/></svg>`;
+function slides(first){
+  const n = ME.name, zn = `무용_${esc(n)}`;
+  const R = [
+    ['🎥', '비디오·오디오 ON', `ZOOM에 입장할 때는 <b>비디오와 오디오를 모두 켠 상태</b>로 들어와 주세요.`, `입장 전에 카메라와 마이크가 잘 되는지 미리 확인해 두면 좋아요.`],
+    ['🏷️', '참가자 이름 설정', `ZOOM 참가자 이름을 <b>‘무용_이름’</b> 형식으로 바꿔 주세요.`, `내 ZOOM 이름 &nbsp;<b>${zn}</b>`],
+    ['⏰', '입장 시간 준수', `사전에 안내된 스케줄을 확인하고, <b>본인 멘토링 시작 10분 전까지</b> 이 대기실 화면에 접속해 주세요.`,
+      ME.test ? `테스트 계정은 시간 제한이 없습니다.` : `내 대기실 접속 시간 &nbsp;<b>${esc(ME.wait)}</b> · 멘토링 ${esc(ME.time)}`],
+    ['🚪', '대기실 안내', `이 화면이 대기실입니다. 앞 순서 멘토링이 끝나면 운영진이 차례대로 <b>[ZOOM 입장]</b> 버튼을 열어 드려요. 화면을 켜 둔 채 기다려 주세요.`, `내 차례가 되면 알림음과 진동으로 알려 드려요.`],
+    ['🙋', '참관 제한', `멘토링은 <b>참가자 본인만</b> 참여할 수 있으며, 참가자 외 인원의 입장 및 참관은 불가합니다.`, ''],
+    ['⏳', '시간 관련 안내', `정해진 입장 시간을 지키지 않으면 멘토링 참여가 어려울 수 있습니다. 당일 진행 상황에 따라 시작·종료 시간이 <b>다소 달라질 수 있으니</b> 배정 시간 전후로 여유 있게 준비해 주세요.`, `궁금한 점은 대기실 채팅으로 운영진에게 물어보세요.`],
+  ];
+  const out = R.map(([ic, t, body, box], i)=>`<div class="sc"><div class="num">유의사항 ${i+1} / ${R.length}</div><div class="ico">${ic}</div><h2>${t}</h2><p>${body}</p>${box ? `<div class="box">${box}</div>` : ''}${DECO}</div>`);
+  if (first) out.unshift(`<div class="sc cover"><div class="num">WELCOME</div><div class="ico">👋</div><h2>${esc(n)} 학생,<br>반가워요!</h2>
+    <p>대기실에 들어가기 전에 꼭 알아야 할 <b>유의사항 ${R.length}가지</b>를 한 장씩 넘기며 확인해 주세요.</p>
+    <div class="box">${ME.test ? '테스트 계정' : `${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님<br>대기실 접속 <b>${esc(ME.wait)}</b> · 멘토링 <b>${esc(ME.time)}</b>`}</div>${DECO}</div>`);
+  return out;
+}
+let RI = 0, RN = 0, RFIRST = false;
+function openRules(first){
+  RFIRST = first; RI = 0;
+  const S = slides(first); RN = S.length;
+  $('#rTrack').innerHTML = S.map(h=>`<div class="slide">${h}</div>`).join('');
+  $('#rBar').innerHTML = S.map(()=>'<i></i>').join('');
+  $('#rClose').hidden = first;
+  $('#rules').classList.add('on'); goRule(0);
+}
+function goRule(i){
+  RI = Math.max(0, Math.min(RN - 1, i));
+  $('#rTrack').style.transform = `translateX(-${RI * 100}%)`;
+  [...$('#rBar').children].forEach((b, k)=>b.classList.toggle('on', k <= RI));
+  $('#rPrev').disabled = RI === 0;
+  const last = RI === RN - 1;
+  $('#rNext').textContent = last ? (RFIRST ? '대기실 입장하기 →' : '확인했어요') : '다음';
+  $('#rNext').classList.toggle('go', last && RFIRST);
+}
+function closeRules(){
+  $('#rules').classList.remove('on');
+  if (RFIRST){ RULES_SEEN = true; save(); }
+  show('room');
+  const box = $('#msgs'); box.scrollTop = box.scrollHeight;
+}
+$('#rNext').addEventListener('click', ()=>{ if (RI === RN - 1) closeRules(); else goRule(RI + 1); });
+$('#rPrev').addEventListener('click', ()=>goRule(RI - 1));
+$('#rClose').addEventListener('click', closeRules);
+$('#rulesBtn').addEventListener('click', ()=>openRules(false));
+document.addEventListener('keydown', e=>{ if (!$('#rules').classList.contains('on')) return;
+  if (e.key === 'ArrowRight') $('#rNext').click(); else if (e.key === 'ArrowLeft') goRule(RI - 1); else if (e.key === 'Escape' && !RFIRST) closeRules(); });
+(()=>{ let x0 = null, y0 = 0;   // 손가락으로 넘기기
+  $('#rView').addEventListener('touchstart', e=>{ x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive:true });
+  $('#rView').addEventListener('touchend', e=>{ if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ if (dx < 0 && RI < RN - 1) goRule(RI + 1); else if (dx > 0) goRule(RI - 1); } }, { passive:true });
+})();
 
 /* ── 상태 ── */
 function renderStatus(r){
   const el = $('#status');
   if (r.status === 'called'){
-    el.className = 'card status called';
+    el.className = 'status called';
     el.innerHTML = `<div class="ic">🔔</div><h2>${esc(ME.name)} 학생, 지금 입장해 주세요!</h2>
-      <p>아래 버튼을 눌러 ZOOM 멘토링방에 입장해 주세요.<br>ZOOM 이름은 <b>무용_${esc(ME.name)}</b>, 비디오·오디오를 켜고 들어와 주세요.</p>
+      <p>ZOOM 이름 <b>무용_${esc(ME.name)}</b> · 비디오·오디오 ON</p>
       ${r.zoom ? `<a class="zbtn" href="${esc(r.zoom)}" id="zLink">ZOOM 입장하기 →</a>
       <span class="fallback">버튼이 반응하지 않으면 <a href="${esc(r.zoom)}" target="_blank" rel="noopener">여기를 눌러 주세요</a></span>`
       : `<span class="zbtn" style="opacity:.7">입장 링크 준비 중 — 채팅으로 운영진에게 알려 주세요</span>`}`;
   } else if (r.status === 'done'){
-    el.className = 'card status done';
+    el.className = 'status done';
     el.innerHTML = `<div class="ic">🌷</div><h2>멘토링이 끝났습니다</h2><p>참여해 주셔서 감사합니다. 수고하셨어요!</p>`;
   } else {
-    el.className = 'card status';
+    el.className = 'status';
     const chips = [];
     if (!ME.test){
       if (r.current) chips.push(`<span class="chip">현재 ${r.current}번 멘토링 중</span>`);
       if (typeof r.ahead === 'number') chips.push(`<span class="chip hot">${r.ahead ? `내 앞 대기 ${r.ahead}명` : '다음 순서입니다'}</span>`);
     }
     el.innerHTML = `<div class="ic">⏳</div><h2 class="dots">대기실에서 기다리는 중</h2>
-      <p>순서가 되면 운영진이 <b>ZOOM 입장 버튼</b>을 열어 드립니다.<br>이 화면을 켜 둔 채 잠시만 기다려 주세요.</p>
+      <p>순서가 되면 여기에 <b>ZOOM 입장 버튼</b>이 열려요. 화면을 켜 두세요.</p>
       ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}`;
   }
 }
@@ -269,7 +355,7 @@ function alertCalled(){
   } catch(_){}
   let n = 0; const orig = '무용분야 심화 멘토링 대기실';
   clearInterval(alertCalled.t); alertCalled.t = setInterval(()=>{ document.title = (n++ % 2) ? orig : '🔔 지금 입장하세요!'; if (n > 40){ clearInterval(alertCalled.t); document.title = orig; } }, 800);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if ($('#rules').classList.contains('on')){ RFIRST && (RULES_SEEN = true, save()); RFIRST = false; closeRules(); }   // 유의사항 보는 중에 차례가 오면 바로 대기실로
 }
 
 /* ── 채팅 ── */
@@ -350,13 +436,25 @@ $('#copyBtn').addEventListener('click', async ()=>{
 function logout(){
   try { sessionStorage.removeItem('dm_wr'); } catch(_){}
   ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; PENDING = []; lastPendSig = ''; lastGv = 0; renderMsgs.cur = []; clearTimeout(timer);
-  $('#room').style.display = 'none'; $('#login').style.display = 'block'; $('#conn').hidden = true;
+  $('#rules').classList.remove('on'); RULES_SEEN = false; show('login');
   $('#msgs').dataset.ready = ''; $('#name').value = ''; $('#birth').value = '';
 }
 $('#again').addEventListener('click', logout);
 
 /* 같은 탭에서는 다시 입력하지 않게 (ZOOM 앱에 다녀와도 유지) */
-try { const s = JSON.parse(sessionStorage.getItem('dm_wr') || 'null'); if (s){ TOKEN = s.token; ME = s.me; enter(); } } catch(_){}
+try { const s = JSON.parse(sessionStorage.getItem('dm_wr') || 'null'); if (s){ TOKEN = s.token; ME = s.me; RULES_SEEN = !!s.seen; enter(); } } catch(_){}
+</script>
+<script>
+/* 확대·축소 막기: 핀치·두 번 탭(모바일), Ctrl+휠·Ctrl +/-/0(PC) */
+(()=>{
+  const stop = e=>{ e.preventDefault(); };
+  ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t, stop, { passive:false }));
+  document.addEventListener('touchmove', e=>{ if (e.touches.length > 1 || (e.scale && e.scale !== 1)) e.preventDefault(); }, { passive:false });
+  let lastTap = 0;
+  document.addEventListener('touchend', e=>{ const now = Date.now(); if (now - lastTap < 320 && !e.target.closest('input,textarea,a,button')) e.preventDefault(); lastTap = now; }, { passive:false });
+  window.addEventListener('wheel', e=>{ if (e.ctrlKey || e.metaKey) e.preventDefault(); }, { passive:false });
+  window.addEventListener('keydown', e=>{ if ((e.ctrlKey || e.metaKey) && ['+','-','=','0','_'].includes(e.key)) e.preventDefault(); });
+})();
 </script>
 </body>
 </html>
