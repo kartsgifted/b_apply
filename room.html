@@ -132,6 +132,12 @@ button{font:inherit;cursor:pointer}
 .m.s .who{display:block;font-size:12px;font-weight:800;color:var(--teal);margin-bottom:2px;cursor:pointer}
 .m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
 .m.o.pend{opacity:.6}
+.m{position:relative}
+.m .del{display:none;position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-strong);background:#fff;color:var(--coral);font-size:14px;font-weight:800;line-height:1;place-items:center;padding:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.m.o .del{right:auto;left:-8px}
+.m:hover .del{display:grid}
+@media (hover:none){.m .del{display:grid}}
+.chead .clr{margin-left:auto}
 .m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:5px 12px}
 .quick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px 0}
 .quick button{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:4px 10px;font-size:12.5px}
@@ -184,7 +190,7 @@ button{font:inherit;cursor:pointer}
         <form id="bcForm"><input id="bcText" maxlength="300" placeholder="예: 앞 순서가 5분 정도 늦어지고 있습니다. 조금만 기다려 주세요."><button class="btn coral" type="submit">전체 보내기</button></form>
         <div class="bclist" id="bcList"></div>
       </div>
-      <div class="chead" id="chead"><b>대기실 채팅</b><span style="color:var(--muted);font-size:13px" id="cheadSub"></span></div>
+      <div class="chead" id="chead"><b>대기실 채팅</b><span style="color:var(--muted);font-size:13px" id="cheadSub"></span><button class="btn ghost sm clr" id="clearChat" type="button" title="이 회차 채팅방의 모든 메시지를 지웁니다">🗑 채팅 지우기</button></div>
       <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.</div></div>
       <div class="quick" id="quick">
         <button type="button">안녕하세요! 운영진입니다. 순서가 되면 입장 버튼을 열어 드릴게요.</button>
@@ -390,19 +396,39 @@ $('#alerts').addEventListener('click', e=>{
 function renderChat(){
   const msgs = DATA.msgs || [], on = DATA.list.filter(x=>!x.test && x.online).length;
   $('#cheadSub').textContent = `${SESS[session]} · 학생 ${on}명 접속 중`;
-  const sig = session + '|' + (msgs.length ? msgs[msgs.length-1].i : 0) + '|' + PENDING.map(p=>p.id).join(',');
+  const sig = session + '|' + (DATA.gv || 0) + '|' + msgs.length + '|' + (msgs.length ? msgs[msgs.length-1].i : 0) + '|' + PENDING.map(p=>p.id).join(',');
   if (sig === lastChatSig) return;
   lastChatSig = sig;
   const box = $('#msgs');
   box.innerHTML = msgs.length ? msgs.map(m => m.f==='o'
-      ? `<div class="m o">${esc(m.x)}<small>운영진 · ${hhmm(m.t)}</small></div>`
-      : `<div class="m s"><span class="who" data-at="${esc(m.n)}">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
+      ? `<div class="m o"><button class="del" data-del="${m.i}" type="button" title="이 메시지 지우기">×</button>${esc(m.x)}<small>운영진 · ${hhmm(m.t)}</small></div>`
+      : `<div class="m s"><button class="del" data-del="${m.i}" type="button" title="이 메시지 지우기">×</button><span class="who" data-at="${esc(m.n)}">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
     : PENDING.length ? '' : `<div class="empty">아직 대화가 없습니다.<br>아래 문구 버튼으로 첫 인사를 보내 보세요.</div>`;
   box.innerHTML += PENDING.filter(p=>p.s===session).map(p=>`<div class="m o pend">${esc(p.x)}<small>보내는 중…</small></div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
 function mention(name){ const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
-$('#msgs').addEventListener('click', e=>{ const w = e.target.closest('[data-at]'); if (w) mention(w.dataset.at); });
+$('#msgs').addEventListener('click', e=>{
+  const d = e.target.closest('[data-del]');
+  if (d){ const m = (DATA.msgs||[]).find(x=>x.i === +d.dataset.del);
+    if (m && confirm(`이 메시지를 지울까요? (학생 화면에서도 사라집니다)\n\n${m.n ? m.n + ': ' : '운영진: '}${m.x}`)) clearChat(+d.dataset.del);
+    return; }
+  const w = e.target.closest('[data-at]'); if (w) mention(w.dataset.at);
+});
+async function clearChat(i){
+  const s0 = session;
+  try{
+    const r = await api('op_clear', i ? { session: s0, i } : { session: s0 });
+    if (!r.ok) return toast(r.error);
+    if (s0 === session && DATA){ DATA.msgs = r.msgs; DATA.gv = r.gv; lastChatSig = ''; renderChat(); }
+    toast(i ? '메시지를 지웠습니다' : `${SESS[s0]} 채팅을 모두 지웠습니다`);
+  }catch(_){ toast('연결에 문제가 있습니다. 다시 눌러 주세요.'); }
+  refresh();
+}
+$('#clearChat').addEventListener('click', ()=>{
+  if (!confirm(`${SESS[session]} 채팅방의 모든 메시지를 지웁니다.\n학생 화면에서도 사라지며, 되돌릴 수 없습니다. (시트 '대기실채팅' 탭 기록은 남음)\n\n진행할까요?`)) return;
+  clearChat(0);
+});
 
 /* ── ZOOM 링크 (회차별, 스크립트 속성에 저장 → 재배포 불필요) ── */
 function renderZoom(link, force){
