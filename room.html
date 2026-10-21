@@ -225,6 +225,8 @@ function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(C
 async function refresh(){
   try{
     const r = await api('op_state', { session });
+    if (!r.ok && r.auth){ clearTimeout(timer); timer = null; try{ sessionStorage.removeItem('dm_room'); }catch(_){}   // 코드가 바뀌면 반복 요청으로 잠기지 않도록 로그인 화면으로
+      $('#app').style.display = 'none'; $('#login').style.display = 'grid'; $('#loginErr').textContent = r.error; return; }
     if (!r.ok){ toast(r.error); throw new Error(r.error); }
     fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간';
     apply(r);
