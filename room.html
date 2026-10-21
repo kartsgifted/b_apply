@@ -53,7 +53,16 @@ button{font:inherit;cursor:pointer}
 .conn i{width:8px;height:8px;border-radius:50%;background:#7CE0A3}
 .conn.off i{background:var(--apricot)}
 .top .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
-.warn{background:var(--apricot-soft);color:#8E3A12;font-weight:700;font-size:13.5px;padding:8px 20px;display:none}
+.zbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 20px;border-bottom:1px solid var(--line);background:var(--teal-soft);font-size:13.5px}
+.zbar.unset{background:var(--apricot-soft)}
+.zbar .zl{font-weight:800;color:var(--teal-ink);white-space:nowrap}
+.zbar.unset .zl{color:#8E3A12}
+.zbar .zv{flex:1;min-width:160px;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zbar .zhint{flex:1;min-width:160px;color:#8E3A12;font-weight:600}
+.zbar input{flex:1;min-width:220px;font:inherit;font-size:14px;padding:8px 11px;border:1.5px solid var(--line-strong);border-radius:9px;outline:none;background:#fff}
+.zbar input:focus{border-color:var(--teal)}
+.zbar .zerr{width:100%;color:var(--coral);font-weight:700;font-size:13px}
+.zbar .zerr:empty{display:none}
 
 .body{flex:1;display:grid;grid-template-columns:minmax(420px,1.25fr) 1fr;min-height:0}
 .left{overflow-y:auto;padding:16px 16px 30px;border-right:1px solid var(--line)}
@@ -109,7 +118,7 @@ button{font:inherit;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 @media (max-width:900px){
-  .body{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr}
   .left{border-right:0;border-bottom:1px solid var(--line);max-height:55vh}
   .tabs{margin-left:0}
 }
@@ -121,8 +130,8 @@ button{font:inherit;cursor:pointer}
   <form class="lcard" id="loginForm" autocomplete="off">
     <div class="eb">2026 K예술영재 프로젝트</div>
     <h1>대기실 운영</h1>
-    <p>무용분야 심화 멘토링 웹 대기실 관리 화면입니다.<br>관리자 코드를 입력해 주세요.</p>
-    <input type="password" id="code" placeholder="관리자 코드" autofocus>
+    <p>무용분야 심화 멘토링 웹 대기실 관리 화면입니다.<br>접속 코드를 입력해 주세요.</p>
+    <input type="password" id="code" placeholder="접속 코드" autofocus>
     <button class="btn" type="submit" id="loginBtn">입장</button>
     <div class="lerr" id="loginErr"></div>
   </form>
@@ -139,7 +148,7 @@ button{font:inherit;cursor:pointer}
       <button class="btn ghost sm" id="logoutBtn" type="button">나가기</button>
     </div>
   </header>
-  <div class="warn" id="warn">⚠ 이 회차의 ZOOM 링크가 아직 등록되지 않았습니다. Code.gs 상단 ZOOM_LINKS 에 링크를 넣고 '새 버전'으로 재배포해 주세요.</div>
+  <div class="zbar" id="zbar"></div>
 
   <div class="body">
     <div class="left">
@@ -183,6 +192,7 @@ async function api(action, body){
   return r.json();
 }
 
+let ZOOM_EDIT = false, ZOOM_CUR = null;   // 링크 입력 중에는 자동 새로고침이 입력칸을 덮지 않음
 let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
 
 /* ── 로그인 ── */
@@ -208,7 +218,7 @@ $('#soundBtn').addEventListener('click', ()=>{ sound = !sound; $('#soundBtn').te
 function renderTabs(){
   $('#tabs').innerHTML = [1,2,3].map(n=>`<button class="tab ${n===session?'on':''}" data-s="${n}" type="button">${SESS[n]}</button>`).join('');
 }
-$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; lastMsgId=-1; lastChatSig=''; renderTabs(); $('#list').innerHTML=''; $('#msgs').innerHTML=''; refresh(); });
+$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; lastMsgId=-1; lastChatSig=''; ZOOM_EDIT=false; ZOOM_CUR=null; renderTabs(); $('#list').innerHTML=''; $('#msgs').innerHTML=''; refresh(); });
 
 /* ── 주기적 새로고침 ── */
 function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
@@ -230,7 +240,7 @@ function beep(){
 function ago(t, now){ if (!t) return '미접속'; const s = Math.round((now - t)/1000); return s < 60 ? `${s}초 전` : `${Math.round(s/60)}분 전`; }
 function apply(r){
   DATA = r;
-  $('#warn').style.display = r.zoomSet ? 'none' : 'block';
+  renderZoom(r.zoomLink || '');
   const L = r.list, real = L.filter(x=>!x.test);
   const on = real.filter(x=>x.online).length, done = real.filter(x=>x.status==='done').length, called = L.find(x=>x.status==='called');
   $('#sum').innerHTML = `<div>접속 중<b>${on}</b>/${real.length}</div><div>대기<b>${real.filter(x=>x.status==='waiting').length}</b></div><div>완료<b>${done}</b></div><div>채팅<b>${r.msgs.filter(m=>m.f==='s').length}</b></div>`;
@@ -278,6 +288,46 @@ function renderChat(){
 function mention(name){ const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
 $('#msgs').addEventListener('click', e=>{ const w = e.target.closest('[data-at]'); if (w) mention(w.dataset.at); });
 
+/* ── ZOOM 링크 (회차별, 스크립트 속성에 저장 → 재배포 불필요) ── */
+function renderZoom(link, force){
+  if (ZOOM_EDIT && !force) return;
+  if (link === ZOOM_CUR && !force) return;
+  ZOOM_CUR = link;
+  const z = $('#zbar'), note = session===1 ? ' · 테스트 계정도 이 링크 사용' : '';
+  z.classList.toggle('unset', !link);
+  if (ZOOM_EDIT || !link){
+    z.innerHTML = `<span class="zl">${link ? '🎥 ZOOM 링크 변경' : '⚠ ZOOM 링크 미등록'} · ${SESS[session]}</span>
+      <input id="zIn" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://us06web.zoom.us/j/123456789?pwd=… (암호 포함 초대 링크)" value="${esc(link)}">
+      <button class="btn sm" id="zSave" type="button">저장</button>
+      ${link ? `<button class="btn ghost sm" id="zCancel" type="button">취소</button><button class="btn ghost sm" id="zDel" type="button">삭제</button>` : ''}
+      <div class="zerr" id="zErr"></div>`;
+  } else {
+    z.innerHTML = `<span class="zl">🎥 ZOOM 링크 등록됨 · ${SESS[session]}${note}</span>
+      <span class="zv" title="${esc(link)}">${esc(link)}</span>
+      <a class="btn ghost sm" href="${esc(link)}" target="_blank" rel="noopener" style="text-decoration:none">열어 보기</a>
+      <button class="btn ghost sm" id="zEdit" type="button">변경</button>`;
+  }
+}
+async function saveZoom(url){
+  const btn = $('#zSave'); if (btn) btn.disabled = true;
+  try{
+    const r = await api('op_zoom', { session, url });
+    if (!r.ok){ $('#zErr') ? $('#zErr').textContent = r.error : toast(r.error); return; }
+    ZOOM_EDIT = false; renderZoom(r.zoomLink, true);
+    toast(url ? `${SESS[session]} ZOOM 링크를 저장했습니다` : `${SESS[session]} ZOOM 링크를 삭제했습니다`);
+  }catch(_){ $('#zErr') && ($('#zErr').textContent = '연결에 문제가 있습니다. 다시 눌러 주세요.'); }
+  finally{ if (btn) btn.disabled = false; }
+}
+$('#zbar').addEventListener('click', e=>{
+  const id = e.target.id;
+  if (id==='zEdit'){ ZOOM_EDIT = true; renderZoom(ZOOM_CUR, true); const i=$('#zIn'); i.focus(); i.select(); }
+  else if (id==='zCancel'){ ZOOM_EDIT = false; renderZoom(ZOOM_CUR, true); }
+  else if (id==='zSave'){ const v = $('#zIn').value.trim(); if (!v){ $('#zErr').textContent = '링크를 붙여 넣어 주세요.'; return; } saveZoom(v); }
+  else if (id==='zDel'){ if (confirm(`${SESS[session]} ZOOM 링크를 삭제할까요?\n삭제하면 입장 허용된 학생에게 링크가 보이지 않습니다.`)) saveZoom(''); }
+});
+$('#zbar').addEventListener('focusin', e=>{ if (e.target.id==='zIn') ZOOM_EDIT = true; });
+$('#zbar').addEventListener('keydown', e=>{ if (e.target.id==='zIn' && e.key==='Enter'){ e.preventDefault(); $('#zSave').click(); } else if (e.key==='Escape' && ZOOM_CUR){ ZOOM_EDIT=false; renderZoom(ZOOM_CUR, true); } });
+
 /* ── 조작 ── */
 $('#list').addEventListener('click', async e=>{
   const card = e.target.closest('.st'); if (!card) return;
@@ -285,6 +335,7 @@ $('#list').addEventListener('click', async e=>{
   if (b){
     const to = b.dataset.set;
     const other = DATA.list.find(v=>v.status==='called' && v.name!==name);
+    if (to==='called' && !ZOOM_CUR && !confirm(`${SESS[session]} ZOOM 링크가 아직 등록되지 않았습니다.\n입장 허용해도 학생에게 링크가 보이지 않습니다. 계속할까요?`)) return;
     if (to==='called' && other && !confirm(`${other.name} 학생이 아직 '입장 허용' 상태입니다. 그대로 두고 ${name} 학생도 입장 허용할까요?`)) return;
     b.disabled = true;
     const r = await api('op_set', { name, status: to });
