@@ -191,7 +191,7 @@ async function api(action, body){
   return r.json();
 }
 
-let ME = null, TOKEN = '', timer = null, lastStatus = '', lastMsgId = 0, audio = null, fails = 0;
+let ME = null, TOKEN = '', timer = null, lastStatus = '', lastSig = '', lastMsgId = 0, audio = null, fails = 0;
 
 /* ── 본인 확인 ── */
 $('#birth').addEventListener('input', e=>{ e.target.value = e.target.value.replace(/\D/g,'').slice(0,8); });
@@ -292,13 +292,14 @@ $('#sendForm').addEventListener('submit', async e=>{
 
 /* ── 실시간 확인 ── */
 async function poll(once){
-  clearTimeout(timer);
+  if (!once) clearTimeout(timer);
   if (!ME) return;
   try{
     const r = await api('wr_poll', { name: ME.name, token: TOKEN });
     if (!r.ok){ if (r.auth) return logout(); throw new Error(r.error); }
     fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간 연결됨';
-    if (r.status !== lastStatus || r.status === 'called'){ renderStatus(r); }
+    const sig = [r.status, r.zoom, r.current, r.ahead].join('|');
+    if (sig !== lastSig){ renderStatus(r); lastSig = sig; }
     if (r.status === 'called' && lastStatus !== 'called') alertCalled();
     if (r.status !== 'called' && lastStatus === 'called') document.title = '무용분야 심화 멘토링 대기실';
     lastStatus = r.status;
@@ -317,7 +318,7 @@ $('#copyBtn').addEventListener('click', async ()=>{
 });
 function logout(){
   try { sessionStorage.removeItem('dm_wr'); } catch(_){}
-  ME = null; TOKEN = ''; lastStatus = ''; lastMsgId = 0; clearTimeout(timer);
+  ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; clearTimeout(timer);
   $('#room').style.display = 'none'; $('#login').style.display = 'block'; $('#conn').hidden = true;
   $('#msgs').dataset.ready = ''; $('#name').value = ''; $('#birth').value = '';
 }
