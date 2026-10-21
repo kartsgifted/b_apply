@@ -199,7 +199,7 @@ async function api(action, body){
   return r.json();
 }
 
-let PENDING = [], pid = 0, lastPendSig = '', lastBc = [];   // 보내는 중인 내 메시지(바로 화면에 표시)
+let PENDING = [], pid = 0, lastPendSig = '', lastBc = [], lastGv = 0;   // 보내는 중인 내 메시지(바로 화면에 표시)
 let ME = null, TOKEN = '', timer = null, lastStatus = '', lastSig = '', lastMsgId = 0, audio = null, fails = 0;
 
 /* ── 본인 확인 ── */
@@ -273,16 +273,18 @@ function alertCalled(){
 }
 
 /* ── 채팅 ── */
-function renderMsgs(msgs, bc){
+function renderMsgs(msgs, bc, gv){
   $('#bc').hidden = !bc.length;
   $('#bc').innerHTML = bc.slice(-3).map(b=>`<div><b>📢 운영진 공지</b> ${esc(b.x)} <small style="color:var(--muted)">${hhmm(b.t)}</small></div>`).join('');
-  if (msgs && msgs.length){   // 이미 화면에 있는 것보다 오래된 목록이면 무시(깜빡임 방지)
+  let force = false;   // 운영진이 채팅을 지우면 버전(gv)이 올라감 → 새로 그림
+  if (msgs && gv != null){ if (gv < lastGv) msgs = null; else if (gv > lastGv){ lastGv = gv; force = true; } }
+  if (msgs && msgs.length && !force){   // 이미 화면에 있는 것보다 오래된 목록이면 무시(깜빡임 방지)
     const tail = msgs[msgs.length-1];
     if (tail.i < lastMsgId && (renderMsgs.cur || []).some(m=>m.i===tail.i && m.t===tail.t)) msgs = null;
   }
   if (msgs) renderMsgs.cur = msgs; else msgs = renderMsgs.cur || [];
   const last = msgs.length ? msgs[msgs.length-1].i : 0, pendSig = PENDING.map(p=>p.id).join(',');
-  if (last === lastMsgId && pendSig === lastPendSig && $('#msgs').dataset.ready) return;
+  if (!force && last === lastMsgId && pendSig === lastPendSig && $('#msgs').dataset.ready) return;
   lastPendSig = pendSig;
   const box = $('#msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
   box.dataset.ready = '1';
@@ -308,7 +310,7 @@ $('#sendForm').addEventListener('submit', async e=>{
     PENDING = PENDING.filter(q=>q !== p);
     if (res.ok){
       const l = res.msgs.length ? res.msgs[res.msgs.length-1].i : 0;
-      if (seq > APPLIED || l >= lastMsgId){ APPLIED = Math.max(APPLIED, seq); renderMsgs(res.msgs, lastBc); } else renderMsgs(null, lastBc);
+      if (seq > APPLIED || l >= lastMsgId){ APPLIED = Math.max(APPLIED, seq); renderMsgs(res.msgs, lastBc, res.gv); } else renderMsgs(null, lastBc);
     }
     else { renderMsgs(null, lastBc); $('#text').value = text; alert(res.error || '보내지 못했습니다.'); }
   }catch(_){ PENDING = PENDING.filter(q=>q !== p); renderMsgs(null, lastBc); $('#text').value = text; alert('연결에 문제가 있습니다. 다시 보내 주세요.'); }
@@ -330,7 +332,7 @@ async function poll(once){
     if (r.status === 'called' && lastStatus !== 'called') alertCalled();
     if (r.status !== 'called' && lastStatus === 'called') document.title = '무용분야 심화 멘토링 대기실';
     lastStatus = r.status;
-    renderMsgs(r.msgs, r.bc);
+    renderMsgs(r.msgs, r.bc, r.gv);
     $('#onlineCnt').textContent = ME.test ? '테스트 계정 · 1회차 방' : `지금 ${r.online}명 접속 중`;
   }catch(e){
     if (e === 0){ if (!once) timer = setTimeout(poll, document.hidden ? CONFIG.POLL_HIDDEN_MS : CONFIG.POLL_MS); return; }
@@ -347,7 +349,7 @@ $('#copyBtn').addEventListener('click', async ()=>{
 });
 function logout(){
   try { sessionStorage.removeItem('dm_wr'); } catch(_){}
-  ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; PENDING = []; lastPendSig = ''; renderMsgs.cur = []; clearTimeout(timer);
+  ME = null; TOKEN = ''; lastStatus = ''; lastSig = ''; lastMsgId = 0; PENDING = []; lastPendSig = ''; lastGv = 0; renderMsgs.cur = []; clearTimeout(timer);
   $('#room').style.display = 'none'; $('#login').style.display = 'block'; $('#conn').hidden = true;
   $('#msgs').dataset.ready = ''; $('#name').value = ''; $('#birth').value = '';
 }
