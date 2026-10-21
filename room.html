@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>대기실 운영 · 무용 심화 멘토링</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+@font-face{font-family:'Paperlogy';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Paperlogy';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+:root{
+  --teal:#176C86; --teal-deep:#1C6077; --teal-ink:#0F4252; --teal-soft:#E6F0F3;
+  --ivory:#FAF9F5; --paper:#fff; --ink:#212326; --muted:#5F6368;
+  --coral:#E84958; --coral-soft:#FDECEE; --apricot:#FFB098; --apricot-soft:#FFE9E0;
+  --green:#1F9D61; --grey-soft:#EEEEEC;
+  --line:rgba(33,35,38,.12); --line-strong:rgba(33,35,38,.22);
+  --head:'Paperlogy','Pretendard Variable',Pretendard,sans-serif;
+  --body:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;word-break:keep-all}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.25}
+button{font:inherit;cursor:pointer}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:800;font-size:14px;background:var(--teal);color:#fff;white-space:nowrap}
+.btn:hover{filter:brightness(.95)}
+.btn.coral{background:var(--coral)}
+.btn.ghost{background:var(--paper);color:var(--ink);border:1.5px solid var(--line-strong)}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* 로그인 */
+#login{min-height:100vh;display:grid;place-items:center;background:var(--teal-deep);padding:20px}
+.lcard{width:100%;max-width:380px;background:#fff;border-radius:18px;padding:30px 26px}
+.lcard .eb{font-family:var(--head);font-weight:600;font-size:12px;letter-spacing:.12em;color:var(--teal)}
+.lcard h1{font-size:24px;font-weight:800;margin:8px 0 6px}
+.lcard p{color:var(--muted);margin:0 0 18px;font-size:14px}
+.lcard input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:10px;outline:none}
+.lcard .btn{width:100%;margin-top:10px;padding:13px;font-size:15px}
+.lerr{color:var(--coral);font-size:13.5px;min-height:20px;margin-top:8px}
+
+/* 앱 */
+#app{display:none;height:100vh;flex-direction:column}
+.top{background:var(--teal-deep);color:#fff;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top h1{font-size:19px;font-weight:800}
+.top small{display:block;font-size:12px;color:rgba(255,255,255,.75);font-weight:600}
+.tabs{display:flex;gap:6px;margin-left:12px}
+.tab{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:9px;padding:7px 12px;font-weight:700;font-size:14px}
+.tab.on{background:#fff;color:var(--teal-ink)}
+.top .sp{margin-left:auto;display:flex;align-items:center;gap:10px}
+.conn{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:6px}
+.conn i{width:8px;height:8px;border-radius:50%;background:#7CE0A3}
+.conn.off i{background:var(--apricot)}
+.top .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.warn{background:var(--apricot-soft);color:#8E3A12;font-weight:700;font-size:13.5px;padding:8px 20px;display:none}
+
+.body{flex:1;display:grid;grid-template-columns:minmax(420px,1.25fr) 1fr;min-height:0}
+.left{overflow-y:auto;padding:16px 16px 30px;border-right:1px solid var(--line)}
+.right{display:flex;flex-direction:column;min-height:0;background:#fff}
+
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sum div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--muted)}
+.sum b{font-family:var(--head);font-size:18px;color:var(--ink);margin-left:4px}
+.now{background:var(--coral);color:#fff;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-weight:700;display:none}
+.now b{font-family:var(--head);font-size:17px}
+
+.st{display:grid;grid-template-columns:34px 1fr auto;gap:4px 10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.st:hover{border-color:var(--line-strong)}
+.st.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.12)}
+.st.called{background:#FFF5F6;border-color:var(--coral)}
+.st.done{opacity:.55}
+.st .no{font-family:var(--head);font-weight:800;font-size:18px;color:var(--teal);text-align:center}
+.st .nm{font-weight:800;font-size:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.st .meta{grid-column:2;font-size:12.5px;color:var(--muted)}
+.st .last{grid-column:2/4;font-size:13px;color:var(--ink);background:var(--ivory);border-radius:8px;padding:5px 9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st .act{grid-row:1/3;grid-column:3;display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.dot{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px}
+.dot i{width:7px;height:7px;border-radius:50%}
+.dot.on{background:#E3F6EC;color:var(--green)} .dot.on i{background:var(--green)}
+.dot.off{background:var(--grey-soft);color:var(--muted)} .dot.off i{background:#B5B9BD}
+.badge{font-size:12px;font-weight:800;border-radius:999px;padding:2px 8px}
+.badge.called{background:var(--coral);color:#fff}
+.badge.done{background:var(--grey-soft);color:var(--muted)}
+.badge.waiting{background:var(--teal-soft);color:var(--teal-ink)}
+.unread{background:var(--coral);color:#fff;font-size:12px;font-weight:800;border-radius:999px;min-width:20px;height:20px;display:inline-grid;place-items:center;padding:0 6px}
+.brk{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
+
+/* 오른쪽: 공지 + 채팅 */
+.bcbox{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--apricot-soft)}
+.bcbox h3{font-size:15px;font-weight:800;margin-bottom:8px}
+.bcbox form,.cin{display:flex;gap:8px}
+.bcbox input,.cin input{flex:1;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line-strong);border-radius:10px;outline:none;background:#fff}
+.bclist{margin-top:8px;font-size:13px;color:#7A3A2A;max-height:64px;overflow:auto}
+.chead{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chead b{font-family:var(--head);font-size:18px;font-weight:800}
+.chead .sp2{margin-left:auto;display:flex;gap:6px}
+.msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:var(--ivory)}
+.msgs .empty{margin:auto;color:var(--muted);text-align:center;font-size:14px}
+.m{max-width:80%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.m small{display:block;font-size:11px;opacity:.7;margin-top:3px}
+.m.s{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:5px 12px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px 0}
+.quick button{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:4px 10px;font-size:12.5px}
+.cin{padding:10px 16px 14px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:900px){
+  .body{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .left{border-right:0;border-bottom:1px solid var(--line);max-height:55vh}
+  .tabs{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <form class="lcard" id="loginForm" autocomplete="off">
+    <div class="eb">2026 K예술영재 프로젝트</div>
+    <h1>대기실 운영</h1>
+    <p>무용분야 심화 멘토링 웹 대기실 관리 화면입니다.<br>관리자 코드를 입력해 주세요.</p>
+    <input type="password" id="code" placeholder="관리자 코드" autofocus>
+    <button class="btn" type="submit" id="loginBtn">입장</button>
+    <div class="lerr" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="app">
+  <header class="top">
+    <div><small>무용분야 심화 멘토링</small><h1>대기실 운영</h1></div>
+    <div class="tabs" id="tabs"></div>
+    <div class="sp">
+      <span class="conn" id="conn"><i></i><span>실시간</span></span>
+      <button class="btn ghost sm" id="soundBtn" type="button">🔔 알림음 켬</button>
+      <button class="btn ghost sm" id="resetBtn" type="button">회차 초기화</button>
+      <button class="btn ghost sm" id="logoutBtn" type="button">나가기</button>
+    </div>
+  </header>
+  <div class="warn" id="warn">⚠ 이 회차의 ZOOM 링크가 아직 등록되지 않았습니다. Code.gs 상단 ZOOM_LINKS 에 링크를 넣고 '새 버전'으로 재배포해 주세요.</div>
+
+  <div class="body">
+    <div class="left">
+      <div class="sum" id="sum"></div>
+      <div class="now" id="now"></div>
+      <div id="list"></div>
+    </div>
+    <div class="right">
+      <div class="bcbox">
+        <h3>📢 이 회차 대기 학생 전체 공지</h3>
+        <form id="bcForm"><input id="bcText" maxlength="300" placeholder="예: 앞 순서가 5분 정도 늦어지고 있습니다. 조금만 기다려 주세요."><button class="btn coral" type="submit">전체 보내기</button></form>
+        <div class="bclist" id="bcList"></div>
+      </div>
+      <div class="chead" id="chead"><span style="color:var(--muted)">왼쪽에서 학생을 고르면 1:1 채팅이 열립니다.</span></div>
+      <div class="msgs" id="msgs"><div class="empty">학생을 선택해 주세요.</div></div>
+      <div class="quick" id="quick" hidden>
+        <button type="button">잠시 후 입장 안내드릴게요. 조금만 기다려 주세요.</button>
+        <button type="button">ZOOM 표시 이름을 ‘무용_이름’으로 바꿔 주세요.</button>
+        <button type="button">비디오와 오디오를 켜고 입장해 주세요.</button>
+        <button type="button">곧 순서입니다. 화면을 켜 두세요.</button>
+      </div>
+      <form class="cin" id="chatForm" hidden><input id="chatText" maxlength="300" placeholder="메시지 입력 (Enter로 보내기)"><button class="btn" type="submit">보내기</button></form>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxZRwa_d4YPL2BD_HqAMc6dMNeJJU0AxC9BftLSIIlWZs1cu45dO6caSkKkuBXcCOiN/exec',
+  POLL_MS: 3000,
+};
+const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hhmm = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Seoul' });
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t.h); t.h=setTimeout(()=>t.classList.remove('on'),1800); }
+async function api(action, body){
+  const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify(Object.assign({ action, code: CODE }, body)) });
+  return r.json();
+}
+
+let CODE = '', session = 1, sel = '', DATA = null, timer = null, fails = 0, sound = true, audio = null, prevUnread = {}, lastChatSig = '';
+
+/* ── 로그인 ── */
+$('#loginForm').addEventListener('submit', async e=>{
+  e.preventDefault(); CODE = $('#code').value.trim(); if (!CODE) return;
+  try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
+  $('#loginBtn').disabled = true; $('#loginErr').textContent = '';
+  try{
+    const r = await api('op_state', { session });
+    if (!r.ok){ $('#loginErr').textContent = r.error; return; }
+    try { sessionStorage.setItem('dm_room', CODE); } catch(_){}
+    start(r);
+  }catch(_){ $('#loginErr').textContent = '연결에 문제가 있습니다.'; }
+  finally{ $('#loginBtn').disabled = false; }
+});
+function start(r){
+  $('#login').style.display = 'none'; $('#app').style.display = 'flex';
+  renderTabs(); apply(r); schedule();
+}
+$('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); }catch(_){} location.reload(); });
+$('#soundBtn').addEventListener('click', ()=>{ sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
+
+function renderTabs(){
+  $('#tabs').innerHTML = [1,2,3].map(n=>`<button class="tab ${n===session?'on':''}" data-s="${n}" type="button">${SESS[n]}</button>`).join('');
+}
+$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; sel=''; prevUnread={}; lastChatSig=''; renderTabs(); $('#list').innerHTML=''; refresh(); });
+
+/* ── 주기적 새로고침 ── */
+function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
+async function refresh(){
+  try{
+    const r = await api('op_state', { session, open: sel });
+    if (!r.ok){ toast(r.error); throw new Error(r.error); }
+    fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간';
+    apply(r);
+  }catch(_){ fails++; $('#conn').classList.add('off'); $('#conn').querySelector('span').textContent = '재연결 중…'; }
+  schedule();
+}
+function beep(){
+  if (!sound || !audio) return;
+  try{ audio.resume && audio.resume(); const o=audio.createOscillator(), g=audio.createGain(); o.frequency.value=660; o.connect(g); g.connect(audio.destination);
+    g.gain.setValueAtTime(.0001,audio.currentTime); g.gain.exponentialRampToValueAtTime(.25,audio.currentTime+.02); g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.25); o.start(); o.stop(audio.currentTime+.27);}catch(_){}
+}
+
+function ago(t, now){ if (!t) return '미접속'; const s = Math.round((now - t)/1000); return s < 60 ? `${s}초 전` : `${Math.round(s/60)}분 전`; }
+function apply(r){
+  DATA = r;
+  $('#warn').style.display = r.zoomSet ? 'none' : 'block';
+  const L = r.list, real = L.filter(x=>!x.test);
+  const on = real.filter(x=>x.online).length, done = real.filter(x=>x.status==='done').length, called = L.find(x=>x.status==='called');
+  $('#sum').innerHTML = `<div>접속 중<b>${on}</b>/${real.length}</div><div>대기<b>${real.filter(x=>x.status==='waiting').length}</b></div><div>완료<b>${done}</b></div><div>새 메시지<b>${L.reduce((a,x)=>a+x.unread,0)}</b></div>`;
+  $('#now').style.display = called ? 'block' : 'none';
+  if (called) $('#now').innerHTML = `지금 입장 허용됨 · <b>${called.test?'테스트':called.order+'번 '}${esc(called.name)}</b> (${esc(called.time)})`;
+
+  // 새 메시지 알림
+  let ding = false;
+  L.forEach(x=>{ if ((prevUnread[x.name] ?? x.unread) < x.unread) ding = true; prevUnread[x.name] = x.unread; });
+  if (ding) beep();
+
+  let html = '';
+  L.forEach((x, k)=>{
+    html += `<div class="st ${x.status} ${x.name===sel?'sel':''}" data-n="${esc(x.name)}">
+      <div class="no">${x.test?'T':x.order}</div>
+      <div class="nm">${esc(x.name)} <span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, r.now)}</span>
+        <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>${x.unread?`<span class="unread">${x.unread}</span>`:''}</div>
+      <div class="act">
+        ${x.status==='waiting' ? `<button class="btn coral sm" data-set="called" type="button">입장 허용</button>` : ''}
+        ${x.status==='called' ? `<button class="btn sm" data-set="done" type="button">멘토링 완료</button>` : ''}
+        ${x.status!=='waiting' ? `<button class="btn ghost sm" data-set="waiting" type="button">대기로</button>` : ''}
+      </div>
+      <div class="meta">${x.test?'테스트 계정':`대기실 ${esc(x.wait)} · 멘토링 ${esc(x.time)}`}</div>
+      ${x.last?`<div class="last">${x.last.f==='s'?'💬 ':x.last.f==='o'?'↩ ':'🔔 '}${esc(x.last.x)} · ${hhmm(x.last.t)}</div>`:''}
+    </div>`;
+    if (!x.test && x.order % 10 === 5) html += `<div class="brk">— 휴식 —</div>`;
+  });
+  $('#list').innerHTML = html;
+
+  $('#bcList').innerHTML = r.bc.slice().reverse().map(b=>`<div>${hhmm(b.t)} · ${esc(b.x)}</div>`).join('');
+  renderChat();
+}
+function renderChat(){
+  const x = DATA && DATA.list.find(v=>v.name===sel);
+  if (!x){ $('#chatForm').hidden = true; $('#quick').hidden = true; return; }
+  $('#chatForm').hidden = false; $('#quick').hidden = false;
+  $('#chead').innerHTML = `<b>${esc(x.name)}</b><span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, DATA.now)}</span>
+    <span style="color:var(--muted);font-size:13px">${x.test?'테스트 계정':`${x.order}번 · ${esc(x.time)}`}</span>`;
+  const msgs = x.msgs || [];
+  const sig = x.name + '|' + (msgs.length ? msgs[msgs.length-1].i : 0);
+  if (sig === lastChatSig) return;
+  lastChatSig = sig;
+  const box = $('#msgs');
+  box.innerHTML = msgs.length ? msgs.map(m => m.f==='sys' ? `<div class="m sys">${esc(m.x)}</div>`
+      : `<div class="m ${m.f}">${esc(m.x)}<small>${m.f==='o'?'운영진 · ':''}${hhmm(m.t)}</small></div>`).join('')
+    : `<div class="empty">아직 대화가 없습니다.</div>`;
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ── 조작 ── */
+$('#list').addEventListener('click', async e=>{
+  const card = e.target.closest('.st'); if (!card) return;
+  const name = card.dataset.n, b = e.target.closest('[data-set]');
+  if (b){
+    const to = b.dataset.set;
+    const other = DATA.list.find(v=>v.status==='called' && v.name!==name);
+    if (to==='called' && other && !confirm(`${other.name} 학생이 아직 '입장 허용' 상태입니다. 그대로 두고 ${name} 학생도 입장 허용할까요?`)) return;
+    b.disabled = true;
+    const r = await api('op_set', { name, status: to });
+    if (!r.ok) toast(r.error); else toast(to==='called' ? `${name} 학생 입장 허용` : to==='done' ? `${name} 학생 완료` : `${name} 학생 대기로`);
+    if (to==='called'){ sel = name; lastChatSig=''; }
+    refresh(); return;
+  }
+  sel = name; lastChatSig = '';
+  document.querySelectorAll('.st').forEach(el=>el.classList.toggle('sel', el.dataset.n===sel));
+  renderChat(); refresh(); $('#chatText').focus();
+});
+$('#chatForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const text = $('#chatText').value.trim(); if (!text || !sel) return;
+  $('#chatText').value = '';
+  const r = await api('op_send', { name: sel, text });
+  if (!r.ok){ toast(r.error); $('#chatText').value = text; }
+  lastChatSig = ''; refresh();
+});
+$('#quick').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; $('#chatText').value = b.textContent; $('#chatText').focus(); });
+$('#bcForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const text = $('#bcText').value.trim(); if (!text) return;
+  if (!confirm(`${SESS[session]} 대기 학생 전체에게 보낼까요?\n\n${text}`)) return;
+  const r = await api('op_bc', { session, text });
+  if (!r.ok) toast(r.error); else { $('#bcText').value = ''; toast('전체 공지를 보냈습니다'); }
+  refresh();
+});
+$('#resetBtn').addEventListener('click', async ()=>{
+  if (!confirm(`${SESS[session]}의 입장 상태·채팅·공지를 모두 지웁니다. (리허설 후 실제 운영 전에 사용)\n시트의 채팅 기록은 남습니다. 진행할까요?`)) return;
+  const r = await api('op_reset', { session }); toast(r.ok ? '초기화했습니다' : r.error); sel=''; lastChatSig=''; prevUnread={}; refresh();
+});
+
+/* 같은 탭에서는 코드 다시 묻지 않음 */
+(async ()=>{ try{ const c = sessionStorage.getItem('dm_room'); if (c){ CODE = c; const r = await api('op_state', { session }); if (r.ok) start(r); } }catch(_){} })();
+</script>
+</body>
+</html>
