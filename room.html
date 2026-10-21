@@ -100,6 +100,7 @@ button{font:inherit;cursor:pointer}
 .m{max-width:80%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
 .m small{display:block;font-size:11px;opacity:.7;margin-top:3px}
 .m.s{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.s .who{display:block;font-size:12px;font-weight:800;color:var(--teal);margin-bottom:2px;cursor:pointer}
 .m.o{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
 .m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:13px;border-radius:999px;padding:5px 12px}
 .quick{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px 0}
@@ -148,19 +149,20 @@ button{font:inherit;cursor:pointer}
     </div>
     <div class="right">
       <div class="bcbox">
-        <h3>📢 이 회차 대기 학생 전체 공지</h3>
+        <h3>📢 상단 고정 공지 <span style="font-weight:500;font-size:12.5px;color:#8E3A12">(학생 채팅창 위에 고정)</span></h3>
         <form id="bcForm"><input id="bcText" maxlength="300" placeholder="예: 앞 순서가 5분 정도 늦어지고 있습니다. 조금만 기다려 주세요."><button class="btn coral" type="submit">전체 보내기</button></form>
         <div class="bclist" id="bcList"></div>
       </div>
-      <div class="chead" id="chead"><span style="color:var(--muted)">왼쪽에서 학생을 고르면 1:1 채팅이 열립니다.</span></div>
-      <div class="msgs" id="msgs"><div class="empty">학생을 선택해 주세요.</div></div>
-      <div class="quick" id="quick" hidden>
+      <div class="chead" id="chead"><b>대기실 채팅</b><span style="color:var(--muted);font-size:13px" id="cheadSub"></span></div>
+      <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.</div></div>
+      <div class="quick" id="quick">
+        <button type="button">안녕하세요! 운영진입니다. 순서가 되면 입장 버튼을 열어 드릴게요.</button>
         <button type="button">잠시 후 입장 안내드릴게요. 조금만 기다려 주세요.</button>
         <button type="button">ZOOM 표시 이름을 ‘무용_이름’으로 바꿔 주세요.</button>
         <button type="button">비디오와 오디오를 켜고 입장해 주세요.</button>
         <button type="button">곧 순서입니다. 화면을 켜 두세요.</button>
       </div>
-      <form class="cin" id="chatForm" hidden><input id="chatText" maxlength="300" placeholder="메시지 입력 (Enter로 보내기)"><button class="btn" type="submit">보내기</button></form>
+      <form class="cin" id="chatForm"><input id="chatText" maxlength="300" placeholder="채팅방 전체에 보낼 메시지 (학생 이름을 누르면 @이름이 붙습니다)"><button class="btn" type="submit">보내기</button></form>
     </div>
   </div>
 </div>
@@ -168,7 +170,7 @@ button{font:inherit;cursor:pointer}
 
 <script>
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxZRwa_d4YPL2BD_HqAMc6dMNeJJU0AxC9BftLSIIlWZs1cu45dO6caSkKkuBXcCOiN/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxlDl4HN6qOaHON0t_xhAkrxNr0EcGAy8HM7G6o4Ij3JTbLSmEV8lBnUztPwx7qGKAy/exec',
   POLL_MS: 3000,
 };
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
@@ -181,7 +183,7 @@ async function api(action, body){
   return r.json();
 }
 
-let CODE = '', session = 1, sel = '', DATA = null, timer = null, fails = 0, sound = true, audio = null, prevUnread = {}, lastChatSig = '';
+let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
 
 /* ── 로그인 ── */
 $('#loginForm').addEventListener('submit', async e=>{
@@ -206,13 +208,13 @@ $('#soundBtn').addEventListener('click', ()=>{ sound = !sound; $('#soundBtn').te
 function renderTabs(){
   $('#tabs').innerHTML = [1,2,3].map(n=>`<button class="tab ${n===session?'on':''}" data-s="${n}" type="button">${SESS[n]}</button>`).join('');
 }
-$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; sel=''; prevUnread={}; lastChatSig=''; renderTabs(); $('#list').innerHTML=''; refresh(); });
+$('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!b) return; session=+b.dataset.s; lastMsgId=-1; lastChatSig=''; renderTabs(); $('#list').innerHTML=''; $('#msgs').innerHTML=''; refresh(); });
 
 /* ── 주기적 새로고침 ── */
 function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
 async function refresh(){
   try{
-    const r = await api('op_state', { session, open: sel });
+    const r = await api('op_state', { session });
     if (!r.ok){ toast(r.error); throw new Error(r.error); }
     fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간';
     apply(r);
@@ -231,28 +233,27 @@ function apply(r){
   $('#warn').style.display = r.zoomSet ? 'none' : 'block';
   const L = r.list, real = L.filter(x=>!x.test);
   const on = real.filter(x=>x.online).length, done = real.filter(x=>x.status==='done').length, called = L.find(x=>x.status==='called');
-  $('#sum').innerHTML = `<div>접속 중<b>${on}</b>/${real.length}</div><div>대기<b>${real.filter(x=>x.status==='waiting').length}</b></div><div>완료<b>${done}</b></div><div>새 메시지<b>${L.reduce((a,x)=>a+x.unread,0)}</b></div>`;
+  $('#sum').innerHTML = `<div>접속 중<b>${on}</b>/${real.length}</div><div>대기<b>${real.filter(x=>x.status==='waiting').length}</b></div><div>완료<b>${done}</b></div><div>채팅<b>${r.msgs.filter(m=>m.f==='s').length}</b></div>`;
   $('#now').style.display = called ? 'block' : 'none';
   if (called) $('#now').innerHTML = `지금 입장 허용됨 · <b>${called.test?'테스트':called.order+'번 '}${esc(called.name)}</b> (${esc(called.time)})`;
 
-  // 새 메시지 알림
-  let ding = false;
-  L.forEach(x=>{ if ((prevUnread[x.name] ?? x.unread) < x.unread) ding = true; prevUnread[x.name] = x.unread; });
-  if (ding) beep();
+  // 학생 새 메시지 알림
+  const maxId = r.msgs.length ? r.msgs[r.msgs.length-1].i : 0;
+  if (lastMsgId >= 0 && r.msgs.some(m=>m.i > lastMsgId && m.f==='s')) beep();
+  lastMsgId = maxId;
 
   let html = '';
   L.forEach((x, k)=>{
-    html += `<div class="st ${x.status} ${x.name===sel?'sel':''}" data-n="${esc(x.name)}">
+    html += `<div class="st ${x.status}" data-n="${esc(x.name)}">
       <div class="no">${x.test?'T':x.order}</div>
       <div class="nm">${esc(x.name)} <span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, r.now)}</span>
-        <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>${x.unread?`<span class="unread">${x.unread}</span>`:''}</div>
+        <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span></div>
       <div class="act">
         ${x.status==='waiting' ? `<button class="btn coral sm" data-set="called" type="button">입장 허용</button>` : ''}
         ${x.status==='called' ? `<button class="btn sm" data-set="done" type="button">멘토링 완료</button>` : ''}
         ${x.status!=='waiting' ? `<button class="btn ghost sm" data-set="waiting" type="button">대기로</button>` : ''}
       </div>
       <div class="meta">${x.test?'테스트 계정':`대기실 ${esc(x.wait)} · 멘토링 ${esc(x.time)}`}</div>
-      ${x.last?`<div class="last">${x.last.f==='s'?'💬 ':x.last.f==='o'?'↩ ':'🔔 '}${esc(x.last.x)} · ${hhmm(x.last.t)}</div>`:''}
     </div>`;
     if (!x.test && x.order % 10 === 5) html += `<div class="brk">— 휴식 —</div>`;
   });
@@ -262,21 +263,20 @@ function apply(r){
   renderChat();
 }
 function renderChat(){
-  const x = DATA && DATA.list.find(v=>v.name===sel);
-  if (!x){ $('#chatForm').hidden = true; $('#quick').hidden = true; return; }
-  $('#chatForm').hidden = false; $('#quick').hidden = false;
-  $('#chead').innerHTML = `<b>${esc(x.name)}</b><span class="dot ${x.online?'on':'off'}"><i></i>${x.online?'접속 중':ago(x.seenAt, DATA.now)}</span>
-    <span style="color:var(--muted);font-size:13px">${x.test?'테스트 계정':`${x.order}번 · ${esc(x.time)}`}</span>`;
-  const msgs = x.msgs || [];
-  const sig = x.name + '|' + (msgs.length ? msgs[msgs.length-1].i : 0);
+  const msgs = DATA.msgs || [], on = DATA.list.filter(x=>!x.test && x.online).length;
+  $('#cheadSub').textContent = `${SESS[session]} · 학생 ${on}명 접속 중`;
+  const sig = session + '|' + (msgs.length ? msgs[msgs.length-1].i : 0);
   if (sig === lastChatSig) return;
   lastChatSig = sig;
   const box = $('#msgs');
-  box.innerHTML = msgs.length ? msgs.map(m => m.f==='sys' ? `<div class="m sys">${esc(m.x)}</div>`
-      : `<div class="m ${m.f}">${esc(m.x)}<small>${m.f==='o'?'운영진 · ':''}${hhmm(m.t)}</small></div>`).join('')
-    : `<div class="empty">아직 대화가 없습니다.</div>`;
+  box.innerHTML = msgs.length ? msgs.map(m => m.f==='o'
+      ? `<div class="m o">${esc(m.x)}<small>운영진 · ${hhmm(m.t)}</small></div>`
+      : `<div class="m s"><span class="who" data-at="${esc(m.n)}">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
+    : `<div class="empty">아직 대화가 없습니다.<br>아래 문구 버튼으로 첫 인사를 보내 보세요.</div>`;
   box.scrollTop = box.scrollHeight;
 }
+function mention(name){ const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
+$('#msgs').addEventListener('click', e=>{ const w = e.target.closest('[data-at]'); if (w) mention(w.dataset.at); });
 
 /* ── 조작 ── */
 $('#list').addEventListener('click', async e=>{
@@ -289,17 +289,14 @@ $('#list').addEventListener('click', async e=>{
     b.disabled = true;
     const r = await api('op_set', { name, status: to });
     if (!r.ok) toast(r.error); else toast(to==='called' ? `${name} 학생 입장 허용` : to==='done' ? `${name} 학생 완료` : `${name} 학생 대기로`);
-    if (to==='called'){ sel = name; lastChatSig=''; }
     refresh(); return;
   }
-  sel = name; lastChatSig = '';
-  document.querySelectorAll('.st').forEach(el=>el.classList.toggle('sel', el.dataset.n===sel));
-  renderChat(); refresh(); $('#chatText').focus();
+  mention(name);
 });
 $('#chatForm').addEventListener('submit', async e=>{
-  e.preventDefault(); const text = $('#chatText').value.trim(); if (!text || !sel) return;
+  e.preventDefault(); const text = $('#chatText').value.trim(); if (!text) return;
   $('#chatText').value = '';
-  const r = await api('op_send', { name: sel, text });
+  const r = await api('op_send', { session, text });
   if (!r.ok){ toast(r.error); $('#chatText').value = text; }
   lastChatSig = ''; refresh();
 });
@@ -313,7 +310,7 @@ $('#bcForm').addEventListener('submit', async e=>{
 });
 $('#resetBtn').addEventListener('click', async ()=>{
   if (!confirm(`${SESS[session]}의 입장 상태·채팅·공지를 모두 지웁니다. (리허설 후 실제 운영 전에 사용)\n시트의 채팅 기록은 남습니다. 진행할까요?`)) return;
-  const r = await api('op_reset', { session }); toast(r.ok ? '초기화했습니다' : r.error); sel=''; lastChatSig=''; prevUnread={}; refresh();
+  const r = await api('op_reset', { session }); toast(r.ok ? '초기화했습니다' : r.error); lastChatSig=''; lastMsgId=-1; refresh();
 });
 
 /* 같은 탭에서는 코드 다시 묻지 않음 */
