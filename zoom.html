@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>무용분야 심화 멘토링 ZOOM 입장</title>
+<title>무용분야 심화 멘토링 대기실</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 @font-face{font-family:'Paperlogy';src:url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
@@ -21,65 +21,84 @@
 body{margin:0;background:var(--ivory);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;word-break:keep-all}
 h1,h2,h3{font-family:var(--head);margin:0;line-height:1.25}
 button{font:inherit;cursor:pointer}
-.wrap{max-width:640px;margin:0 auto;padding:0 18px}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
 
-.hero{background:var(--teal-deep);color:#fff;position:relative;overflow:hidden;padding:40px 0 34px}
-.hero svg{position:absolute;right:-140px;top:-50px;width:480px;opacity:.9;pointer-events:none}
+.hero{background:var(--teal-deep);color:#fff;position:relative;overflow:hidden;padding:34px 0 28px}
+.hero svg{position:absolute;right:-140px;top:-60px;width:460px;opacity:.9;pointer-events:none}
 .hero .wrap{position:relative}
 .eyebrow{font-family:var(--head);font-weight:600;font-size:12.5px;letter-spacing:.12em;color:var(--apricot)}
-.hero h1{font-weight:800;font-size:clamp(28px,7.5vw,40px);margin:10px 0 8px}
-.hero h1 span{display:block}
-.hero p{margin:0;color:rgba(255,255,255,.85);font-size:15.5px}
+.hero h1{font-weight:800;font-size:clamp(26px,7vw,36px);margin:8px 0 6px}
+.hero p{margin:0;color:rgba(255,255,255,.85);font-size:15px}
+.conn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);border-radius:999px;padding:4px 10px}
+.conn i{width:8px;height:8px;border-radius:50%;background:#7CE0A3}
+.conn.off i{background:#FFB098}
 
-main{padding:22px 0 50px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:16px}
-.card h2{font-size:20px;font-weight:800;margin-bottom:6px}
-.card .lead{margin:0 0 18px;color:var(--muted);font-size:15px}
+main{padding:18px 0 40px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 18px;margin-bottom:14px}
+.card h2{font-size:19px;font-weight:800;margin-bottom:6px}
+.lead{margin:0 0 16px;color:var(--muted);font-size:15px}
 label{display:block;font-weight:700;margin:0 0 6px;font-size:15px}
-input{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1.5px solid var(--line-strong);border-radius:11px;outline:none;background:#fff;color:var(--ink)}
-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.15)}
+input,textarea{width:100%;font:inherit;font-size:17px;padding:13px 14px;border:1.5px solid var(--line-strong);border-radius:11px;outline:none;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,108,134,.15)}
 .field{margin-bottom:14px}
 .hint{font-size:13px;color:var(--muted);margin-top:6px}
 .btn{border:0;border-radius:12px;padding:15px;font-weight:800;font-size:17px;background:var(--teal);color:#fff;width:100%}
-.btn:hover{background:var(--teal-ink)}
 .btn:disabled{opacity:.6;cursor:default}
 .err{color:var(--coral);font-size:14px;min-height:22px;margin-top:10px;font-weight:600}
 
-/* 입장 화면 */
-#enter{display:none}
-.hello{font-family:var(--head);font-weight:800;font-size:22px}
-.sched{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:14px 0 0;padding:14px 16px;background:var(--teal-soft);border-radius:12px;font-size:15.5px}
+#room{display:none}
+
+/* 상태 */
+.status{text-align:center;padding:24px 18px;border-width:2px;border-color:var(--teal)}
+.status .ic{font-size:40px;line-height:1}
+.status h2{font-size:23px;margin:10px 0 6px}
+.status p{margin:0;color:var(--muted);font-size:15px}
+.status .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
+.chip{background:var(--teal-soft);color:var(--teal-ink);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:700}
+.chip.hot{background:var(--apricot-soft);color:#A3303B}
+.status.called{background:var(--coral);border-color:var(--coral);color:#fff;animation:glow 1.6s ease-in-out infinite}
+.status.called p{color:rgba(255,255,255,.92)}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(232,73,88,.18)}}
+.zbtn{display:block;width:100%;margin-top:16px;padding:18px;border-radius:14px;border:0;background:#fff;color:var(--coral);font-weight:800;font-size:20px;text-decoration:none}
+.status .fallback{display:block;margin-top:10px;font-size:13.5px;color:#fff}
+.status .fallback a{color:#fff;font-weight:700}
+.status.done{border-color:var(--line)}
+.dots::after{content:'';animation:dots 1.5s steps(4) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+
+.sched{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:0;font-size:15px}
 .sched dt{color:var(--muted);font-weight:600}
 .sched dd{margin:0;font-weight:700}
-.sched dd.big{color:var(--coral);font-family:var(--head);font-size:20px;line-height:1.3}
-
-.zoom{border:2px solid var(--teal)}
-.zh{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.zh h2{margin:0}
-.pill{margin-left:auto;font-size:13px;font-weight:800;border-radius:999px;padding:4px 12px;background:#ECECEA;color:var(--muted);white-space:nowrap}
-.pill.on{background:var(--coral);color:#fff}
-.zbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:18px 14px;border:0;border-radius:14px;font-weight:800;font-size:19px;line-height:1.35;text-align:center;background:var(--coral);color:#fff;box-shadow:0 8px 22px rgba(232,73,88,.32);animation:pulse 1.8s ease-in-out infinite;text-decoration:none}
-.zbtn:disabled{background:#DADCDE;color:#6B7075;box-shadow:none;animation:none;cursor:not-allowed}
-@keyframes pulse{50%{box-shadow:0 8px 32px rgba(232,73,88,.6)}}
-.wait{margin:14px 0 0;padding:14px 16px;background:var(--apricot-soft);border-radius:12px;text-align:center}
-.wait b.msg{display:block;font-size:16.5px}
-.wait .cd{display:block;font-family:var(--head);font-weight:800;font-size:26px;color:var(--coral);margin-top:4px;font-variant-numeric:tabular-nums}
-.wait .sub{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
-.ready{margin:12px 0 0;text-align:center;font-size:14.5px;color:var(--muted)}
-.ready a{color:var(--teal);font-weight:700}
-.zname{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;background:var(--teal-soft);border-radius:12px;padding:12px 14px;font-size:15px}
+.zname{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;background:var(--teal-soft);border-radius:12px;padding:11px 14px;font-size:15px}
 .zname b{font-size:17px;color:var(--teal-ink)}
 .zname button{margin-left:auto;border:1.5px solid var(--teal);background:#fff;color:var(--teal);border-radius:9px;padding:5px 12px;font-weight:700;font-size:14px}
 
-.rules h2{margin-bottom:12px}
-.rules ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.rules li{background:var(--ivory);border-radius:12px;padding:12px 14px}
+/* 채팅 */
+.chat h2{display:flex;align-items:center;gap:8px}
+.chat h2 small{font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted)}
+.bc{background:var(--apricot-soft);border-radius:12px;padding:10px 12px;margin:10px 0 0;font-size:14.5px}
+.bc b{color:#A3303B}
+.bc div+div{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(163,48,59,.25)}
+.msgs{height:300px;overflow-y:auto;background:var(--ivory);border-radius:12px;padding:12px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.msgs .empty{margin:auto;color:var(--muted);font-size:14px;text-align:center}
+.m{max-width:82%;padding:9px 12px;border-radius:14px;font-size:15px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+.m small{display:block;font-size:11.5px;opacity:.7;margin-top:3px}
+.m.s{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.m.o{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.o .who{display:block;font-size:12px;font-weight:800;color:var(--teal);margin-bottom:2px}
+.m.sys{align-self:center;background:var(--coral);color:#fff;font-weight:700;font-size:14px;border-radius:999px;padding:6px 14px}
+.send{display:flex;gap:8px;margin-top:10px}
+.send input{flex:1;font-size:16px;padding:12px}
+.send button{flex:none;border:0;border-radius:11px;background:var(--teal);color:#fff;font-weight:800;padding:0 18px}
+
+.rules ol{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:9px}
+.rules li{background:var(--ivory);border-radius:12px;padding:11px 13px}
 .rules li .t{display:flex;align-items:center;gap:8px;font-weight:800}
 .rules li .n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12.5px;display:grid;place-items:center}
 .rules li p{margin:4px 0 0 30px;font-size:14.5px;color:#3E4246}
 .rules li p b{color:var(--coral)}
-.again{display:block;margin:6px auto 0;background:none;border:0;color:var(--teal);font-weight:700;text-decoration:underline;padding:8px}
-footer{text-align:center;font-size:13.5px;color:var(--muted);padding:10px 0 40px}
+.again{display:block;margin:4px auto 0;background:none;border:0;color:var(--teal);font-weight:700;text-decoration:underline;padding:8px}
+footer{text-align:center;font-size:13.5px;color:var(--muted);padding:6px 0 40px}
 footer a{color:var(--teal)}
 </style>
 </head>
@@ -93,8 +112,9 @@ footer a{color:var(--teal)}
   </svg>
   <div class="wrap">
     <div class="eyebrow">2026 K예술영재 프로젝트 · 심화과정</div>
-    <h1><span>무용분야 심화 멘토링</span><span>ZOOM 입장</span></h1>
-    <p>본인 확인 후 ZOOM 입장 버튼과 참여 유의사항을 확인해 주세요.</p>
+    <h1>무용분야 심화 멘토링 대기실</h1>
+    <p>본인 확인 후 이 화면에서 순서를 기다려 주세요.</p>
+    <div class="conn" id="conn" hidden><i></i><span>실시간 연결됨</span></div>
   </div>
 </header>
 
@@ -111,31 +131,31 @@ footer a{color:var(--teal)}
       </div>
       <div class="field">
         <label for="birth">생년월일 8자리</label>
-        <input type="text" id="birth" inputmode="numeric" maxlength="10" placeholder="예: 20150901">
-        <div class="hint">입력한 정보는 본인 확인에만 사용되며 저장되지 않습니다.</div>
+        <input type="text" id="birth" inputmode="numeric" maxlength="8" placeholder="예: 20150901">
+        <div class="hint">입력한 정보는 본인 확인에만 사용됩니다.</div>
       </div>
-      <button class="btn" type="submit" id="loginBtn">확인</button>
+      <button class="btn" type="submit" id="loginBtn">대기실 입장</button>
       <div class="err" id="loginErr" aria-live="polite"></div>
     </form>
   </section>
 
-  <!-- 입장 -->
-  <div id="enter">
+  <!-- 대기실 -->
+  <div id="room">
+    <section class="card status" id="status" aria-live="assertive"></section>
+
     <section class="card">
-      <div class="hello" id="hello"></div>
       <dl class="sched" id="sched"></dl>
+      <div class="zname">ZOOM 표시 이름 <b id="zName"></b><button type="button" id="copyBtn">복사</button></div>
     </section>
 
-    <section class="card zoom">
-      <div class="zh"><h2>ZOOM 대기실 입장</h2><span class="pill" id="pill">대기 중</span></div>
-      <button class="zbtn" type="button" id="zbtn" disabled>🔒 입장 버튼 대기 중</button>
-      <div class="wait" id="wait">
-        <b class="msg">입장 시간이 되면 버튼이 자동으로 활성화됩니다.<br>잠시만 기다려 주세요.</b>
-        <span class="cd" id="cd"></span>
-        <span class="sub" id="cdSub"></span>
-      </div>
-      <p class="ready" id="ready" hidden></p>
-      <div class="zname">ZOOM 표시 이름 <b id="zName"></b><button type="button" id="copyBtn">복사</button></div>
+    <section class="card chat">
+      <h2>운영진과 채팅 <small>궁금한 점을 남겨 주세요</small></h2>
+      <div class="bc" id="bc" hidden></div>
+      <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.<br>접속 문제나 궁금한 점이 있으면 메시지를 보내 주세요.</div></div>
+      <form class="send" id="sendForm" autocomplete="off">
+        <input type="text" id="text" maxlength="300" placeholder="메시지 입력">
+        <button type="submit" id="sendBtn">보내기</button>
+      </form>
     </section>
 
     <section class="card rules">
@@ -143,130 +163,168 @@ footer a{color:var(--teal)}
       <ol>
         <li><div class="t"><span class="n">0</span>비디오 / 오디오 ON</div><p>ZOOM 입장 시 비디오와 오디오를 켜고 입장해 주세요.</p></li>
         <li><div class="t"><span class="n">1</span>참가자 이름</div><p><b>‘무용_이름’</b> 형식으로 설정해 주세요. (예: <span class="ex"></span>)</p></li>
-        <li><div class="t"><span class="n">2</span>입장 시간 준수</div><p>사전에 안내된 스케줄을 확인하시고, <b>본인 멘토링 시작 시간 10분 전까지</b> ZOOM 대기실에 입장해 주세요.</p></li>
-        <li><div class="t"><span class="n">3</span>대기실 입장 안내</div><p>대기실 안내 화면이 보인다면 정상적으로 입장한 상태입니다. 앞선 멘토링이 종료되면 순차적으로 멘토링방에 입장시켜 드리니, 대기실에서 기다려 주세요.</p></li>
+        <li><div class="t"><span class="n">2</span>입장 시간 준수</div><p>사전에 안내된 스케줄을 확인하시고, <b>본인 멘토링 시작 시간 10분 전까지</b> 이 대기실 화면에 접속해 주세요.</p></li>
+        <li><div class="t"><span class="n">3</span>대기실 안내</div><p>이 화면이 대기실입니다. 앞선 멘토링이 끝나면 운영진이 순서대로 <b>[ZOOM 입장]</b> 버튼을 열어 드리니, 화면을 켜 둔 채 기다려 주세요.</p></li>
         <li><div class="t"><span class="n">4</span>참관 제한</div><p>멘토링은 참가자 본인만 참여할 수 있으며, 참가자 외 인원의 입장 및 참관은 불가합니다.</p></li>
         <li><div class="t"><span class="n">5</span>시간 관련 안내</div><p>정해진 입장 시간을 지키지 않으면 멘토링 참여가 어려울 수 있습니다. 당일 진행 상황에 따라 시작 및 종료 시간이 다소 달라질 수 있으니, 배정 시간 전후로 여유 있게 준비해 주세요.</p></li>
       </ol>
     </section>
-    <button class="again" type="button" id="again">다른 학생으로 확인하기</button>
+    <button class="again" type="button" id="again">다른 학생으로 입장하기</button>
   </div>
 </main>
 
 <footer>한국예술영재교육연구원 · 2026 K예술영재 프로젝트<br>문의 <a href="mailto:kgifted2026@naver.com">kgifted2026@naver.com</a></footer>
 
 <script>
-/* 학생별 일정·ZOOM 링크는 이름+생년월일로만 풀리도록 암호화되어 있습니다 (PBKDF2 → AES-GCM) */
-const ENC = {"salt": "gWt6wKDTfRHGDgbA94+Fzw==", "iter": 150000, "recs": {"70c0512144969a1616eebe6375f10cbc": {"iv": "5ETkY5KsUPr+5oDq", "ct": "yvpUnAx8wZzg5NmIT7ytEXC6VwCf1UHxH9RvfNwUFBMf1nOl3eL0/FuetiRgPqZa8B5eLXLlTRMMTmv8S1Xf4vj8VAdaJ7Mt11wnA96aWKstVNJtQ+I5lKG7WSvkP1togrEkyd6nGBbzzhZygknuJID+YDZpx3JbC89nM43M0N3MuAQ+NiVSltI4S4Tc3jtJVz+T71QP4Y88cAE+zRt7eu2mlFMDX1gsLApISE0cPmCnTF+Lj0qkEQeWDuG+b++HIldAVNBD1czF/TXHPa+CCv2DmPgAF3Z3LPFGW5YWswnDKL5JBDhF4gSB4IDmcyXLOe/ZOr9H41KtjbSfU28="}, "e7bc09ab6e3682a4d257af1035ef1713": {"iv": "xEr/Ug7dMLKrZKwm", "ct": "J9xJgVPWdBAszbPLwVh1A45pswWu6erFX+cn+m6rK/WCrqFaIdSVvvSocCtb5pO6s1NSQvgelM7Acep13klX11Aj34+uWgAMSU64NFEHj2xtWA6IRZi2nEjAhMwCbY5Jd5SKisxXRkd7pFPBXE0EVqroCf0CpbADvPEYSNEdzD8n9RQNYr0+WDs55w8OwabA+8twvWlLIe5q1BOKYAe4Eac9pcji9T+xJXr0RjDkvXQK/+b1GaBG0//JQlBDsKAD06GZAtHbOfEUwqVY7OwnHv8R9SRpW0WtuQJo9mxk9OaVQyMhp98X6ddwWKefVQ0/Ujaj5T1VTNK2nB72bLQ="}, "8375276d0df5b732239c683613efe1a2": {"iv": "2rNkaTMeZWoKcAdT", "ct": "UCuvNXiYhT2Kc8dnQyr0VHHrb448Eh4zIdVtaFXOtgnQQx4ZdeJwqh/433IuaGEqOZnKq+i9jxyTHs1FACA1TeLb+YAnaF+YC3lgTPn71RRhCe2EZvXNOTSHDp+eX2r1ym2Ipy6qyx71io1en5xZ+A/ZjGZeELRJoMUcp2QmF3zm2ZTB9AIXCPQD8xs8mFZOg7cBsY4hv3Z3iblX4vffxD2si8AOyCKu3kFuWPYKkUxR3j4EGsmM7oMhLlkrKIoxItcfFQFz9xH8ciIkwelsePtcFy9egrkoYqe37aclo9T28+Dz8q+rRaqgLHrFyU5efsypZRovTNf4Q1HqkvI="}, "5ec1d3628be8c72fe31893ba266c7970": {"iv": "fpe+vBEEOK+2eqMr", "ct": "xP4nvaQgLQbhwsZKARhCop3MYVsNdm7yPEE81eQ7pZN3FsSAkCFFE022+d237cstGjBm0PvD/IkSz0gW3Ar7pw9hJxHdli6RBkMYfLDUBsW3TDiO8ONn3OkHDOrwVN/Epsph85jiKPVV0MHuLOH6QxSQAziiwUeOOk6roY/K8kyTlz5+f4X+YgGTPQjOfH6mMUkd1BowePm23RiET8hhrnfWD4UwRCgD3N/nKTLSBVThw7umWezMm4Io59Nfdav1rX28fELbNZvKHmPPFU3TZFL/MeXdW2u9NRB+aQJBRxCLO/MwtBT779eMQa0W9v61DbRP/R0dKD5jvZucXbo="}, "de33bb4dfeabc4fe0b73d713e6674aaf": {"iv": "B13QtCGHlXF46iZY", "ct": "Ahxm+awYjnLWArRn8mRHAmMvZHJxOhz3Cx8GdPcD6bB/O4YrAwBfQx8XqqNYSTW9rcOjz1bh7UTozZPMw3B/L5YBuann3y6x0ER13dXFR2l81RZ/DPAaW6DRELzKQVqByZ9IesF5crzWi/bnYnJqs86zpPV+jGlsYLV2R22xRyl6uREBG/QIT0phjUfUlyzJb5yB1iPG97i65sjJchPLWDprK4OVVLu1ihjJ9ktk5XEuhPzPlgiB4ANNxWIj+yyOsPzmm9iRBCZaE3bs8QcnxmIvyB65VQR1DAifdQTBwSPQAtE54DU8aO+dYkSDkiVIy5TfHY/mm3sP8jKqylM="}, "917e6091bdfeb25b0abfe2fdfa5c72ef": {"iv": "/zU2Ab6xF7fC+BBv", "ct": "lKLLpjk0YKiqXeM3vULDT50I/XLmJ9vr5NtSugsTuhi4kJA8NJUxjNo0xNOlLeK8UAYxDr6dPNtA9WLYi3KhcXt2eQ9rZkWWxXA8hhjltvZMkgVf1wTPhSssBa0BTXV357ENc7E6SSH0VRItAKjkkJR1tKXloGnt5ZHUGKWm346JDZ/SOeEkEv8SarFlv9xMlQD4PQHY25th2/AzcnGF1URm8THqVGx+F8kJizL1UeTTt5aC6stQoMASFAMvv3borteAkUxSa0WfVQlHaFYGaEXc5HIM0l+nCfNgawbTQ34WesmWPwFG/yH4DmJz1QmyWpBxApg9fQ/JjWUW/tY="}, "3990cc72b1ba25cd043ade8f9311a0d8": {"iv": "xzRMevteFbOR6pfW", "ct": "VlAa2y6n2L7WxF3op3+aKo6RUKWH7S0+7vXYXkMt/+qAP3+7C1rKW4b9ReER+Eedww4LZuDpPenC8RVmSyNHTwryGHFn8F/AJRQkce629Cf8579NoO82lj7lQicFRM+AztzFRkycTVH6v17DJ0nUhrkab7tqmETu6O7/g+6vIubBwlccrhq3+KXvKoJ52UC9XhAidU06Clh3S/eBKxqK5ByLWo3a/mz2HHjPPJ9JTKdg6GiuShC5OicoAPPi9yW7x2Ychaaw1xUNrqjPD1nsbj/iG6QOL/1oOGNP/Jcnbf20eKFndZs7cIm70FgpBXKb0P/rJStEJOhDXs/gUX0="}, "0fa08ee66a997e10e7dc6c937f810651": {"iv": "4TCaEIsi4wJcY65o", "ct": "whbm4cjHlDIfCUf9jEC0x3qd54WNdebnkY59A5j803EdcMF0aqRV21VY9tpyg70RhAZLJKyDjvJapQQcb/tUKDnFCnPmw+wGfXb0b0EACVUNU+nGNK4meFIQLgkOEJZWptdwgYrNWXZLzIeOQ/mklbHGXB/djOwSXKkQHAYJTQabbHKdglGgN+B3HwTHJGT0DXrf7Weo5ajJB5J8v6jvK1HQa/hj5mcOtn0xNXpVGDEqlk/bOU9Kw1AaJSmfOc1p3L9qtjf5nc9VwAH65aQqbDTfMXJHvxZqUkfiARn8PhO7mds16YwlfyGbq1N0dJBc0hcj0KATgwRqi0xS8Y8="}, "b5bc3a243214bd995e6c3cbb2b15c3b4": {"iv": "GVwvQeBE8zFoKshu", "ct": "mpd/kLe4EFMlnMBk6zswXRo3gPr2joRqQpDH3eBxkTK2JgfBx1kEOjCJGqhvPPFR+Ju5o9LIL8KIf6oHkCcgroKFpoMFOga+70Zm0E2Mnu7mWko8Sw73WqIwATANZRoe2Lvi2P48V2QVnAzwCfSAL2iWolmRE0nhaciVk0LpY+OSE4jqzD4aVIfiZyTQ6IQj73EpXlrfehyVU5GNspikTGUNMZbJx8hgq0pG18ZCzicADUjK+x4MNR05qS6eqvIkQQGJv9cH2ua8QqF1RVE5QKzAjX/AG9e5qLDckJ6jwkO1PfXaFbINwqPQUYyYux/MGRvSU8LymH8Nexuluk8="}, "2000ec0e8a9c4db60fb12810c969da35": {"iv": "KCcI1nsT8y42oQUw", "ct": "uY4i19emcOfo3qDUbCa8KgslvDWukxh+5HQCELHsVyq0RyD7QHevwyVw0zYkgAo0t8QsiDo/u6e9vgvE9Jwdx5QfCMm1En92vdSvYddyMMgLILAJU83zRI0DMlDTbm7UKFTuKJ4AtLLR7lrY1eer9UKuTzhpK8Gp0jqdMTtXf19URXZg63DCGXkAaS5lGHMdIVOiyu5/lSAGhNMN1qI18nIKNAzHoeufrejjVoa0Fw7o0vbU+riyNOI92WXhLoxmZWwUm8Ge0u89IsXbrAaP3BsRj9+pvDDhvi+LhbGbEiVrpkOWfsYXhpy2T30uEz/Vt4+MYzrq7clkpXdx/zSC"}, "9247f44cf1d34b1b18236e8ddeb84a59": {"iv": "G5rC8yo1+r6yIc4J", "ct": "8dqzQcZMyyH/PncFYK2b1ZqKsJoaCm2LPWnL7q0vy079TB/xOr8TekqBt5PW8DVmDY66XoBiJevYiHcn8XXlV13KLA6CZIqsTPwDsGW6cx83abwzgjpCi61+Dh+edaJDgzaUlr/IEVWRu8mcM/B+kGWxWVrfveswAPeOVq26XrquLRSZbkOFfDcgIVOAAJIRqcfiWJFK1zDIzqiYx80BcepNAVlzgouEc5w51bHhtDV0oNptWt/PcMHQ8XUSAwphi5i395IJrg7m9uV1XVz+lQ39P1rZRKcfj2jvYU31ZR99kZsmDfPQEJXHbUFzKjtTn28fhmB8leKFXFnd6gDN"}, "b84b594d3e442e0a33f10a3818dc7c66": {"iv": "ImoX1ihwgH9KzIYp", "ct": "IPYoRcoOCMYGydwLis/RrNKQkX/VhEckTgw3rYq40OrEVIv9MCpZnGSgJaAr2OLJTQB5U12ObjgNgM11bbO1Oj/937LD38eIBflM+xnURkQayoQPY86VbzoLWwSKO1yPehee39zi9JwfoOanQgthTq3sG9LZnLHuHkejBkIOlCU9lcQx+dkNnNothxhz/cYXczkx3ZT6Y2qp3KmB6k8+gAYZr1YLreM1eWM/e4FVCCmeS7H2hoOOwEXg8MiahbAzGS+nyROdtDBYWC1/sbavuMb/FmLAe2SC0sQiBwMY6wdVfawPtuYLiWb+lh15N7FKu7xYVP+vs67yaVuXMRlP"}, "2f263d998a778803d1fba5e4ca15526a": {"iv": "mPcRzqjT5CHyWgjq", "ct": "2+1mcDr0zakkNIY0Q1w+B1NyadCUflbAPeY93bQu3yiu0jo2azaFJAD49hpXLVyIXcuO/kf77nS3KqxyHAMMzsQgzQZscK1FubVnMcZCDGMfU0IwDeZdmT0Dy6uAWZ6Q1WN6krG738wMcs1Gi1RUlfwrvt6a1EvA+znCgeqkQFseN/1oc5Km6oJMkkp2E+EN6cYOwHG+Hn2vRGu0lWkWjjxuvPqB8fq8QRgg8D/L5xJMeWzn6xrWoZxzN5TGTF0kaxO2JuPuJ/Im3pcN+UElZKSaKBeLyo/MYsw4WV107ANKX/lzEdRgTk6RklLi/guFLzuBXc9SwdR3CcJeWqD0"}, "08b1b27ba7b03a101fd714f75591cba3": {"iv": "AgSlrEAyo/pfXOnf", "ct": "rH6AH8TjSLOVnHCKva06m0/R5VY8C5DEfSEPqUTzcGZWjI3lrWMn/wUkgKEe6ajzlbuxi4Jr+xCh4HLxv9k5g4Ks0rG9rVZQFgRmJBktoK3h19Co/9M0aixY1fQ6AStd9cBPgeghcgyKGQ5+dgI1Mo7RiT7BZdoN4T3iufYYT3eQqZkPmPqw6VfOPYVGPd/uT4kqSKErKY8i5GcqtMi/8whwEW+NTaalALBoPSiEicvGcZlu1dHpa2zB0zTfeXNrk6NgH0F0ED29E2a6F9sAdHuZzwm+ugWwjJdLYmawCiOlZdAYg4vf5mEEjUR4bi3rw4c0MfX7w1y1Pmv1wUp7"}, "dba61cb1b984b032836834d32c70c7bd": {"iv": "vg8h3Aus/aXS43ED", "ct": "lQNHMYgHxqyt9O/Eo33hNu9vHoWkUeIK+Pj9OrAU+WK59cpbMCPXO/hCfNgeeE+FKw6VpojhAz73PhXW+ZpEEJzjD6DBVtdBBDj2B4qD0QP3UUsf2BVmNDc6cuLGLfIeTe2opMVcuPAvSmMUUeNjXV6b9Q8VROhgGhNk7fV564cE0GgqmjJJVbZuQyHiFHFKOXhlCUDtn2w4LbnAAO65uOrjZw2RKFwWn5Qp0oQox2SUhGQBYHAJ3Ge9fFtB6pC20PnQEA6tpUv6CpQMi5PHPatGlHCLMz5v8ibbyqN7GLgscmFalA2GrSV9zXQr5Sxjmvxj8PwAptuNmW7JIE9c"}, "984a5398368015c3d7c50d4bbb20ce98": {"iv": "dGXMXWLOVql+rYZv", "ct": "h4axM8QkgNt/blHkYLXlBtD4jlOpLRp2fLe50R52zomLHxGwoxVK7zdxvyXPJoK5criOjnMxF5SHIjwjwuRQjyM8fNTp4mZz+IholZTgJ/Cq0dlwqkuZWBiEgeuuPpGkUL5YwXa2GT9W5i0lkrLD5dGbGmFV/m1njDuTUwQJB1LY5JomqqlsZz9FmgdE+jIGsKU8rIw9Wnu4IDHp7dZW0GQxERQLXSeaQXuw9qXQkJCDuPUOWhSWoLvnP1vQcNUo/rM/OoKBnsqFG5JwhqFFLPK5FXc2ONWxSc86yMQftLibBXeELvwd2qW8j3VW2CO4EPhA2qOEvryqZbiiVYyL"}, "d54fcb964fb1fcf1d158529e1f0f6848": {"iv": "XSDBKvundPezulDO", "ct": "uohumK+BUcyo0alEHw2SH21gQ7Ls55zZJLe3JpkFDArGiBob5lwqqqaVkCN/Hhx5tor39EVuR6+0zzYcWK0SK8H1PMoe38BkRL484/YjKfXi9pz6LY2OXZKHEXWayhZTmNmgWxOmiz0OVpt9nCeQkxb+i+jRQwryzDR+BDXSaPAmpksoal6ONqh2OB1PH3nQCKSdhRpJFGOjrf8/5P7cZTq88Df5IWK1EohjNQa6OomFJh6I3zv7PYDHznHQvumieZqsF4dmdmSWfv8LgE4dVWryTj1LoeiiW/X0Xx+f9mSVigpZsQmuor1PQFy2ewiQRcUfp2ElMbJEgBMaQ8la"}, "c64a58e2775f9b93bc28832431a16bca": {"iv": "eDrXHZiT6r6lyqoQ", "ct": "mKrVhv1NCV30VYuciq3w6KPvXkHppP8L4Jvkew0SpHWIm9s0C1NC84ujKvowO2necFXmmV9kkhlAuo8/70wrywol+OQAAP5U9SdVbXip7X8qb9U8H/wcmIn/rm8LqNNhJzPkguzwxT/yzDO72i+jnhJCUCbJI/PfvSSlVFKaOECJMs5UAb/h4HsHpsi30bk1rw+Ex7HmVsRWEM6OW3si+nGyIZi3FjMSCAOASzZoGgINi1XrrfAHQOEfYULcgBLLOIMDb2GTI8UdYW5RIyyvRddtZzgZJnZ1rdiesar95K55t3KA8Ze/k3lXNf+wPA46Cmoz4aLCnFL2e2FzcZo4"}, "3ba60ffa6a8f426adc1fdb53df7628c0": {"iv": "/9v1wTTJkgxUcYI/", "ct": "04tWKP2wNxBk4d/DnlKSpMILN812xa2dZpQVjDl8i3nxMSLEN5jAXL3sEQVnih7h/JKAb9HasDogAySwrBjibmEfprajEp4/PJCxmJbEOlCaB2wUQXjBnClpZc603HAttCw5s6+s4lXGSPI/ENC7l+DCxtDDaB/rE/0qO3vVpfWPgZMvTZ+8izl5M+dwcoKnHhYgIrc8uRENJDKKtYkY3gOPwCvb0nC9NOK8qnRHdwxMWHJJWIgccyu6OpldNBNRsFA4cc0260uIYt48w7+aD34tZAF+JD2MlI7oAEiulZEc0gWhvYbvOezTd0RjOdkstRRWMR64rZVSHMPcLcxT"}, "b8941803a6cfea639176647d3ba27eeb": {"iv": "8U5T91dsfSIV8T52", "ct": "m+9ZteM2cERi1hWvJNoUMUuu/XuCb+3jcPeubiHZkhZJgrTsqp/K5n4gVgOdW6/FcQbMohReJzVExBCfwZDyb9Tvq3lHm1cNDw4TFkfpPHK7Du5uMBCyGM+9k5lcz/KWWYTTAyN+vGYgJQHfPdUusSYZ3UrrEzTGbQkYjTbo8lfglMmz5/DBlg1kCe4lxr4Vg5h0ejVwGPCwcXiVe3LRwwW6pJEdzU1ViqaBptVnDiJyJryQ7V1gxNmzN2GAAUtn8EzS2BN5EdUPGcT2v5eh3Oomh8SXvlygtSS113ZRdRzw6t12Va/x6Q1VCiOYtcGsujKuJz28CKDUGGloiZSE"}, "33e912f1149ff9108c494a6056a5102a": {"iv": "BjjPYR6dh0qdMM12", "ct": "ZkB0Y5zVqz7gCh7WnqPqvF/pck/0YSsRZPH0ehIcFkwZTURJD7bq+lnZm+66HRLvrU9T2rLovS2rHGJYHwMir5ELR0R45BvJAYcn9ILNIIac364LHRbjRTiyMURikAkAp7t/xyJqsixbUnZmm6oG4SnDWHrOL4IeuQEuKcK8EnQUK8zM0oET5swc04V3IhfnlIJWeZS2xJfHLbViLz6fJVdAo0sDD2zn+V7EcpYoyId4XvCnahBJPm7Wi7xdJtCPfEJjuv5M8+BtrcEeDfEVAbRmOZlargoQbEmliymWmvp960qmzVXLNRKAOBDSP37ToUjDM50Z3/6mWUTMCyk="}, "3a2a3ad953c6c786d9ee985d7380922f": {"iv": "1DlXuiqwK40jbw5s", "ct": "py2BC3TqajRetaWewBjy7lmBcisvM7liVQnvRU2GdLaHyhkzlCBDOj8Flo30JxkHJZRW31phJvVTHvIvEJVi4e995WF8R5aSIpRUjXM66EBeNvqYvSXlmLwD2oxGFkNcTocMDfkqnHrVNMoQa0h0BSGF/o7oanG91cXxqeeoGiKKBf5vfRRmkv/Q8lXBVLJrSlV7B2Xd8FX5z9S6dNoMy8aDYt2crmvz0Lo2CyYUjrt9CyxInv+7Mys4mBg5om/y5d26yGnXZQYf6ques7EvYfQObuI5B4dy/jLCmz+rkHlRGg7/cFD634huFUaEzhRFkGfoXtAfIAVx9UnaffY="}, "3c7c88341f19518cad2bd6d6dd36012d": {"iv": "7uNXSJtY2xkzziKv", "ct": "uBI2XD2+h+00H2c2WT/YUcZizI7pgw96N0V5jfxQ92gskvaTqew3kSAH9LI6J01ndo++5v+ypmL9yhrBIkeUXLmmQS0/jLlSglluALly1VUhbAn6BG9YiuXLeoAFBODjK5GZYvjVn2TLsV8FR3YdWBTNKQjiv221dXQMTEf56KNIaWnWdZ/LhoPB4sO/Rn3XjELSS4OSZ/1ycEYafA0m89miQ9JgRSUpe/A4jswS7WBpBgWhMH4VbCB8jJoQaGeOJFcNoGneVSTUAR12HD1dxIvO+QiWKuOAnfaoQdSGF8/xmhOhNd3T+1E3Kd/IAxazRMdZSqO//ds7Nsgw64g="}, "1b2e840f597d5d7abbc46207b7527a74": {"iv": "44xRoqC8YIBUTa+z", "ct": "PjgMSWSE7Gul0hBhoJJrplDLmSdeLn7vq6iR7AApfMxHC44v7Cia5/yZ3oBXpqtkhPRt/dnwDlC1U08FaV4KKh92v5BjzWlO3Eqo80bc8H2yXBTO0jbHb/v3B2awRlGlCuwH0BYlnjswsrP+f2LXO3ElHJnWXDiWGMw/SH3PXaUHhRDQgd4LcteT5HeyPLVDGWjkZkBPE4NdaTjjus3/v76rW336waY6l0UZbtKTfpv+DX37twUzKYK2Fo/7/YnhVDXmp1gzOqm1UAICSX9LXRdzRQpmKmc2Z89pVhYr4VPXwdzoBmTvNkd3AvwLraVymbpcYgTzhQLhNZe/4WE="}, "88b4fe4738d99a58b2415d2cfe5c1cf7": {"iv": "hO20K3vUdez72Xl7", "ct": "JYLgRbGK+ryro0N6mH90cjioDwqNy1XjWlJF8T1cIP6JuF4P5mEUpbjoOdQq6TkaeiKiGtqJrgoFcBh43CcTfhm8i7yaWySiXzxwdjaL41+6nPOMXUNWUey9e57st2n0Qyf2uPXKnydnuDweS+uSVpkLqUD2bbpeiQEOcXI8n+jhKR47AhIyd0NtC/iXqmIQx5m5Zk7OlVZknewjnA9LPThsCyuq5YutQN5gDl+D4+NgyKGSi88iryaJ4hLi2w0WqQIz3X+AEsR22PvvmcwGjK7dNwv+dMoC90eZcdgJmtDXvY2odXy772muwr4f8zRN5hMyPdGxctUKQJmVKjw="}, "ee3a44e39175ff238805563ae95b4d2d": {"iv": "A3QgqgYBtAD5nKZD", "ct": "WBjrH/awGHnembR6YiigsaDzO39kCQQppEVkEXfF0cFoW7INSbuFooNBtHYF1qRKxTdhiaz3F/zLYpc+tYg6FDGR6e14DOix/X3Rd6/zCZGUAyUHBF2IRzwBt0xsGpAuxpkgBL+Mo/6T2MiyfPCQ/LaK1up8IGOP6NOkz8N+a1ns4AfKDJcW5gJEwCB03G4LZYe6K+iu9q9dr496fQ9BsbLRzaQ25eGcqSYT7eu2iZvPkB6MsaLXXaG7OefPiIzwTQIrg8BtT7+TTb6viTgTSOK2BDfx9Pl0M8T1Nrs7nvah1T1h9H2MlxTUEsvgJEVK6lp2abK4RIhk8GToKCM="}, "5587f5ddcbc1a2444eb76e0e8603855d": {"iv": "3BmfUNjQ98GeDD+E", "ct": "TGeNvXAGkjD7/ITvTZvA5kLKGQ2jsUEqvs/L1dBfX6b8GAk9xCHPiZsH1+EYv41zuwGJpgc8u4sWiWxmRVNTepqtN1izUgfTRnLyfwac1H5hNopLOnf4rXQecq9O+VHU/r9xiwJ9Jq7uT0U8Yq9Z8bWzQVaqxZuyfRbRihHIWN9FHrkAiEwRlxngX8xQDqX4EkDFhmCxhgUEIO1z3xCgkEFtVQnLNQy2Xve6iArcdogGq0tuKxk90S0zT36unhCejgL/8KD8RL8S+v2wWR/70tKVv11nmt57G3EjOoaHbGjAM6z2Y5TlkNilm1F9A54uKCH7GUEarNXOu39I1A0="}, "a5f12d70ce36e41eb2ed50bf3c9bed9e": {"iv": "nktvZdenbGaTDnZi", "ct": "mYjQYpV0GEDEbs/J/xZC2TFykl1FDu8Qv6PPlYSw7knsSBPmUqbIXEw5la4n6PlQNHg71B/mgeFbl78/DsIhvb2os2B8XyHfI4vgjdIWqaZ4aV/Gd8H6s3iQmwNHpe/RW/keVaGMb0+erYdcTIVPk5XCsda3NCDIE5xB2W7ckG5PE7v3dtxa+HX5m7jsUMGRKXoGbWZzQxymbMsyaOO9U3ArSBwKdvwAKSzIglxyOdui4FJmUTnd95rZ5aNEokEBnUxlIaEAow9KcfFhjQU3qJ08oBAPtim3plfAWQ5mb+T1n2yADGIqj+DFHa6xHg0YMpy4oIZ5numu4dv/udg="}, "9344fe26cebbf94ca49e9082c2037fc5": {"iv": "71ASzp+X2q81mNnF", "ct": "4LYeOxGn5RwIUgmVdZMgo8jglmUm30Pi6BQKTH0hGdmc+nO/rYjZ45nQZO7RJjDuaXEKO3NiZg+C9eJQbVrZH923g5oPfKDJhdEfPOLNXsUDl+BK296Su2TL33FwNd7xuDVUxDEVQN31a9PesRipI8x+7nox7nVphGbYb9rq0arHXTtFknMZSkVEUTXYv9ZhtwWpRsNbT0tc7Jw1bUaTatbVaa4e+8BA0loencaxCkEoZUIZMSEbNnfXdoaTHx0zhm4AoFMRsKLwp5YPZvYYaCt6gfJ3DopwYhUSEnzZAbjDq5FjZz3uWGmPxEcL8yfwyLGB+IoocEat5JeXVUs="}, "a18c6d0391fa62846fdecfdf241513ac": {"iv": "vsXZzsapNoD2AzMU", "ct": "4YCYxMOZiCKU1IXhGbyWFbiLQtKcCe6iLzwH5OD4/NL9cfKRRhOy16bBdbJoXpFLWlGSFzQW33UBadCVZZLN4t96GuhiwlHy6OkMBXlBbbSJ/aoW7dOnfRYUM9iWmrEGgd/ef5Ij+wHLSWEFQiOFKIyp1mSL8xuvw+t2i7nEzL7twhCF4+wQo8ZxQsxxF14FpZRB1sDcAdWMn2QVCxLf0OLhtFnvapSgx/yMzKkFUlC+cJ/KSOJy8XeV9yhYltM+rFObEzmJy1+ijJTwpqeik3ZCKooEBb8ikASjS1VGIGWIlhvZutW6TRwGLN07JsuHrHWKP7GeRLHoP9nz994="}, "31b98764dd8babcbae626d5ac8c74eea": {"iv": "EeCzIJa4IZTgNeXm", "ct": "jAKWO3qxZkJz3aBP3H83wQiU9idLhOgR2J6Z1kBcISLALMZpFvMK9aBgiuBxcyStroq0Xstjt6p3kSiiJr+HFRrAnLCdTxqJd2gbQp6luEgRFO8qe+kmVsPGhBpO92R5+40RGSi4aZCI9eUeKapyXPBzWgVAUEvOH/L5zwX2qL152A6QS06v4PVm8L03+HW0XMbU+idA7DU2/EJMfXI5b/UQEvWs29bSo4WG1vIVsy3dMbNMYlvX1Qz7o86OGxnZXdK/Uz05qVegNpWJLLxJG7MN3tvehbBvnlTG3qLHOu2qk8kYtHpUrwXbwXP86abcgwN3WC2BFT4tGfuoV40="}}};
-
+const CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxZRwa_d4YPL2BD_HqAMc6dMNeJJU0AxC9BftLSIIlWZs1cu45dO6caSkKkuBXcCOiN/exec',
+  POLL_MS: 3000,          // 화면을 보고 있을 때 새 소식 확인 간격
+  POLL_HIDDEN_MS: 10000,  // 다른 앱을 보고 있을 때
+};
 const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm = s => (s||'').replace(/\s+/g,'');
-const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-const hex = a => [...a].map(x=>x.toString(16).padStart(2,'0')).join('');
+const hhmm = t => new Date(t).toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Seoul' });
 
-/* 시간: 페이지 서버 시각에 맞춤(기기 시계가 틀려도 정확), 미리보기는 ?t=2026-10-25T10:49 */
-let offset = 0;
-const PREVIEW = (()=>{ const m = location.search.match(/[?&]t=([\d\-T:]+)/); return m ? new Date(m[1]+':00+09:00').getTime() : 0; })();
-if (PREVIEW) offset = PREVIEW - Date.now();
-else fetch(location.href, { method:'HEAD', cache:'no-store' }).then(r=>{ const d = Date.parse(r.headers.get('Date')); if (d) offset = d - Date.now(); }).catch(()=>{});
-const now = () => Date.now() + offset;
-
-function birth8(v){
-  let d = String(v||'').replace(/\D/g,'');
-  if (d.length === 6) d = '20' + d;
-  return d;
-}
-async function unlock(name, birth){
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(name + '|' + birth), 'PBKDF2', false, ['deriveBits']);
-  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name:'PBKDF2', salt:b64(ENC.salt), iterations:ENC.iter, hash:'SHA-256' }, base, 384));
-  const rec = ENC.recs[hex(bits.slice(0,16))];
-  if (!rec) return null;
-  const key = await crypto.subtle.importKey('raw', bits.slice(16,48), 'AES-GCM', false, ['decrypt']);
-  const buf = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64(rec.iv) }, key, b64(rec.ct));
-  return JSON.parse(new TextDecoder().decode(buf));
+async function api(action, body){
+  const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify(Object.assign({ action }, body)) });
+  return r.json();
 }
 
-let S = null, timer = null;
+let ME = null, TOKEN = '', timer = null, lastStatus = '', lastMsgId = 0, audio = null, fails = 0;
+
+/* ── 본인 확인 ── */
+$('#birth').addEventListener('input', e=>{ e.target.value = e.target.value.replace(/\D/g,'').slice(0,8); });
 $('#loginForm').addEventListener('submit', async e=>{
   e.preventDefault();
-  const name = norm($('#name').value), birth = birth8($('#birth').value);
-  if (name.length < 2 || birth.length !== 8){ $('#loginErr').textContent = '이름과 생년월일 8자리를 정확히 입력해 주세요.'; return; }
+  const name = norm($('#name').value), birth = $('#birth').value;
+  if (name.length < 2 || birth.length < 6){ $('#loginErr').textContent = '이름과 생년월일 8자리를 정확히 입력해 주세요.'; return; }
+  try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}   // 입장 알림음 준비
   $('#loginBtn').disabled = true; $('#loginBtn').textContent = '확인 중…'; $('#loginErr').textContent = '';
   try{
-    const r = await unlock(name, birth);
-    if (!r){ $('#loginErr').textContent = '이름 또는 생년월일이 명단과 일치하지 않습니다. 다시 확인해 주세요.'; return; }
-    try { sessionStorage.setItem('dm_zoom', name + '|' + birth); } catch(_){}
-    show(r);
-  }catch(err){ $('#loginErr').textContent = '확인 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.'; }
-  finally{ $('#loginBtn').disabled = false; $('#loginBtn').textContent = '확인'; }
+    const res = await api('wr_login', { name, birth });
+    if (!res.ok){ $('#loginErr').textContent = res.error; return; }
+    TOKEN = res.token; ME = res.me;
+    try { sessionStorage.setItem('dm_wr', JSON.stringify({ token: TOKEN, me: ME })); } catch(_){}
+    enter();
+  }catch(err){ $('#loginErr').textContent = '연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.'; }
+  finally{ $('#loginBtn').disabled = false; $('#loginBtn').textContent = '대기실 입장'; }
 });
-$('#birth').addEventListener('input', e=>{ e.target.value = e.target.value.replace(/[^\d]/g,'').slice(0,8); });
 
-function show(r){
-  S = r;
-  $('#login').style.display = 'none'; $('#enter').style.display = 'block';
-  $('#hello').textContent = `${r.name} 학생, 반가워요!`;
-  $('#sched').innerHTML = `<dt>일정</dt><dd>${r.session}회차 · ${r.dateLabel}</dd>
-    <dt>멘토</dt><dd>${r.mentor} 선생님</dd>
-    <dt>대기실 입장</dt><dd class="big">${r.wait}까지</dd>
-    <dt>멘토링</dt><dd>${r.time}</dd>`;
-  $('#zName').textContent = `무용_${r.name}`;
-  document.querySelector('.rules .ex').textContent = `무용_${r.name}`;
-  window.scrollTo(0, 0);
-  tick();
+function enter(){
+  $('#login').style.display = 'none'; $('#room').style.display = 'block'; $('#conn').hidden = false;
+  $('#sched').innerHTML = ME.test
+    ? `<dt>계정</dt><dd>테스트 계정 (1회차 링크 사용)</dd>`
+    : `<dt>일정</dt><dd>${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님</dd>
+       <dt>내 순서</dt><dd>${ME.order}번 · 멘토링 ${esc(ME.time)}</dd>
+       <dt>대기 시작</dt><dd>${esc(ME.wait)}까지 이 화면에 접속</dd>`;
+  $('#zName').textContent = `무용_${ME.name}`;
+  document.querySelector('.rules .ex').textContent = `무용_${ME.name}`;
+  renderStatus({ status:'waiting' });
+  window.scrollTo(0,0);
+  poll();
 }
-function left(ms){
-  const s = Math.max(0, Math.ceil(ms/1000)), d = Math.floor(s/86400), h = Math.floor(s%86400/3600), m = Math.floor(s%3600/60), ss = s%60;
-  const p = n => String(n).padStart(2,'0');
-  if (d >= 1) return `${d}일 ${h}시간 ${m}분`;
-  return h ? `${h}:${p(m)}:${p(ss)}` : `${p(m)}:${p(ss)}`;
-}
-function tick(){
-  clearTimeout(timer);
-  if (!S) return;
-  const t = now(), open = Date.parse(S.openAt), close = Date.parse(S.closeAt);
-  const btn = $('#zbtn');
-  if (t < open){
-    btn.disabled = true; btn.textContent = `🔒 ${S.dateLabel} ${S.wait}에 열립니다`;
-    $('#pill').className = 'pill'; $('#pill').textContent = '입장 전';
-    $('#wait').hidden = false; $('#ready').hidden = true;
-    $('#cd').textContent = left(open - t);
-    $('#cdSub').textContent = '이 화면을 열어 두면 시간이 되었을 때 자동으로 열립니다.';
-    timer = setTimeout(tick, 1000);
-  } else if (t <= close){
-    $('#pill').className = 'pill on'; $('#pill').textContent = '입장 가능';
-    $('#wait').hidden = true; $('#ready').hidden = false;
-    if (S.zoom){
-      btn.disabled = false; btn.textContent = 'ZOOM 대기실 입장하기 →';
-      $('#ready').innerHTML = `버튼이 반응하지 않으면 <a href="${S.zoom}" target="_blank" rel="noopener">여기를 눌러 입장</a>해 주세요.`;
-    } else {
-      btn.disabled = true; btn.textContent = 'ZOOM 링크 준비 중';
-      $('#ready').textContent = '입장 링크를 준비하고 있습니다. 잠시 후 새로고침해 주세요.';
-    }
-    timer = setTimeout(tick, 30000);
+
+/* ── 상태 ── */
+function renderStatus(r){
+  const el = $('#status');
+  if (r.status === 'called'){
+    el.className = 'card status called';
+    el.innerHTML = `<div class="ic">🔔</div><h2>${esc(ME.name)} 학생, 지금 입장해 주세요!</h2>
+      <p>아래 버튼을 눌러 ZOOM 멘토링방에 입장해 주세요.<br>ZOOM 이름은 <b>무용_${esc(ME.name)}</b>, 비디오·오디오를 켜고 들어와 주세요.</p>
+      ${r.zoom ? `<a class="zbtn" href="${esc(r.zoom)}" id="zLink">ZOOM 입장하기 →</a>
+      <span class="fallback">버튼이 반응하지 않으면 <a href="${esc(r.zoom)}" target="_blank" rel="noopener">여기를 눌러 주세요</a></span>`
+      : `<span class="zbtn" style="opacity:.7">입장 링크 준비 중 — 채팅으로 운영진에게 알려 주세요</span>`}`;
+  } else if (r.status === 'done'){
+    el.className = 'card status done';
+    el.innerHTML = `<div class="ic">🌷</div><h2>멘토링이 끝났습니다</h2><p>참여해 주셔서 감사합니다. 수고하셨어요!</p>`;
   } else {
-    btn.disabled = true; btn.textContent = '멘토링이 종료되었습니다';
-    $('#pill').className = 'pill'; $('#pill').textContent = '종료';
-    $('#wait').hidden = true; $('#ready').hidden = false; $('#ready').textContent = '참여해 주셔서 감사합니다.';
+    el.className = 'card status';
+    const chips = [];
+    if (!ME.test){
+      if (r.current) chips.push(`<span class="chip">현재 ${r.current}번 멘토링 중</span>`);
+      if (typeof r.ahead === 'number') chips.push(`<span class="chip hot">${r.ahead ? `내 앞 대기 ${r.ahead}명` : '다음 순서입니다'}</span>`);
+    }
+    el.innerHTML = `<div class="ic">⏳</div><h2 class="dots">대기실에서 기다리는 중</h2>
+      <p>순서가 되면 운영진이 <b>ZOOM 입장 버튼</b>을 열어 드립니다.<br>이 화면을 켜 둔 채 잠시만 기다려 주세요.</p>
+      ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}`;
   }
 }
-$('#zbtn').addEventListener('click', ()=>{ if (S && S.zoom && now() >= Date.parse(S.openAt)) location.href = S.zoom; });
+function alertCalled(){
+  try { navigator.vibrate && navigator.vibrate([300,150,300,150,600]); } catch(_){}
+  try {
+    if (audio){ audio.resume && audio.resume();
+      [0, .35, .7].forEach(d=>{ const o = audio.createOscillator(), g = audio.createGain(); o.frequency.value = 880; o.connect(g); g.connect(audio.destination);
+        g.gain.setValueAtTime(.0001, audio.currentTime+d); g.gain.exponentialRampToValueAtTime(.3, audio.currentTime+d+.02); g.gain.exponentialRampToValueAtTime(.0001, audio.currentTime+d+.3);
+        o.start(audio.currentTime+d); o.stop(audio.currentTime+d+.32); }); }
+  } catch(_){}
+  let n = 0; const orig = '무용분야 심화 멘토링 대기실';
+  clearInterval(alertCalled.t); alertCalled.t = setInterval(()=>{ document.title = (n++ % 2) ? orig : '🔔 지금 입장하세요!'; if (n > 40){ clearInterval(alertCalled.t); document.title = orig; } }, 800);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── 채팅 ── */
+function renderMsgs(msgs, bc){
+  $('#bc').hidden = !bc.length;
+  $('#bc').innerHTML = bc.slice(-3).map(b=>`<div><b>📢 운영진 공지</b> ${esc(b.x)} <small style="color:var(--muted)">${hhmm(b.t)}</small></div>`).join('');
+  const last = msgs.length ? msgs[msgs.length-1].i : 0;
+  if (last === lastMsgId && $('#msgs').dataset.ready) return;
+  const box = $('#msgs'), atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+  box.dataset.ready = '1';
+  box.innerHTML = msgs.length ? msgs.map(m => m.f === 'sys'
+      ? `<div class="m sys">${esc(m.x)}</div>`
+      : `<div class="m ${m.f==='s'?'s':'o'}">${m.f==='o'?'<span class="who">운영진</span>':''}${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
+    : `<div class="empty">아직 대화가 없습니다.<br>접속 문제나 궁금한 점이 있으면 메시지를 보내 주세요.</div>`;
+  if (atBottom || last > lastMsgId) box.scrollTop = box.scrollHeight;
+  lastMsgId = last;
+}
+$('#sendForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const text = $('#text').value.trim(); if (!text) return;
+  $('#sendBtn').disabled = true;
+  try{
+    const res = await api('wr_send', { name: ME.name, token: TOKEN, text });
+    if (res.ok){ $('#text').value = ''; renderMsgs(res.msgs, []); poll(true); }
+    else alert(res.error || '보내지 못했습니다.');
+  }catch(_){ alert('연결에 문제가 있습니다. 다시 보내 주세요.'); }
+  finally{ $('#sendBtn').disabled = false; $('#text').focus(); }
+});
+
+/* ── 실시간 확인 ── */
+async function poll(once){
+  clearTimeout(timer);
+  if (!ME) return;
+  try{
+    const r = await api('wr_poll', { name: ME.name, token: TOKEN });
+    if (!r.ok){ if (r.auth) return logout(); throw new Error(r.error); }
+    fails = 0; $('#conn').classList.remove('off'); $('#conn').querySelector('span').textContent = '실시간 연결됨';
+    if (r.status !== lastStatus || r.status === 'called'){ renderStatus(r); }
+    if (r.status === 'called' && lastStatus !== 'called') alertCalled();
+    if (r.status !== 'called' && lastStatus === 'called') document.title = '무용분야 심화 멘토링 대기실';
+    lastStatus = r.status;
+    renderMsgs(r.msgs, r.bc);
+  }catch(_){
+    fails++; $('#conn').classList.add('off'); $('#conn').querySelector('span').textContent = '연결 확인 중…';
+  }
+  if (!once) timer = setTimeout(poll, document.hidden ? CONFIG.POLL_HIDDEN_MS : Math.min(CONFIG.POLL_MS * (1 + fails), 15000));
+}
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden && ME) poll(); });
+
 $('#copyBtn').addEventListener('click', async ()=>{
   try { await navigator.clipboard.writeText($('#zName').textContent); $('#copyBtn').textContent = '복사됨'; }
   catch(e){ $('#copyBtn').textContent = '길게 눌러 복사'; }
   setTimeout(()=>{ $('#copyBtn').textContent = '복사'; }, 1600);
 });
-$('#again').addEventListener('click', ()=>{
-  try { sessionStorage.removeItem('dm_zoom'); } catch(_){}
-  S = null; clearTimeout(timer);
-  $('#enter').style.display = 'none'; $('#login').style.display = 'block';
-  $('#name').value = ''; $('#birth').value = ''; $('#loginErr').textContent = '';
-});
-/* 다른 화면(ZOOM 앱)에 다녀와도 같은 탭에서는 다시 입력하지 않게 */
-document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) tick(); });
-(async ()=>{
-  try { const c = sessionStorage.getItem('dm_zoom'); if (c){ const [n,b] = c.split('|'); const r = await unlock(n,b); if (r) show(r); } } catch(_){}
-})();
+function logout(){
+  try { sessionStorage.removeItem('dm_wr'); } catch(_){}
+  ME = null; TOKEN = ''; lastStatus = ''; lastMsgId = 0; clearTimeout(timer);
+  $('#room').style.display = 'none'; $('#login').style.display = 'block'; $('#conn').hidden = true;
+  $('#msgs').dataset.ready = ''; $('#name').value = ''; $('#birth').value = '';
+}
+$('#again').addEventListener('click', logout);
+
+/* 같은 탭에서는 다시 입력하지 않게 (ZOOM 앱에 다녀와도 유지) */
+try { const s = JSON.parse(sessionStorage.getItem('dm_wr') || 'null'); if (s){ TOKEN = s.token; ME = s.me; enter(); } } catch(_){}
 </script>
 </body>
 </html>
