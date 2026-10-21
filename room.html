@@ -113,6 +113,14 @@ button{font:inherit;cursor:pointer}
 .al.absent{background:#FBE3E1;color:#8C1D18;border:1.5px solid #E8A29C}
 .al.soon{background:var(--apricot-soft);color:#7A2E12}
 .al .btn.ghost{background:#fff}
+.ph{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px;font-size:13.5px;font-weight:600}
+.ph span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ph a{color:inherit;font-weight:800;text-decoration:none;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.ph a:hover{text-decoration:underline}
+.ph .cp{border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;font-size:11.5px;font-weight:700;padding:1px 6px;opacity:.75}
+.ph .cp:hover{opacity:1}
+.ph .none{opacity:.75;font-weight:500}
+.st .ph{grid-column:2/4;background:#FBE3E1;color:#8C1D18;border-radius:8px;padding:6px 10px;margin-top:2px}
 .brk{text-align:center;font-size:12.5px;color:var(--muted);margin:6px 0 10px}
 
 /* 오른쪽: 공지 + 채팅 */
@@ -310,6 +318,7 @@ function apply(r){
         ${x.status!=='waiting' ? `<button class="btn ghost sm" data-set="waiting" type="button">대기로</button>` : ''}
       </div>
       <div class="meta">${x.test?'테스트 계정':`대기실 ${esc(x.wait)} · 멘토링 ${esc(x.time)}`}</div>
+      ${f.absent ? phonesHtml(x) : ''}
     </div>`;
     if (!x.test && x.order % 10 === 5) html += `<div class="brk">— 휴식 —</div>`;
   });
@@ -323,6 +332,16 @@ function apply(r){
 let ABS_ACK = new Set(), NOTIFIED = new Set(), lastAlertSig = '', lastDueBeep = 0, titleOn = false;
 try { ABS_ACK = new Set(JSON.parse(sessionStorage.getItem('dm_room_ack') || '[]')); } catch(_){}
 function askNotify(){ try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(_){} }
+function phonesHtml(x){
+  const one = (label, v) => v ? `<span>${label} <a href="tel:${v.replace(/\D/g,'')}">${esc(v)}</a><button class="cp" type="button" data-copy="${esc(v)}">복사</button></span>` : '';
+  const h = one('📞 학생', x.sPhone) + one('👪 보호자', x.pPhone);
+  return `<div class="ph">${h || `<span class="none">연락처 없음 (참석 회신 기록 없음)</span>`}</div>`;
+}
+document.addEventListener('click', async e=>{
+  const c = e.target.closest('[data-copy]'); if (!c) return;
+  e.stopPropagation();
+  try { await navigator.clipboard.writeText(c.dataset.copy); toast(`${c.dataset.copy} 복사했습니다`); } catch(_){ toast(c.dataset.copy); }
+}, true);
 function alertsOf(L){
   const now = clock(), d = SDATE[session], out = [];
   if (new Date(now + 9*3600e3).toISOString().slice(0,10) !== d) return out;   // 그 회차 당일에만
@@ -351,10 +370,10 @@ function tick(fromApply){
       const x = a.x, who = `${x.order}번 ${esc(x.name)}`;
       if (a.type === 'due') return `<div class="al due"><div class="tx">⏰ <b>${who}</b> 학생 멘토링 시간(${fmt(a.at)})입니다 · 입장 허용을 눌러 주세요
           ${called ? `<small>현재 ${esc(called.name)} 학생이 입장 허용 상태입니다. 끝났으면 [멘토링 완료]를 먼저 눌러 주세요.</small>` : ''}
-          ${x.online ? '' : `<small>⚠ 이 학생은 지금 대기실에 접속해 있지 않습니다.</small>`}</div>
+          ${x.online ? '' : `<small>⚠ 이 학생은 지금 대기실에 접속해 있지 않습니다.</small>${phonesHtml(x)}`}</div>
         <button class="btn sm blink" data-name="${esc(x.name)}" data-set="called" type="button">⏰ 입장 허용</button></div>`;
       if (a.type === 'absent') return `<div class="al absent"><div class="tx">⚠ <b>${who}</b> 학생 · 대기실 접속 시각(${fmt(a.at)})이 지났는데 ${x.seenAt ? '연결이 끊겼습니다' : '아직 접속하지 않았습니다'}
-          <small>전화·문자로 확인해 주세요. 접속하면 이 알림은 자동으로 사라집니다.</small></div>
+          ${phonesHtml(x)}<small>접속하면 이 알림은 자동으로 사라집니다.</small></div>
         <button class="btn ghost sm" data-ack="${esc(x.name)}" type="button">확인함</button></div>`;
       return `<div class="al soon"><div class="tx">🕐 1분 뒤 <b>${who}</b> 학생 차례입니다 (${fmt(a.at)})</div></div>`;
     }).join('');
@@ -473,6 +492,7 @@ $('#zbar').addEventListener('keydown', e=>{ if (e.target.id==='zIn' && e.key==='
 /* ── 조작 ── */
 $('#list').addEventListener('click', async e=>{
   const card = e.target.closest('.st'); if (!card) return;
+  if (e.target.closest('a,.ph')) return;   // 전화번호 누를 때는 @호출 안 함
   const name = card.dataset.n, b = e.target.closest('[data-set]');
   if (b) return setStatus(name, b.dataset.set, b);
   mention(name);
