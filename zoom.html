@@ -138,6 +138,36 @@ footer a{color:var(--teal)}
 .send input{flex:1;font-size:16px;padding:11px 12px}
 .send button{flex:none;border:0;border-radius:11px;background:var(--teal);color:#fff;font-weight:800;padding:0 16px}
 @media (max-width:420px){ .conn span{display:none} .pill{padding:5px 9px;font-size:13px} }
+/* 스마트폰: 위쪽 정보는 작게, 채팅은 크게 */
+@media (max-width:600px){
+  #room{padding:0 8px max(8px,env(safe-area-inset-bottom));gap:6px}
+  .rh{padding-top:max(8px,env(safe-area-inset-top))}
+  .rh h1{font-size:16px}
+  .status:not(.called){padding:8px 12px;gap:0 10px;border-width:1.5px}
+  .status:not(.called) .ic{font-size:24px}
+  .status:not(.called) h2{font-size:15.5px}
+  .status:not(.called) p{display:none}
+  .status:not(.called) .chips{grid-column:2;margin-top:3px}
+  .status:not(.called) .chip{font-size:12px;padding:2px 8px}
+  .status.called{padding:10px 12px}
+  .status.called .ic{font-size:28px}
+  .zbtn{padding:13px;font-size:18px;margin-top:8px}
+  .info{padding:6px 10px;gap:2px 8px;font-size:12.5px;border-radius:12px}
+  .info .when .long{display:none}
+  .info .zn b{font-size:14px}
+  .chat{padding:8px;border-radius:14px}
+  .chat .ch h2{font-size:15px}
+  .bc{font-size:13px;max-height:3.4em;padding:6px 9px}
+  .msgs{padding:8px;margin-top:6px;gap:8px}
+  .m{font-size:16px;max-width:86%;padding:9px 12px}
+  .m small{font-size:11.5px}
+  .m.o .who,.m.p .who{font-size:12.5px}
+  .send{margin-top:6px}
+  .send input{padding:12px}
+  .send button{padding:0 18px;font-size:16px}
+}
+/* 키보드가 올라와 있는 동안: 채팅만 크게 (입장 버튼이 열리면 그대로 보임) */
+body.typing .status:not(.called), body.typing .info{display:none}
 @media (max-height:600px){ .info .when{display:none} .status .ic{font-size:26px} .status{padding:9px 12px} }
 html,body{touch-action:pan-x pan-y}
 button,a,input{touch-action:manipulation}
@@ -258,7 +288,7 @@ function show(id){ ['login','room'].forEach(k=>$('#'+k).classList.toggle('on', k
 function enter(){
   $('#sched').innerHTML = ME.test
     ? `테스트 계정 <span>· 1회차 채팅방 · 1회차 ZOOM 링크 사용</span>`
-    : `${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님 <span>· ${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)}</span>`;
+    : `${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)} <span class="long">· ${ME.session}회차 ${esc(ME.date)} · ${esc(ME.mentor)} 선생님</span>`;
   $('#zName').textContent = `무용_${ME.name}`;
   renderStatus({ status:'waiting' });
   poll();   // 유의사항을 보는 동안에도 '접속 중'으로 표시
@@ -428,6 +458,18 @@ async function poll(once){
 }
 document.addEventListener('visibilitychange', ()=>{ if (!document.hidden && ME) poll(); });
 
+/* 스마트폰 키보드 대응: 보이는 화면 높이에 맞추고, 입력 중에는 채팅을 크게 */
+function fitRoom(){
+  const vv = window.visualViewport, h = vv ? vv.height : innerHeight;
+  $('#room').style.height = Math.round(h) + 'px';
+  if (vv && vv.offsetTop > 0) window.scrollTo(0, 0);
+  const box = $('#msgs'); if (document.body.classList.contains('typing')) box.scrollTop = box.scrollHeight;
+}
+if (window.visualViewport){ visualViewport.addEventListener('resize', fitRoom); visualViewport.addEventListener('scroll', fitRoom); }
+window.addEventListener('resize', fitRoom); fitRoom();
+$('#text').addEventListener('focus', ()=>{ document.body.classList.add('typing'); setTimeout(fitRoom, 60); setTimeout(fitRoom, 350); });
+$('#text').addEventListener('blur', ()=>{ setTimeout(()=>{ if (document.activeElement !== $('#text')){ document.body.classList.remove('typing'); fitRoom(); } }, 150); });
+['pointerdown','mousedown'].forEach(t=>$('#sendBtn').addEventListener(t, e=>{ if (document.activeElement === $('#text')) e.preventDefault(); }, { passive:false }));   // 보내기를 눌러도 키보드가 내려가지 않게
 $('#copyBtn').addEventListener('click', async ()=>{
   try { await navigator.clipboard.writeText($('#zName').textContent); $('#copyBtn').textContent = '복사됨'; }
   catch(e){ $('#copyBtn').textContent = '길게 눌러 복사'; }
