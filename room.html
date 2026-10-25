@@ -64,9 +64,9 @@ button{font:inherit;cursor:pointer}
 .zbar .zerr{width:100%;color:var(--coral);font-weight:700;font-size:13px}
 .zbar .zerr:empty{display:none}
 
-.body{flex:1;display:grid;grid-template-columns:minmax(420px,1.25fr) 1fr;min-height:0}
+.body{flex:1;display:grid;grid-template-columns:minmax(420px,1.25fr) minmax(0,1fr);min-height:0}
 .left{overflow-y:auto;padding:16px 16px 30px;border-right:1px solid var(--line)}
-.right{display:flex;flex-direction:column;min-height:0;background:#fff}
+.right{display:flex;flex-direction:column;min-height:0;min-width:0;background:#fff}
 
 .sum{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .sum div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13px;color:var(--muted)}
@@ -173,10 +173,57 @@ button{font:inherit;cursor:pointer}
 .cin{padding:10px 16px 14px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
+/* 빠른 문구: 한 줄로 (옆으로 밀어서 보기) → 채팅 영역 확보 */
+.quick{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:8px 16px 0}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:none;white-space:nowrap}
+.bclist{max-height:44px}
+.m{font-size:15px}
+.mtabs{display:none}
+.top .me{font-size:12.5px;font-weight:700;background:rgba(255,255,255,.14);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.m.o .whoo{display:block;font-size:12px;font-weight:800;margin-bottom:2px;opacity:.9}
+.m.o.peer{background:#E3F0F4;color:var(--ink);border:1px solid #B9D7E1}
+.m.o.peer .whoo{color:var(--teal);opacity:1}
+#mtUnread[hidden]{display:none}
+.chead .bcTog{display:none}
+/* 스마트폰·좁은 화면: [학생 목록] / [채팅] 탭으로 나눠 각각 전체 화면 */
 @media (max-width:900px){
-  .body{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr}
-  .left{border-right:0;border-bottom:1px solid var(--line);max-height:55vh}
+  #app{height:100dvh}
   .tabs{margin-left:0}
+  .top{padding:8px 12px;gap:8px}
+  .top small{display:none}
+  .top h1{font-size:16px}
+  .tab{padding:6px 9px;font-size:13px}
+  .top .sp{gap:6px}
+  #simBtn,#resetBtn{display:none}
+  .conn span{display:none}
+  .zbar{padding:7px 12px}
+  .mtabs{display:flex;gap:6px;padding:6px 10px;background:#fff;border-bottom:1px solid var(--line)}
+  .mtabs button{flex:1;border:1.5px solid var(--line-strong);background:#fff;border-radius:10px;padding:9px;font-weight:800;font-size:15px;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px}
+  .mtabs button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+  .mtabs button.alert{border-color:var(--coral);color:var(--coral);animation:blinkSoft 1.2s infinite}
+  .body{display:block;position:relative}
+  .left,.right{height:100%}
+  .left{max-height:none;border:0;padding:12px 10px 24px}
+  body.m-chat .left{display:none}
+  body:not(.m-chat) .right{display:none}
+  .bcbox{padding:8px 10px;display:none}
+  body.m-bc .bcbox{display:block}
+  .chead{flex-wrap:nowrap}
+  .chead b{font-size:16px;white-space:nowrap}
+  #cheadSub{display:none}
+  .chead .bcTog{display:inline-block;margin-left:auto}
+  .chead .clr{margin-left:0}
+  .chead .btn.sm{padding:5px 9px;font-size:12.5px}
+  body.m-bc .chead .bcTog{background:var(--coral);color:#fff;border-color:var(--coral)}
+  .bcbox h3{font-size:13px;margin-bottom:5px}
+  .bcbox h3 span{display:none}
+  .bclist{max-height:34px;margin-top:5px}
+  .chead{padding:8px 10px}
+  .msgs{padding:10px}
+  .m{font-size:15.5px;max-width:86%}
+  .quick{padding:6px 10px 0}
+  .cin{padding:8px 10px 10px}
 }
 html,body{touch-action:pan-x pan-y}
 button,a,input{touch-action:manipulation}
@@ -189,8 +236,10 @@ button,a,input{touch-action:manipulation}
   <form class="lcard" id="loginForm" autocomplete="off">
     <div class="eb">2026 K예술영재 프로젝트</div>
     <h1>대기실 운영</h1>
-    <p>무용분야 심화 멘토링 웹 대기실 관리 화면입니다.<br>접속 코드를 입력해 주세요.</p>
-    <input type="password" id="code" placeholder="접속 코드" autofocus>
+    <p>무용분야 심화 멘토링 웹 대기실 관리 화면입니다.<br>운영자 이름과 접속 코드를 입력해 주세요.</p>
+    <input type="text" id="opName" maxlength="12" placeholder="운영자 이름 (예: 박종현)" autofocus style="margin-bottom:8px">
+    <input type="password" id="code" placeholder="접속 코드">
+    <div style="font-size:12.5px;color:var(--muted);margin-top:8px">이름은 운영진 화면에만 보이고, 학생 화면에는 ‘운영진’으로만 표시됩니다.</div>
     <button class="btn" type="submit" id="loginBtn">입장</button>
     <div class="lerr" id="loginErr"></div>
   </form>
@@ -205,11 +254,13 @@ button,a,input{touch-action:manipulation}
       <button class="btn ghost sm" id="soundBtn" type="button">🔔 알림음 켬</button>
       <button class="btn ghost sm" id="simBtn" type="button" title="정해진 시각이 된 것처럼 알림을 미리 확인합니다">🧪 알림 미리보기</button>
       <button class="btn ghost sm" id="resetBtn" type="button">회차 초기화</button>
+      <span class="me" id="meName"></span>
       <button class="btn ghost sm" id="logoutBtn" type="button">나가기</button>
     </div>
   </header>
   <div class="simbar" id="simbar"></div>
   <div class="zbar" id="zbar"></div>
+  <div class="mtabs" id="mtabs"><button type="button" id="mtList" class="on">👥 학생 목록</button><button type="button" id="mtChat">💬 채팅 <span class="unread" id="mtUnread" hidden>0</span></button></div>
 
   <div class="body">
     <div class="left">
@@ -224,7 +275,7 @@ button,a,input{touch-action:manipulation}
         <form id="bcForm"><input id="bcText" maxlength="300" placeholder="예: 앞 순서가 5분 정도 늦어지고 있습니다. 조금만 기다려 주세요."><button class="btn coral" type="submit">전체 보내기</button></form>
         <div class="bclist" id="bcList"></div>
       </div>
-      <div class="chead" id="chead"><b>대기실 채팅</b><span style="color:var(--muted);font-size:13px" id="cheadSub"></span><button class="btn ghost sm clr" id="clearChat" type="button" title="이 회차 채팅방의 모든 메시지를 지웁니다">🗑 채팅 지우기</button></div>
+      <div class="chead" id="chead"><b>대기실 채팅</b><button class="btn ghost sm bcTog" id="bcTog" type="button">📢 공지</button><span style="color:var(--muted);font-size:13px" id="cheadSub"></span><button class="btn ghost sm clr" id="clearChat" type="button" title="이 회차 채팅방의 모든 메시지를 지웁니다">🗑 채팅 지우기</button></div>
       <div class="msgs" id="msgs"><div class="empty">아직 대화가 없습니다.</div></div>
       <div class="quick" id="quick">
         <button type="button">안녕하세요! 운영진입니다. 순서가 되면 입장 버튼을 열어 드릴게요.</button>
@@ -262,27 +313,32 @@ async function api(action, body){
 
 let ZOOM_EDIT = false, ZOOM_CUR = null;   // 링크 입력 중에는 자동 새로고침이 입력칸을 덮지 않음
 let SEQ = 0, APPLIED = 0, PENDING = [];   // 요청 순번(늦게 온 옛 응답 무시) · 보내는 중인 운영진 메시지
+let OPNAME = '';   // 운영자 이름 (운영진끼리만 보임)
 let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
 
 /* ── 로그인 ── */
 $('#loginForm').addEventListener('submit', async e=>{
-  e.preventDefault(); CODE = $('#code').value.trim(); if (!CODE) return;
+  e.preventDefault(); CODE = $('#code').value.trim();
+  OPNAME = $('#opName').value.trim().replace(/\s+/g,' ');
+  if (!OPNAME){ $('#loginErr').textContent = '운영자 이름을 입력해 주세요.'; $('#opName').focus(); return; }
+  if (!CODE) return;
   try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
   askNotify();
   $('#loginBtn').disabled = true; $('#loginErr').textContent = '';
   try{
     const r = await api('op_state', { session });
     if (!r.ok){ $('#loginErr').textContent = r.error; return; }
-    try { sessionStorage.setItem('dm_room', CODE); } catch(_){}
+    try { sessionStorage.setItem('dm_room', CODE); sessionStorage.setItem('dm_room_name', OPNAME); } catch(_){}
     start(r);
   }catch(_){ $('#loginErr').textContent = '연결에 문제가 있습니다.'; }
   finally{ $('#loginBtn').disabled = false; }
 });
 function start(r){
   $('#login').style.display = 'none'; $('#app').style.display = 'flex';
+  $('#meName').textContent = '👤 ' + OPNAME;
   renderTabs(); apply(r); schedule(); renderSim();
 }
-$('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); }catch(_){} location.reload(); });
+$('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); sessionStorage.removeItem('dm_room_name'); }catch(_){} location.reload(); });
 $('#soundBtn').addEventListener('click', ()=>{ askNotify(); sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
 
 function renderTabs(){
@@ -353,7 +409,7 @@ function apply(r){
   tick(true);
   if ((SIM_OPEN || SIM_OFF) && simSess !== session){ simSess = session; renderSim(); }   // 회차 탭을 바꾸면 그 회차 기준으로 다시
   $('#bcList').innerHTML = r.bc.slice().reverse().map(b=>`<div>${hhmm(b.t)} · ${esc(b.x)}</div>`).join('');
-  renderChat();
+  renderChat(); updUnread();
 }
 /* ── 시간 알림: 멘토링 시작 시각(입장 허용 필요) · 대기실 접속 시각 미접속 ── */
 let SIM_OPEN = false, simSess = 0;
@@ -447,6 +503,7 @@ function tick(fromApply){
     if (NOTIFIED.has(k) || a.type === 'soon') return;
     NOTIFIED.add(k);
     alarm(a.type);
+    if (a.type === 'due' && MQ.matches && mTab === 'chat' && document.activeElement !== $('#chatText')) setMTab('list');   // 입장 허용할 학생이 생기면 목록으로
     notify(a.type === 'due' ? `⏰ ${a.x.name} 학생 입장 허용 시간` : `⚠ ${a.x.name} 학생 대기실 미접속`,
            a.type === 'due' ? `${fmt(a.at)} 멘토링 시작 · 운영 화면에서 [입장 허용]을 눌러 주세요.` : `대기실 접속 시각 ${fmt(a.at)}이 지났습니다.`, k);
   });
@@ -454,6 +511,8 @@ function tick(fromApply){
   if (due && Date.now() - lastDueBeep > 30000){ if (lastDueBeep) alarm('due'); lastDueBeep = Date.now(); }   // 누를 때까지 30초마다 다시 알림
   if (!due) lastDueBeep = 0;
   const hot = A.filter(a=>a.type!=='soon');
+  $('#mtList').classList.toggle('alert', !!hot.length && mTab === 'chat');
+  const ml = hot.length ? `👥 학생 목록 ⚠${hot.length}` : '👥 학생 목록'; if ($('#mtList').textContent !== ml) $('#mtList').textContent = ml;
   titleOn = hot.length ? !titleOn : false;
   document.title = titleOn ? (due ? '⏰ 입장 허용 필요!' : '⚠ 미접속 학생') : '대기실 운영 · 무용 심화 멘토링';
 }
@@ -483,13 +542,36 @@ function renderChat(){
   lastChatSig = sig;
   const box = $('#msgs');
   box.innerHTML = msgs.length ? msgs.map(m => m.f==='o'
-      ? `<div class="m o"><button class="del" data-del="${m.i}" type="button" title="이 메시지 지우기">×</button>${esc(m.x)}<small>운영진 · ${hhmm(m.t)}</small></div>`
+      ? `<div class="m o${m.b && m.b !== OPNAME ? ' peer' : ''}"><button class="del" data-del="${m.i}" type="button" title="이 메시지 지우기">×</button>${m.b && m.b !== OPNAME ? `<span class="whoo">운영진 · ${esc(m.b)}</span>` : ''}${esc(m.x)}<small>${m.b === OPNAME ? `나(${esc(OPNAME)})` : m.b ? '운영진' : '운영진(이름 없음)'} · ${hhmm(m.t)}</small></div>`
       : `<div class="m s"><button class="del" data-del="${m.i}" type="button" title="이 메시지 지우기">×</button><span class="who" data-at="${esc(m.n)}">${esc(m.n)}</span>${esc(m.x)}<small>${hhmm(m.t)}</small></div>`).join('')
     : PENDING.length ? '' : `<div class="empty">아직 대화가 없습니다.<br>아래 문구 버튼으로 첫 인사를 보내 보세요.</div>`;
-  box.innerHTML += PENDING.filter(p=>p.s===session).map(p=>`<div class="m o pend">${esc(p.x)}<small>보내는 중…</small></div>`).join('');
+  box.innerHTML += PENDING.filter(p=>p.s===session).map(p=>`<div class="m o pend">${esc(p.x)}<small>나(${esc(OPNAME)}) · 보내는 중…</small></div>`).join('');
   box.scrollTop = box.scrollHeight;
 }
-function mention(name){ const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
+/* ── 스마트폰 탭 ── */
+const MQ = matchMedia('(max-width:900px)');
+let mTab = 'list', seenChat = 0;
+function setMTab(t){
+  mTab = t; document.body.classList.toggle('m-chat', t === 'chat');
+  $('#mtList').classList.toggle('on', t === 'list'); $('#mtChat').classList.toggle('on', t === 'chat');
+  if (t === 'chat'){ updUnread(); const b = $('#msgs'); b.scrollTop = b.scrollHeight; }
+  if (DATA){ lastAlertSig = ''; tick(true); }
+}
+function updUnread(){
+  const m = (DATA && DATA.msgs) || [], last = m.length ? m[m.length-1].i : 0;
+  if (!MQ.matches || mTab === 'chat') seenChat = last;
+  if (last < seenChat) seenChat = last;   // 채팅을 지운 경우
+  const n = m.filter(x=>x.f === 's' && x.i > seenChat).length;
+  $('#mtUnread').textContent = n; $('#mtUnread').hidden = !n;
+}
+$('#mtList').addEventListener('click', ()=>setMTab('list'));
+$('#bcTog').addEventListener('click', ()=>{ document.body.classList.toggle('m-bc'); if (document.body.classList.contains('m-bc')) $('#bcText').focus(); });
+$('#mtChat').addEventListener('click', ()=>setMTab('chat'));
+function fitApp(){ if (!MQ.matches) { $('#app').style.height = ''; return; } const vv = window.visualViewport; $('#app').style.height = Math.round(vv ? vv.height : innerHeight) + 'px'; if (vv && vv.offsetTop > 0) window.scrollTo(0,0); }
+if (window.visualViewport){ visualViewport.addEventListener('resize', fitApp); visualViewport.addEventListener('scroll', fitApp); }
+window.addEventListener('resize', fitApp); fitApp();
+
+function mention(name){ if (MQ.matches && mTab !== 'chat') setMTab('chat'); const t = $('#chatText'); if (!t.value.startsWith('@'+name)) t.value = `@${name} ` + t.value.replace(/^@\S+\s*/, ''); t.focus(); }
 $('#msgs').addEventListener('click', e=>{
   const d = e.target.closest('[data-del]');
   if (d){ const m = (DATA.msgs||[]).find(x=>x.i === +d.dataset.del);
@@ -576,7 +658,7 @@ $('#chatForm').addEventListener('submit', async e=>{
   $('#chatText').value = ''; $('#chatText').focus();
   const p = { id: Date.now() + Math.random(), x: text, s: session }; PENDING.push(p);
   if (DATA) renderChat();   // 서버 응답을 기다리지 않고 바로 표시
-  let r; try{ r = await api('op_send', { session: p.s, text }); }catch(_){ r = { ok:false, error:'연결에 문제가 있습니다. 다시 보내 주세요.' }; }
+  let r; try{ r = await api('op_send', { session: p.s, text, by: OPNAME }); }catch(_){ r = { ok:false, error:'연결에 문제가 있습니다. 다시 보내 주세요.' }; }
   if (!r.ok){ PENDING = PENDING.filter(q=>q!==p); toast(r.error); $('#chatText').value = text; lastChatSig = ''; renderChat(); return; }
   await refresh(); PENDING = PENDING.filter(q=>q!==p); lastChatSig = ''; renderChat();
 });
@@ -584,8 +666,8 @@ $('#quick').addEventListener('click', e=>{ const b=e.target.closest('button'); i
 $('#bcForm').addEventListener('submit', async e=>{
   e.preventDefault(); const text = $('#bcText').value.trim(); if (!text) return;
   if (!confirm(`${SESS[session]} 대기 학생 전체에게 보낼까요?\n\n${text}`)) return;
-  const r = await api('op_bc', { session, text });
-  if (!r.ok) toast(r.error); else { $('#bcText').value = ''; toast('전체 공지를 보냈습니다'); }
+  const r = await api('op_bc', { session, text, by: OPNAME });
+  if (!r.ok) toast(r.error); else { $('#bcText').value = ''; toast('전체 공지를 보냈습니다'); document.body.classList.remove('m-bc'); }
   refresh();
 });
 $('#resetBtn').addEventListener('click', async ()=>{
@@ -594,7 +676,7 @@ $('#resetBtn').addEventListener('click', async ()=>{
 });
 
 /* 같은 탭에서는 코드 다시 묻지 않음 */
-(async ()=>{ try{ const c = sessionStorage.getItem('dm_room'); if (c){ CODE = c; const r = await api('op_state', { session }); if (r.ok) start(r); } }catch(_){} })();
+(async ()=>{ try{ const c = sessionStorage.getItem('dm_room'), nm = sessionStorage.getItem('dm_room_name'); if (c && nm){ CODE = c; OPNAME = nm; const r = await api('op_state', { session }); if (r.ok) start(r); } }catch(_){} })();
 </script>
 <script>
 /* 확대·축소 막기: 핀치·두 번 탭(모바일), Ctrl+휠·Ctrl +/-/0(PC) */
