@@ -316,7 +316,9 @@ async function api(action, body){
 let ZOOM_EDIT = false, ZOOM_CUR = null;   // 링크 입력 중에는 자동 새로고침이 입력칸을 덮지 않음
 let SEQ = 0, APPLIED = 0, PENDING = [];   // 요청 순번(늦게 온 옛 응답 무시) · 보내는 중인 운영진 메시지
 let OPNAME = '';   // 운영자 이름 (운영진끼리만 보임)
-let CODE = '', session = 1, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
+/* 처음 여는 회차: 오늘(한국 시간) 이후 가장 가까운 회차 */
+const NEXT_SESSION = (()=>{ const t = new Date(Date.now()+9*3600e3).toISOString().slice(0,10); const n = [1,2,3].find(k=>SDATE[k] >= t); return n || 3; })();
+let CODE = '', session = NEXT_SESSION, DATA = null, timer = null, fails = 0, sound = true, audio = null, lastMsgId = -1, lastChatSig = '';
 
 /* ── 로그인 ── */
 $('#loginForm').addEventListener('submit', async e=>{

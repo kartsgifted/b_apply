@@ -403,7 +403,8 @@ $('#sessionCards').innerHTML = SESSIONS.map(s=>`
   </div>`).join('');
 
 /* ================== 시간표 ================== */
-let current = 0, hit = null;
+/* 기본 탭: 오늘(한국 시간) 이후 가장 가까운 회차. 모든 회차가 지나면 마지막 회차 */
+let current = (()=>{ const t = new Date(Date.now()+9*3600e3).toISOString().slice(0,10); const i = SESSIONS.findIndex(s=>s.date >= t); return i < 0 ? SESSIONS.length-1 : i; })(), hit = null;
 function renderTabs(){
   $('#tabs').innerHTML = SESSIONS.map((s,i)=>`<button class="tab" role="tab" aria-selected="${i===current}" data-i="${i}">${s.no}회차<small>${s.d}(${s.w})</small></button>`).join('');
 }
