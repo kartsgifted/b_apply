@@ -131,7 +131,9 @@ button{font:inherit;cursor:pointer}
 .ph .cp{border:1px solid currentColor;background:transparent;color:inherit;border-radius:6px;font-size:11.5px;font-weight:700;padding:1px 6px;opacity:.75}
 .ph .cp:hover{opacity:1}
 .ph .none{opacity:.75;font-weight:500}
-.st .ph{grid-column:2/4;background:#FBE3E1;color:#8C1D18;border-radius:8px;padding:6px 10px;margin-top:2px}
+.st .ph{grid-column:2/4;background:rgba(33,35,38,.04);color:#3E4246;border-radius:8px;padding:4px 10px;margin-top:2px;font-size:13px}
+.st .ph.warn{background:#FBE3E1;color:#8C1D18;padding:6px 10px;font-size:13.5px}
+.st.live .ph:not(.warn){background:rgba(31,157,97,.08)}
 /* 리허설(시간 미리보기) */
 .simbar{display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 20px;background:#2B2F36;color:#fff;font-size:13.5px}
 .simbar.on{display:flex}
@@ -295,8 +297,8 @@ const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxlDl4HN6qOaHON0t_xhAkrxNr0EcGAy8HM7G6o4Ij3JTbLSmEV8lBnUztPwx7qGKAy/exec',
   POLL_MS: 1500,
 };
-const SESS = { 1:'1회차 10/25', 2:'2회차 11/22', 3:'3회차 12/6' };
-const SDATE = { 1:'2026-10-25', 2:'2026-11-22', 3:'2026-12-06' };
+const SESS = { 1:'1회차 10/25', 2:'2회차 11/21', 3:'3회차 12/6' };
+const SDATE = { 1:'2026-10-25', 2:'2026-11-21', 3:'2026-12-06' };   // ’26.11.11 2회차 11/22→11/21
 /* 리허설용: 주소 뒤에 ?sim=2026-10-25T10:58 을 붙이면 그 시각부터 시계가 흐르는 것으로 알림을 미리 볼 수 있음 */
 let SIM_OFF = (()=>{ try{ const v = new URLSearchParams(location.search).get('sim'); if (!v) return 0; const t = new Date(v + (v.length <= 16 ? ':00+09:00' : '')).getTime(); return isNaN(t) ? 0 : t - Date.now(); }catch(_){ return 0; } })();
 const clock = () => Date.now() + SIM_OFF;
@@ -400,7 +402,7 @@ function apply(r){
         ${x.status!=='waiting' ? `<button class="btn ghost sm" data-set="waiting" type="button">대기로</button>` : ''}
       </div>
       <div class="meta">${x.test?'테스트 계정':`대기실 ${esc(x.wait)} · 멘토링 ${esc(x.time)}`}</div>
-      ${f.absent ? phonesHtml(x) : ''}
+      ${x.test ? '' : phonesHtml(x, f.absent)}
     </div>`;
     if (!x.test && x.order % 10 === 5) html += `<div class="brk">— 휴식 —</div>`;
   });
@@ -451,10 +453,10 @@ $('#simbar').addEventListener('click', e=>{
 let ABS_ACK = new Set(), NOTIFIED = new Set(), lastAlertSig = '', lastDueBeep = 0, titleOn = false;
 try { ABS_ACK = new Set(JSON.parse(sessionStorage.getItem('dm_room_ack') || '[]')); } catch(_){}
 function askNotify(){ try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(_){} }
-function phonesHtml(x){
+function phonesHtml(x, warn){
   const one = (label, v) => v ? `<span>${label} <a href="tel:${v.replace(/\D/g,'')}">${esc(v)}</a><button class="cp" type="button" data-copy="${esc(v)}">복사</button></span>` : '';
   const h = one('📞 학생', x.sPhone) + one('👪 보호자', x.pPhone);
-  return `<div class="ph">${h || `<span class="none">연락처 없음 (참석 회신 기록 없음)</span>`}</div>`;
+  return `<div class="ph${warn ? ' warn' : ''}">${h || `<span class="none">연락처 없음 (참석 회신 기록 없음)</span>`}</div>`;
 }
 document.addEventListener('click', async e=>{
   const c = e.target.closest('[data-copy]'); if (!c) return;
