@@ -317,6 +317,18 @@ const CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxlDl4HN6qOaHON0t_xhAkrxNr0EcGAy8HM7G6o4Ij3JTbLSmEV8lBnUztPwx7qGKAy/exec',
   POLL_MS: 1500,
 };
+/* ’26.11.13 시간표 = 운영계획(안) ’26.11.12 분반 명단 (안내 페이지 시간표와 같음, 이름 가운데 글자 가림).
+   관문 명단에 옛 시간(2회차 11:00 시작 등)이 남아 있어도 화면·알림·안내 문자는 이 표의 시간을 쓴다. 시간이 바뀌면 이 표와 index.html을 함께 고칠 것 */
+const TT = {1: [["곽○율", "10:50", "11:00 – 11:10"], ["김○희", "11:00", "11:10 – 11:20"], ["송○솔", "11:10", "11:20 – 11:30"], ["오○린", "11:20", "11:30 – 11:40"], ["윤○우", "11:30", "11:40 – 11:50"], ["이○아", "11:50", "12:00 – 12:10"], ["조○은", "12:00", "12:10 – 12:20"], ["최○령", "12:10", "12:20 – 12:30"], ["최○인", "12:20", "12:30 – 12:40"], ["박○엘", "12:30", "12:40 – 12:50"]], 2: [["서○온", "9:50", "10:00 – 10:10"], ["이○울", "10:00", "10:10 – 10:20"], ["김○해", "10:10", "10:20 – 10:30"], ["김○율", "10:20", "10:30 – 10:40"], ["김○혜", "10:30", "10:40 – 10:50"], ["문○원", "10:50", "11:00 – 11:10"], ["한○린", "11:00", "11:10 – 11:20"], ["송○잎", "11:10", "11:20 – 11:30"]], 3: [["한○슬", "17:20", "17:30 – 17:40"], ["맹○유", "17:30", "17:40 – 17:50"], ["송○경", "17:40", "17:50 – 18:00"], ["한○루", "17:50", "18:00 – 18:10"], ["김○서", "18:00", "18:10 – 18:20"], ["김○채", "18:20", "18:30 – 18:40"], ["신○윤", "18:30", "18:40 – 18:50"], ["권○재", "18:40", "18:50 – 19:00"], ["이○은", "18:50", "19:00 – 19:10"], ["안○랑", "19:00", "19:10 – 19:20"], ["이○윤", "19:10", "19:20 – 19:30"]]};
+function ttFix(x, setSession){
+  if (!x || x.test || !x.name) return x;
+  const n = String(x.name).replace(/\s+/g,''); let no = 0;
+  for (const s of [1,2,3]) for (const [m, w, t] of TT[s]){
+    no++;
+    if (m.length===n.length && m[0]===n[0] && m[m.length-1]===n[n.length-1]){ x.wait = w; x.time = t; x.order = no; x.ttOk = true; if (setSession) x.session = s; return x; }
+  }
+  x.ttOk = false; return x;
+}
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/21', 3:'3회차 12/6' };
 const SDATE = { 1:'2026-10-25', 2:'2026-11-21', 3:'2026-12-06' };   // ’26.11.11 2회차 날짜 변경 → 11/21(토)
 /* 리허설용: 주소 뒤에 ?sim=2026-10-25T10:58 을 붙이면 그 시각부터 시계가 흐르는 것으로 알림을 미리 볼 수 있음 */
@@ -394,6 +406,7 @@ function beep(){
 
 function ago(t, now){ if (!t) return '미접속'; const s = Math.round((now - t)/1000); return s < 60 ? `${s}초 전` : `${Math.round(s/60)}분 전`; }
 function apply(r){
+  r.list.forEach(x=>ttFix(x)); r.list.sort((a,b)=>(a.test?-1:0)-(b.test?-1:0) || (a.order||0)-(b.order||0));
   DATA = r;
   renderZoom(r.zoomLink || '');
   const L = r.list, real = L.filter(x=>!x.test);
@@ -402,7 +415,7 @@ function apply(r){
   const CL = L.filter(x=>x.status==='called').sort((a,b)=>(a.test?0:a.order)-(b.test?0:b.order));
   $('#now').style.display = CL.length ? 'block' : 'none';
   if (CL.length) $('#now').innerHTML = `입장 허용됨 ${CL.length}명 · ` + CL.map((c,i)=>`<b>${c.test?'테스트':c.order+'번 '}${esc(c.name)}</b> (${esc(c.time)})${CL.length>1?(i?' ZOOM 대기':' 멘토링 차례'):''}`).join(' · ');
-  const NX = {}; real.filter(x=>x.status==='waiting').sort((a,b)=>a.order-b.order).slice(0,2).forEach((x,i)=>NX[x.name]=i+1);   // 다음 2명
+  const NX = {}; real.filter(x=>x.status==='waiting' && x.ttOk !== false).sort((a,b)=>a.order-b.order).slice(0,2).forEach((x,i)=>NX[x.name]=i+1);   // 다음 2명
 
   // 학생 새 메시지 알림
   const maxId = r.msgs.length ? r.msgs[r.msgs.length-1].i : 0;
@@ -420,6 +433,7 @@ function apply(r){
         <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>
         ${f.due ? `<span class="badge due">⏰ 멘토링 시간</span>` : f.prep ? `<span class="badge prep">ZOOM 대기실로</span>` : f.soon ? `<span class="badge soon">곧 차례</span>` : ''}
         ${NX[x.name] && !f.due ? `<span class="badge nx">다음 ${NX[x.name]}</span>` : ''}
+        ${x.ttOk === false ? `<span class="badge absent">시간표에 없음 · 명단 확인</span>` : ''}
         ${f.absent ? `<span class="badge absent">⚠ ${x.seenAt ? '연결 끊김' : '미접속'}</span>` : ''}</div>
       <div class="act">
         ${x.status==='waiting' ? `<button class="btn coral sm" data-set="called" type="button">${f.due?'⏰ 입장 허용':'입장 허용'}</button>` : ''}
@@ -492,9 +506,9 @@ document.addEventListener('click', async e=>{
 function alertsOf(L){
   const now = clock(), d = SDATE[session], out = [];
   if (new Date(now + 9*3600e3).toISOString().slice(0,10) !== d) return out;   // 그 회차 당일에만
-  const nx = L.filter(x=>!x.test && x.status==='waiting').sort((a,b)=>a.order-b.order).slice(0,2).map(x=>x.name);
+  const nx = L.filter(x=>!x.test && x.ttOk !== false && x.status==='waiting').sort((a,b)=>a.order-b.order).slice(0,2).map(x=>x.name);
   L.forEach(x=>{
-    if (x.test || x.status !== 'waiting') return;
+    if (x.test || x.status !== 'waiting' || x.ttOk === false) return;   // 시간표에 없는 학생은 알림 안 함
     const st = kst(d, x.time), wt = kst(d, x.wait);
     if (now >= st) out.push({ type:'due', x, at: st });
     else if (x.online && (now >= wt || nx.includes(x.name))) out.push({ type:'prep', x, at: wt, pos: nx.indexOf(x.name) + 1 });   // 다음 2명 또는 대기실 접속 시각 → ZOOM 대기실로 미리 입장

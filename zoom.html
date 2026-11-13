@@ -274,7 +274,7 @@ $('#loginForm').addEventListener('submit', async e=>{
   try{
     const res = await api('wr_login', { name, birth });
     if (!res.ok){ $('#loginErr').textContent = res.error; return; }
-    TOKEN = res.token; ME = res.me;
+    TOKEN = res.token; ME = ttFix(res.me, true);
     RULES_SEEN = false; save();
     enter();
   }catch(err){ $('#loginErr').textContent = '연결에 문제가 있습니다. 잠시 후 다시 시도해 주세요.'; }
@@ -283,6 +283,18 @@ $('#loginForm').addEventListener('submit', async e=>{
 
 let RULES_SEEN = false;
 function save(){ try { sessionStorage.setItem('dm_wr', JSON.stringify({ token: TOKEN, me: ME, seen: RULES_SEEN })); } catch(_){} }
+/* ’26.11.13 시간표 = 운영계획(안) ’26.11.12 분반 명단 (안내 페이지 시간표와 같음, 이름 가운데 글자 가림).
+   관문 명단에 옛 시간(2회차 11:00 시작 등)이 남아 있어도 화면·알림·안내 문자는 이 표의 시간을 쓴다. 시간이 바뀌면 이 표와 index.html을 함께 고칠 것 */
+const TT = {1: [["곽○율", "10:50", "11:00 – 11:10"], ["김○희", "11:00", "11:10 – 11:20"], ["송○솔", "11:10", "11:20 – 11:30"], ["오○린", "11:20", "11:30 – 11:40"], ["윤○우", "11:30", "11:40 – 11:50"], ["이○아", "11:50", "12:00 – 12:10"], ["조○은", "12:00", "12:10 – 12:20"], ["최○령", "12:10", "12:20 – 12:30"], ["최○인", "12:20", "12:30 – 12:40"], ["박○엘", "12:30", "12:40 – 12:50"]], 2: [["서○온", "9:50", "10:00 – 10:10"], ["이○울", "10:00", "10:10 – 10:20"], ["김○해", "10:10", "10:20 – 10:30"], ["김○율", "10:20", "10:30 – 10:40"], ["김○혜", "10:30", "10:40 – 10:50"], ["문○원", "10:50", "11:00 – 11:10"], ["한○린", "11:00", "11:10 – 11:20"], ["송○잎", "11:10", "11:20 – 11:30"]], 3: [["한○슬", "17:20", "17:30 – 17:40"], ["맹○유", "17:30", "17:40 – 17:50"], ["송○경", "17:40", "17:50 – 18:00"], ["한○루", "17:50", "18:00 – 18:10"], ["김○서", "18:00", "18:10 – 18:20"], ["김○채", "18:20", "18:30 – 18:40"], ["신○윤", "18:30", "18:40 – 18:50"], ["권○재", "18:40", "18:50 – 19:00"], ["이○은", "18:50", "19:00 – 19:10"], ["안○랑", "19:00", "19:10 – 19:20"], ["이○윤", "19:10", "19:20 – 19:30"]]};
+function ttFix(x, setSession){
+  if (!x || x.test || !x.name) return x;
+  const n = String(x.name).replace(/\s+/g,''); let no = 0;
+  for (const s of [1,2,3]) for (const [m, w, t] of TT[s]){
+    no++;
+    if (m.length===n.length && m[0]===n[0] && m[m.length-1]===n[n.length-1]){ x.wait = w; x.time = t; x.order = no; x.ttOk = true; if (setSession) x.session = s; return x; }
+  }
+  x.ttOk = false; return x;
+}
 /* ’26.11.13 회차 날짜·멘토는 화면 기준으로 표시(관문 명단에 옛 날짜가 남아 있어도 바뀐 날짜로) */
 const SESS_FIX = { 1:{ date:'10월 25일(일)', mentor:'정은영' }, 2:{ date:'11월 21일(토)', mentor:'정은영' }, 3:{ date:'12월 6일(일)', mentor:'정은영' } };
 const sDate = m => (SESS_FIX[m.session] || {}).date || m.date, sMentor = m => (SESS_FIX[m.session] || {}).mentor || m.mentor;
@@ -487,7 +499,7 @@ function logout(){
 $('#again').addEventListener('click', logout);
 
 /* 같은 탭에서는 다시 입력하지 않게 (ZOOM 앱에 다녀와도 유지) */
-try { const s = JSON.parse(sessionStorage.getItem('dm_wr') || 'null'); if (s){ TOKEN = s.token; ME = s.me; RULES_SEEN = !!s.seen; enter(); } } catch(_){}
+try { const s = JSON.parse(sessionStorage.getItem('dm_wr') || 'null'); if (s){ TOKEN = s.token; ME = ttFix(s.me, true); RULES_SEEN = !!s.seen; enter(); } } catch(_){}
 </script>
 <script>
 /* 확대·축소 막기: 핀치·두 번 탭(모바일), Ctrl+휠·Ctrl +/-/0(PC) */
