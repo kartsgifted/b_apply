@@ -318,7 +318,7 @@ const CONFIG = {
   POLL_MS: 1500,
 };
 const SESS = { 1:'1회차 10/25', 2:'2회차 11/21', 3:'3회차 12/6' };
-const SDATE = { 1:'2026-10-25', 2:'2026-11-21', 3:'2026-12-06' };   // ’26.11.11 2회차 11/22→11/21
+const SDATE = { 1:'2026-10-25', 2:'2026-11-21', 3:'2026-12-06' };   // ’26.11.11 2회차 날짜 변경 → 11/21(토)
 /* 리허설용: 주소 뒤에 ?sim=2026-10-25T10:58 을 붙이면 그 시각부터 시계가 흐르는 것으로 알림을 미리 볼 수 있음 */
 let SIM_OFF = (()=>{ try{ const v = new URLSearchParams(location.search).get('sim'); if (!v) return 0; const t = new Date(v + (v.length <= 16 ? ':00+09:00' : '')).getTime(); return isNaN(t) ? 0 : t - Date.now(); }catch(_){ return 0; } })();
 const clock = () => Date.now() + SIM_OFF;

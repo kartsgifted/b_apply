@@ -286,6 +286,10 @@ async function load(code){
   const r = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify({ action:'list', code }) });
   const j = await r.json();
   if (!j.ok) throw new Error(j.error || '불러오기 실패');
+  // ’26.11.13 2회차 날짜 변경(→11/21(토) 10:00–12:00, 멘토 정은영): 관문 명단에 옛 날짜가 남아 있어도 화면·안내 문자는 바뀐 일정으로
+  const FIX = { 2:{ date:'11월 21일(토)', mentor:'정은영', range:'10:00 – 12:00' } };
+  (j.sessions || []).forEach(s=>{ if (FIX[s.no]) Object.assign(s, FIX[s.no]); });
+  (j.roster || []).forEach(r=>{ if (r.changed) r.changed = String(r.changed).replace(/\s*11\/22\s*\(일\)(\s*\d{1,2}:\d{2})?/g, ''); });
   return j;
 }
 

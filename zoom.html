@@ -283,12 +283,15 @@ $('#loginForm').addEventListener('submit', async e=>{
 
 let RULES_SEEN = false;
 function save(){ try { sessionStorage.setItem('dm_wr', JSON.stringify({ token: TOKEN, me: ME, seen: RULES_SEEN })); } catch(_){} }
+/* ’26.11.13 회차 날짜·멘토는 화면 기준으로 표시(관문 명단에 옛 날짜가 남아 있어도 바뀐 날짜로) */
+const SESS_FIX = { 1:{ date:'10월 25일(일)', mentor:'정은영' }, 2:{ date:'11월 21일(토)', mentor:'정은영' }, 3:{ date:'12월 6일(일)', mentor:'정은영' } };
+const sDate = m => (SESS_FIX[m.session] || {}).date || m.date, sMentor = m => (SESS_FIX[m.session] || {}).mentor || m.mentor;
 function show(id){ ['login','room'].forEach(k=>$('#'+k).classList.toggle('on', k===id)); }
 
 function enter(){
   $('#sched').innerHTML = ME.test
     ? `테스트 계정 <span>· 1회차 채팅방 · 1회차 ZOOM 링크 사용</span>`
-    : `${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)} <span class="long">· ${ME.session}회차 ${esc(ME.date)} · ${esc(ME.mentor)} 선생님</span>`;
+    : `${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)} <span class="long">· ${ME.session}회차 ${esc(sDate(ME))} · ${esc(sMentor(ME))} 선생님</span>`;
   $('#zName').textContent = `발레_${ME.name}`;   // ’26.11.12 2회차 운영계획: ZOOM 표시 이름 발레_000
   renderStatus({ status:'waiting' });
   poll();   // 유의사항을 보는 동안에도 '접속 중'으로 표시
@@ -311,7 +314,7 @@ function slides(first){
   const out = R.map(([ic, t, body, box], i)=>`<div class="sc"><div class="num">유의사항 ${i+1} / ${R.length}</div><div class="ico">${ic}</div><h2>${t}</h2><p>${body}</p>${box ? `<div class="box">${box}</div>` : ''}${DECO}</div>`);
   if (first) out.unshift(`<div class="sc cover"><div class="num">WELCOME</div><div class="ico">👋</div><h2>${esc(n)} 학생,<br>반가워요!</h2>
     <p>대기실에 들어가기 전에 꼭 알아야 할 <b>유의사항 ${R.length}가지</b>를 한 장씩 넘기며 확인해 주세요.</p>
-    <div class="box">${ME.test ? '테스트 계정' : `${ME.session}회차 · ${esc(ME.date)} · ${esc(ME.mentor)} 선생님<br>대기실 접속 <b>${esc(ME.wait)}</b> · 멘토링 <b>${esc(ME.time)}</b>`}</div>${DECO}</div>`);
+    <div class="box">${ME.test ? '테스트 계정' : `${ME.session}회차 · ${esc(sDate(ME))} · ${esc(sMentor(ME))} 선생님<br>대기실 접속 <b>${esc(ME.wait)}</b> · 멘토링 <b>${esc(ME.time)}</b>`}</div>${DECO}</div>`);
   return out;
 }
 let RI = 0, RN = 0, RFIRST = false;
