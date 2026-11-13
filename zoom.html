@@ -289,7 +289,7 @@ function enter(){
   $('#sched').innerHTML = ME.test
     ? `테스트 계정 <span>· 1회차 채팅방 · 1회차 ZOOM 링크 사용</span>`
     : `${ME.order}번 · 대기실 ${esc(ME.wait)} · 멘토링 ${esc(ME.time)} <span class="long">· ${ME.session}회차 ${esc(ME.date)} · ${esc(ME.mentor)} 선생님</span>`;
-  $('#zName').textContent = `무용_${ME.name}`;
+  $('#zName').textContent = `발레_${ME.name}`;   // ’26.11.12 2회차 운영계획: ZOOM 표시 이름 발레_000
   renderStatus({ status:'waiting' });
   poll();   // 유의사항을 보는 동안에도 '접속 중'으로 표시
   if (RULES_SEEN){ show('room'); } else { show(null); openRules(true); }
@@ -298,15 +298,15 @@ function enter(){
 /* ── 유의사항 카드뉴스 ── */
 const DECO = `<svg class="deco" viewBox="0 0 220 220" fill="none" aria-hidden="true"><path d="M10 200C70 140 110 180 150 120S200 30 230 40" stroke="#FFB098" stroke-width="2"/><path d="M0 180C60 125 100 160 140 105S190 15 220 25" stroke="#176C86" stroke-width="1" opacity=".5"/><circle cx="150" cy="120" r="4" fill="#E84958"/></svg>`;
 function slides(first){
-  const n = ME.name, zn = `무용_${esc(n)}`;
+  const n = ME.name, zn = `발레_${esc(n)}`;
   const R = [
     ['🎥', '비디오·오디오 ON', `ZOOM에 입장할 때는 <b>비디오와 오디오를 모두 켠 상태</b>로 들어와 주세요.`, `입장 전에 카메라와 마이크가 잘 되는지 미리 확인해 두면 좋아요.`],
-    ['🏷️', '참가자 이름 설정', `ZOOM 참가자 이름을 <b>‘무용_이름’</b> 형식으로 바꿔 주세요.`, `내 ZOOM 이름 &nbsp;<b>${zn}</b>`],
+    ['🏷️', '참가자 이름 설정', `ZOOM 참가자 이름을 <b>‘발레_이름’</b> 형식으로 바꿔 주세요.`, `내 ZOOM 이름 &nbsp;<b>${zn}</b>`],
     ['⏰', '입장 시간 준수', `사전에 안내된 스케줄을 확인하고, <b>본인 멘토링 시작 10분 전까지</b> 이 대기실 화면에 접속해 주세요.`,
       ME.test ? `테스트 계정은 시간 제한이 없습니다.` : `내 대기실 접속 시간 &nbsp;<b>${esc(ME.wait)}</b> · 멘토링 ${esc(ME.time)}`],
-    ['🚪', '대기실 안내', `이 화면이 대기실입니다. 앞 순서 멘토링이 끝나면 운영진이 차례대로 <b>[ZOOM 입장]</b> 버튼을 열어 드려요. 화면을 켜 둔 채 기다려 주세요.`, `내 차례가 되면 알림음과 진동으로 알려 드려요.`],
+    ['🚪', '대기실 안내', `이 화면이 대기실입니다. 차례가 가까워지면 운영진이 <b>[ZOOM 입장]</b> 버튼을 미리 열어 드려요. ZOOM에 들어가면 <b>ZOOM 대기실</b>에서 기다리다가, 앞 학생 멘토링이 끝나는 대로 바로 멘토링실로 연결됩니다.`, `버튼이 열리면 알림음과 진동으로 알려 드려요. 바로 ZOOM에 들어가 주세요.`],
     ['🙋', '참관 제한', `멘토링은 <b>참가자 본인만</b> 참여할 수 있으며, 참가자 외 인원의 입장 및 참관은 불가합니다.`, ''],
-    ['⏳', '시간 관련 안내', `정해진 입장 시간을 지키지 않으면 멘토링 참여가 어려울 수 있습니다. 당일 진행 상황에 따라 시작·종료 시간이 <b>다소 달라질 수 있으니</b> 배정 시간 전후로 여유 있게 준비해 주세요.`, `궁금한 점은 대기실 채팅으로 운영진에게 물어보세요.`],
+    ['⏳', '시간 관련 안내', `정해진 입장 시간을 지키지 않으면 멘토링 참여가 어려울 수 있습니다. 당일 진행 상황에 따라 시작·종료 시간이 <b>다소 달라질 수 있으니</b> 배정 시간 전후로 여유 있게 준비해 주세요.`, `멘토링은 1인 10분 (피드백 8분 · 질의응답 2분)<br>궁금한 점은 대기실 채팅으로 운영진에게 물어보세요.`],
   ];
   const out = R.map(([ic, t, body, box], i)=>`<div class="sc"><div class="num">유의사항 ${i+1} / ${R.length}</div><div class="ico">${ic}</div><h2>${t}</h2><p>${body}</p>${box ? `<div class="box">${box}</div>` : ''}${DECO}</div>`);
   if (first) out.unshift(`<div class="sc cover"><div class="num">WELCOME</div><div class="ico">👋</div><h2>${esc(n)} 학생,<br>반가워요!</h2>
@@ -355,8 +355,8 @@ function renderStatus(r){
   const el = $('#status');
   if (r.status === 'called'){
     el.className = 'status called';
-    el.innerHTML = `<div class="ic">🔔</div><h2>${esc(ME.name)} 학생, 지금 입장해 주세요!</h2>
-      <p>ZOOM 이름 <b>무용_${esc(ME.name)}</b> · 비디오·오디오 ON</p>
+    el.innerHTML = `<div class="ic">🔔</div><h2>${esc(ME.name)} 학생, 지금 ZOOM에 입장해 주세요!</h2>
+      <p>ZOOM 이름 <b>발레_${esc(ME.name)}</b> · 비디오·오디오 ON<br>ZOOM 대기실에서 기다리면 앞 학생이 끝나는 대로 바로 연결돼요.</p>
       ${r.zoom ? `<a class="zbtn" href="${esc(r.zoom)}" id="zLink">ZOOM 입장하기 →</a>
       <span class="fallback">버튼이 반응하지 않으면 <a href="${esc(r.zoom)}" target="_blank" rel="noopener">여기를 눌러 주세요</a></span>`
       : `<span class="zbtn" style="opacity:.7">입장 링크 준비 중 — 채팅으로 운영진에게 알려 주세요</span>`}`;
