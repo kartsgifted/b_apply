@@ -319,13 +319,13 @@ const CONFIG = {
 };
 /* ’26.11.13 시간표 = 운영계획(안) ’26.11.12 분반 명단 (안내 페이지 시간표와 같음, 이름 가운데 글자 가림).
    관문 명단에 옛 시간(2회차 11:00 시작 등)이 남아 있어도 화면·알림·안내 문자는 이 표의 시간을 쓴다. 시간이 바뀌면 이 표와 index.html을 함께 고칠 것 */
-const TT = {1: [["곽○율", "10:50", "11:00 – 11:10"], ["김○희", "11:00", "11:10 – 11:20"], ["송○솔", "11:10", "11:20 – 11:30"], ["오○린", "11:20", "11:30 – 11:40"], ["윤○우", "11:30", "11:40 – 11:50"], ["이○아", "11:50", "12:00 – 12:10"], ["조○은", "12:00", "12:10 – 12:20"], ["최○령", "12:10", "12:20 – 12:30"], ["최○인", "12:20", "12:30 – 12:40"], ["박○엘", "12:30", "12:40 – 12:50"]], 2: [["서○온", "9:50", "10:00 – 10:10"], ["이○울", "10:00", "10:10 – 10:20"], ["김○해", "10:10", "10:20 – 10:30"], ["김○율", "10:20", "10:30 – 10:40"], ["김○혜", "10:30", "10:40 – 10:50"], ["문○원", "10:50", "11:00 – 11:10"], ["한○린", "11:00", "11:10 – 11:20"], ["송○잎", "11:10", "11:20 – 11:30"]], 3: [["한○슬", "17:20", "17:30 – 17:40"], ["맹○유", "17:30", "17:40 – 17:50"], ["송○경", "17:40", "17:50 – 18:00"], ["한○루", "17:50", "18:00 – 18:10"], ["김○서", "18:00", "18:10 – 18:20"], ["김○채", "18:20", "18:30 – 18:40"], ["신○윤", "18:30", "18:40 – 18:50"], ["권○재", "18:40", "18:50 – 19:00"], ["이○은", "18:50", "19:00 – 19:10"], ["안○랑", "19:00", "19:10 – 19:20"], ["이○윤", "19:10", "19:20 – 19:30"]]};
+const TT = {1: [["곽○율", "10:50", "11:00 – 11:10"], ["김○희", "11:00", "11:10 – 11:20"], ["송○솔", "11:10", "11:20 – 11:30"], ["오○린", "11:20", "11:30 – 11:40"], ["윤○우", "11:30", "11:40 – 11:50"], ["이○아", "11:50", "12:00 – 12:10"], ["조○은", "12:00", "12:10 – 12:20"], ["최○령", "12:10", "12:20 – 12:30"], ["최○인", "12:20", "12:30 – 12:40"], ["박○엘", "12:30", "12:40 – 12:50"]], 2: [["서○온", "9:50", "10:00 – 10:10"], ["이○울", "10:00", "10:10 – 10:20"], ["김○해", "10:10", "10:20 – 10:30"], ["김○율", "10:20", "10:30 – 10:40"], ["김○혜", "10:30", "10:40 – 10:50"], ["문○원", "10:50", "11:00 – 11:10"], ["한○린", "11:00", "11:10 – 11:20"], ["송○잎", "11:10", "11:20 – 11:30"]], 3: [["한○슬", "17:20", "17:30 – 17:40"], ["맹○유", "17:30", "17:40 – 17:50"], ["송○경", "17:40", "17:50 – 18:00"], ["한○루", "17:50", "18:00 – 18:10"], ["김○서", "18:00", "18:10 – 18:20"], ["김○채", "18:20", "18:30 – 18:40"], ["신○윤", "18:30", "18:40 – 18:50"], ["권○재", "18:40", "18:50 – 19:00"], ["이○은", "18:50", "19:00 – 19:10"], ["안○랑", "19:00", "19:10 – 19:20"], ["이○윤", "19:10", "19:20 – 19:30"], ["이○민", "19:20", "19:30 – 19:40"]]};
 function ttFix(x, setSession){
   if (!x || x.test || !x.name) return x;
   const n = String(x.name).replace(/\s+/g,''); let no = 0;
   for (const s of [1,2,3]) for (const [m, w, t] of TT[s]){
     no++;
-    if (m.length===n.length && m[0]===n[0] && m[m.length-1]===n[n.length-1]){ x.wait = w; x.time = t; x.order = no; x.ttOk = true; if (setSession) x.session = s; return x; }
+    if (m.length===n.length && m[0]===n[0] && m[m.length-1]===n[n.length-1]){ x.wait = w; x.time = t; x.order = no; x.ttOk = true; x.ttSess = s; if (setSession) x.session = s; return x; }
   }
   x.ttOk = false; return x;
 }
@@ -372,7 +372,7 @@ $('#loginForm').addEventListener('submit', async e=>{
 function start(r){
   $('#login').style.display = 'none'; $('#app').style.display = 'flex';
   $('#meName').textContent = '👤 ' + OPNAME;
-  renderTabs(); apply(r); schedule(); renderSim();
+  renderTabs(); apply(r); schedule(); renderSim(); if (!fetchMoved.on){ fetchMoved.on = true; fetchMoved(); }
 }
 $('#logoutBtn').addEventListener('click', ()=>{ try{ sessionStorage.removeItem('dm_room'); sessionStorage.removeItem('dm_room_name'); }catch(_){} location.reload(); });
 $('#soundBtn').addEventListener('click', ()=>{ askNotify(); sound = !sound; $('#soundBtn').textContent = sound ? '🔔 알림음 켬' : '🔕 알림음 끔'; try{ audio && audio.resume(); }catch(_){} });
@@ -384,6 +384,19 @@ $('#tabs').addEventListener('click', e=>{ const b=e.target.closest('.tab'); if(!
 
 /* ── 주기적 새로고침 ── */
 function schedule(){ clearTimeout(timer); timer = setTimeout(refresh, Math.min(CONFIG.POLL_MS * (1 + fails), 15000)); }
+/* 시트(대기실 탭)에 옛 회차로 남은 학생을 계획안 회차 탭에 보이게: 15초마다 다른 회차 명단을 읽어 옮겨 담음 */
+let MOVED = {};
+async function fetchMoved(){
+  try{
+    const M = {};
+    for (const s of [1,2,3]){
+      const r = await api('op_state', { session: s }); if (!r.ok) continue;
+      r.list.forEach(x=>{ ttFix(x); if (!x.test && x.ttSess && x.ttSess !== s){ x.sheetSess = s; (M[x.ttSess] = M[x.ttSess] || []).push(x); } });
+    }
+    MOVED = M; if (DATA) refresh();
+  }catch(_){}
+  setTimeout(fetchMoved, 15000);
+}
 async function refresh(){
   const seq = ++SEQ, s0 = session;
   try{
@@ -406,7 +419,9 @@ function beep(){
 
 function ago(t, now){ if (!t) return '미접속'; const s = Math.round((now - t)/1000); return s < 60 ? `${s}초 전` : `${Math.round(s/60)}분 전`; }
 function apply(r){
-  r.list.forEach(x=>ttFix(x)); r.list.sort((a,b)=>(a.test?-1:0)-(b.test?-1:0) || (a.order||0)-(b.order||0));
+  r.list.forEach(x=>ttFix(x)); r.list = r.list.filter(x=>x.test || !x.ttSess || x.ttSess === session);   // 계획안에서 다른 회차로 옮긴 학생(예: 이소민 2→3회차)은 이 탭에서 뺌
+  (MOVED[session] || []).forEach(m=>{ if (!r.list.some(x=>x.name===m.name)) r.list.push(Object.assign({}, m)); });   // 시트에는 다른 회차로 남아 있지만 계획안상 이 회차인 학생
+  r.list.sort((a,b)=>(a.test?-1:0)-(b.test?-1:0) || (a.order||0)-(b.order||0));
   DATA = r;
   renderZoom(r.zoomLink || '');
   const L = r.list, real = L.filter(x=>!x.test);
@@ -433,6 +448,7 @@ function apply(r){
         <span class="badge ${x.status}">${x.status==='called'?'입장 허용됨':x.status==='done'?'완료':'대기'}</span>
         ${f.due ? `<span class="badge due">⏰ 멘토링 시간</span>` : f.prep ? `<span class="badge prep">ZOOM 대기실로</span>` : f.soon ? `<span class="badge soon">곧 차례</span>` : ''}
         ${NX[x.name] && !f.due ? `<span class="badge nx">다음 ${NX[x.name]}</span>` : ''}
+        ${x.sheetSess ? `<span class="badge soon">시트엔 ${x.sheetSess}회차</span>` : ''}
         ${x.ttOk === false ? `<span class="badge absent">시간표에 없음 · 명단 확인</span>` : ''}
         ${f.absent ? `<span class="badge absent">⚠ ${x.seenAt ? '연결 끊김' : '미접속'}</span>` : ''}</div>
       <div class="act">
